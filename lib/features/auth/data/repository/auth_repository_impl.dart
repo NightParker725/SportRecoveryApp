@@ -17,4 +17,17 @@ class AuthRepositoryImpl extends AuthRepository {
       _profileDataSource.createProfile(profile);
     }
   }
+  
+  @override
+  Future<Profile?> loginUser(String email, String password) async {
+    // 1. Autenticar con Supabase Auth
+    String? userId = await _authDataSource.signIn(email, password);
+    
+    // 2. Obtener el perfil del usuario
+    if (userId != null) {
+      return await _profileDataSource.getProfileById(userId);
+    }
+    
+    return null;
+  }
 }

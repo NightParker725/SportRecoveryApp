@@ -5,13 +5,14 @@ import 'package:moviles252/ui/screens/login_screen.dart';
 import 'package:moviles252/ui/screens/profile_screen.dart';
 import 'package:moviles252/features/auth/ui/screens/signup_screen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:moviles252/features/auth/ui/bloc/login_bloc.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await Supabase.initialize(
-    url: 'https://yzosfzyewkdpnmlbgbej.supabase.co',
-    anonKey: 'sb_publishable_sVlCTCKFQ9NktJjQTOmahw_QoBUGODX',
+    url: 'https://badsghvoqgnepezakrmt.supabase.co',
+    anonKey: 'sb_publishable_CnJibsSasgTs_BbFPshk8A_doYfZigk',
   );
 
   runApp(const MyApp());
@@ -28,11 +29,11 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      initialRoute: '/profile',
+      initialRoute: '/login',
       routes: {
         '/signup': (_) =>
             BlocProvider(create: (_) => SignupBloc(), child: SignupScreen()),
-        '/login': (_) => LoginScreen(),
+        '/login': (_) => BlocProvider(create: (_) => LoginBloc(), child: LoginScreen(),),
         '/profile': (_) => ProfileScreen(),
       },
     );
