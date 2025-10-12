@@ -3,24 +3,34 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 abstract class ProfileDataSource {
   Future<void> createProfile(Profile profile);
-
-  Future<Profile?> getProfileById(String userId) async {}
+  Future<Profile?> getProfileById(String userId);
+  Future<void> updateProfile(Profile profile);
 }
 
 class ProfileDataSourceImpl extends ProfileDataSource {
+  static const tableName = 'profiles';
+  final _db = Supabase.instance.client;
+
   @override
   Future<void> createProfile(Profile profile) async {
-    await Supabase.instance.client.from("profiles").insert(profile.toJson());
+    await _db.from(tableName).insert(profile.toJson());
   }
 
   @override
   Future<Profile?> getProfileById(String userId) async {
-    final response = await Supabase.instance.client
-        .from("profiles")
+    final data = await _db
+        .from(tableName)
         .select()
         .eq('id', userId)
-        .single();
-    
-    return Profile.fromJson(response);
+        .maybeSingle();
+    if (data == null) return null;
+    return Profile.fromJson(Map<String, dynamic>.from(data));
+  }
+
+  @override
+  Future<void> updateProfile(Profile profile) async {
+    final data = profile.toJson();
+    data.remove('created_at');
+    await _db.from(tableName).update(data).eq('id', profile.id);
   }
 }

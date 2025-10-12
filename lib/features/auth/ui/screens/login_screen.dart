@@ -4,109 +4,102 @@ import 'package:moviles252/features/auth/ui/bloc/login_bloc.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
-  State<StatefulWidget> createState() {
-    return LoginScreenState();
-  }
+  State<StatefulWidget> createState() => LoginScreenState();
 }
 
 class LoginScreenState extends State<LoginScreen> {
-  TextEditingController emailController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
 
-  Widget content() => Padding(
+  Widget _content() => Padding(
     padding: const EdgeInsets.all(16.0),
     child: Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text(
+        const Text(
           "Iniciar Sesión",
           style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
         ),
-        SizedBox(height: 32),
+        const SizedBox(height: 32),
         TextField(
           controller: emailController,
-          decoration: InputDecoration(
+          decoration: const InputDecoration(
             label: Text("Correo electrónico"),
             border: OutlineInputBorder(),
           ),
           keyboardType: TextInputType.emailAddress,
         ),
-        SizedBox(height: 16),
+        const SizedBox(height: 16),
         TextField(
           controller: passwordController,
-          decoration: InputDecoration(
+          decoration: const InputDecoration(
             label: Text("Contraseña"),
             border: OutlineInputBorder(),
           ),
           obscureText: true,
         ),
-        SizedBox(height: 24),
-        submitButton(),
-        SizedBox(height: 16),
+        const SizedBox(height: 24),
+        _submitButton(),
+        const SizedBox(height: 16),
         TextButton(
-          onPressed: () {
-            Navigator.pushReplacementNamed(context, '/signup');
-          },
-          child: Text("¿No tienes cuenta? Regístrate"),
+          onPressed: () => Navigator.pushReplacementNamed(context, '/signup'),
+          child: const Text("¿No tienes cuenta? Regístrate"),
         ),
       ],
     ),
   );
 
-  Widget submitButton() => BlocBuilder<LoginBloc, LoginState>(
+  Widget _submitButton() => BlocBuilder<LoginBloc, LoginState>(
     builder: (context, state) {
-      bool isLoading = state is LoginLoadingState;
-      
+      final isLoading = state is LoginLoadingState;
       return ElevatedButton(
-        onPressed: isLoading ? null : () {
-          context.read<LoginBloc>().add(
-            SubmitLoginEvent(
-              email: emailController.text,
-              password: passwordController.text,
-            ),
-          );
-        },
-        child: isLoading 
-          ? SizedBox(
-              height: 20,
-              width: 20,
-              child: CircularProgressIndicator(strokeWidth: 2),
-            )
-          : Text("Iniciar Sesión"),
+        onPressed: isLoading
+            ? null
+            : () {
+                context.read<LoginBloc>().add(
+                  SubmitLoginEvent(
+                    email: emailController.text.trim(),
+                    password: passwordController.text,
+                  ),
+                );
+              },
         style: ElevatedButton.styleFrom(
-          minimumSize: Size(double.infinity, 50),
+          minimumSize: const Size(double.infinity, 50),
         ),
+        child: isLoading
+            ? const SizedBox(
+                height: 20,
+                width: 20,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              )
+            : const Text("Iniciar Sesión"),
       );
     },
   );
 
-  Widget dynamicContent() => BlocConsumer<LoginBloc, LoginState>(
+  Widget _dynamicContent() => BlocConsumer<LoginBloc, LoginState>(
     listener: (context, state) {
       if (state is LoginSuccessState) {
-        Navigator.pushReplacementNamed(context, '/profile');
+        Navigator.pushReplacementNamed(context, '/my_profile');
       } else if (state is LoginErrorState) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text("Error al iniciar sesión. Verifica tus credenciales."),
+          const SnackBar(
+            content: Text(
+              "Error al iniciar sesión. Verifica tus credenciales.",
+            ),
             backgroundColor: Colors.red,
           ),
         );
       }
     },
     builder: (context, state) {
-      if (state is LoginLoadingState) {
-        return Center(child: CircularProgressIndicator());
-      }
-      return content();
+      if (state is LoginLoadingState)
+        return const Center(child: CircularProgressIndicator());
+      return _content();
     },
   );
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: dynamicContent(),
-      ),
-    );
-  }
+  Widget build(BuildContext context) =>
+      Scaffold(body: SafeArea(child: _dynamicContent()));
 }
