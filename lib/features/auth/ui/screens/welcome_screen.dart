@@ -6,8 +6,8 @@ class WelcomeScreen extends StatefulWidget {
 }
 
 class _WelcomeScreenState extends State<WelcomeScreen> {
-  double _slideValue = 0.0;
-  final double _slideMaxWidth = 300.0;
+  double _slideValue = 8;
+  double _slideMaxWidth = 0.0; // Se calculará dinámicamente
 
   void _onSlideUpdate(DragUpdateDetails details) {
     if (details.primaryDelta != null) {
@@ -23,128 +23,167 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
       Navigator.pushReplacementNamed(context, '/signup');
     } else {
       setState(() {
-        _slideValue = 0.0;
+        _slideValue = 8.0;
       });
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    // Calcular el ancho máximo basado en el ancho de la pantalla
+    final screenWidth = MediaQuery.of(context).size.width;
+    _slideMaxWidth = screenWidth - 72; // 36 + 36 = 72 de padding total
+
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [Color(0xFF1A237E), Color(0xFF283593)],
+      body: Stack(
+        children: [
+          // Fondo con imagen
+          Positioned.fill(
+            child: Image.asset(
+              'images/welcome/back_welcome.png',
+              fit: BoxFit.cover,
+            ),
           ),
-        ),
-        child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(24.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 40),
-                const Text(
-                  'SPORT RECOVERY',
-                  style: TextStyle(
-                    fontSize: 32,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                    letterSpacing: 2.0,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                const Text(
-                  'Guía inmediata para el manejo\nde lesiones deportivas',
-                  style: TextStyle(
-                    fontSize: 18,
-                    color: Colors.white70,
-                    height: 1.4,
-                  ),
-                ),
-                const Spacer(),
-                Center(
-                  child: Container(
-                    width: _slideMaxWidth + 20,
-                    height: 70,
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.2),
-                      borderRadius: BorderRadius.circular(35),
-                    ),
-                    child: Stack(
-                      children: [
-                        Container(
-                          width: _slideMaxWidth + 20,
-                          height: 70,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(35),
+          // Capa oscura para mejor contraste
+          Positioned.fill(
+            child: Container(color: Colors.black.withOpacity(0.5)),
+          ),
+          // Contenido principal alineado abajo
+          SafeArea(
+            child: Align(
+              alignment: Alignment.bottomLeft,
+              child: Container(
+                width: screenWidth, // Ocupa todo el ancho de la pantalla
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 36,
+                  vertical: 24,
+                ), // 36 a ambos lados
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Logo
+                    Image.asset('images/logo.png', width: 200),
+                    const SizedBox(height: 8),
+                    // Descripción - CON LA VERSIÓN SOLICITADA
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Container(
+                        width: double.infinity,
+                        child: const Text(
+                          'Guía inmediata para el manejo de lesiones deportivas',
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.white70,
+                            height: 1.4,
                           ),
-                          child: const Center(
-                            child: Text(
-                              'Desliza para empezar →',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 32),
+                    // Botón deslizable - ahora ocupa el ancho disponible
+                    Container(
+                      width: double.infinity, // Ocupa todo el ancho disponible
+                      height: 56,
+                      decoration: BoxDecoration(
+                        color: Color(0xFF31373F),
+                        borderRadius: BorderRadius.circular(35),
+                      ),
+                      child: Stack(
+                        children: [
+                          // Fondo con >>>
+                          Container(
+                            width:
+                                double.infinity, // También ocupa todo el ancho
+                            height: 56,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(35),
+                            ),
+                            child: const Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 20),
+                              child: Center(
+                                child: Text(
+                                  '       > > > ',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w500,
+                                    letterSpacing: 3,
+                                  ),
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                        AnimatedPositioned(
-                          duration: const Duration(milliseconds: 200),
-                          left: _slideValue,
-                          child: GestureDetector(
-                            onPanUpdate: _onSlideUpdate,
-                            onPanEnd: _onSlideEnd,
-                            child: Container(
-                              width: 70,
-                              height: 70,
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(35),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.3),
-                                    blurRadius: 8,
-                                    offset: const Offset(0, 3),
+                          // Botón deslizable con "Empezar"
+                          AnimatedPositioned(
+                            top: 8,
+                            duration: const Duration(milliseconds: 200),
+                            left: _slideValue,
+                            child: GestureDetector(
+                              onPanUpdate: _onSlideUpdate,
+                              onPanEnd: _onSlideEnd,
+                              child: Container(
+                                width: 120,
+                                height: 40,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(35),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.3),
+                                      blurRadius: 8,
+                                      offset: const Offset(0, 3),
+                                    ),
+                                  ],
+                                ),
+                                child: const Center(
+                                  child: Text(
+                                    'Empezar',
+                                    style: TextStyle(
+                                      color: Color(0xFF31373F),
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w700,
+                                    ),
                                   ),
-                                ],
+                                ),
                               ),
-                              child: const Icon(
-                                Icons.arrow_forward_ios_rounded,
-                                color: Color(0xFF1A237E),
-                                size: 24,
-                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    // Texto de "¿Ya tienes cuenta?"
+                    Row(
+                      children: [
+                        const Text(
+                          '¿Ya tienes cuenta?',
+                          style: TextStyle(color: Colors.white, fontSize: 16),
+                        ),
+                        const SizedBox(width: 8),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.pushReplacementNamed(context, '/login');
+                          },
+                          child: const Text(
+                            'Iniciar Sesión',
+                            style: TextStyle(
+                              color: Colors.cyan,
+                              fontSize: 16,
+                              decoration: TextDecoration.underline,
+                              fontWeight: FontWeight.w700,
                             ),
                           ),
                         ),
                       ],
                     ),
-                  ),
+                    const SizedBox(height: 20),
+                  ],
                 ),
-                const SizedBox(height: 30),
-                Center(
-                  child: GestureDetector(
-                    onTap: () {
-                      Navigator.pushReplacementNamed(context, '/login');
-                    },
-                    child: const Text(
-                      '¿Ya tienes cuenta? Iniciar Sesión',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        decoration: TextDecoration.underline,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 40),
-              ],
+              ),
             ),
           ),
-        ),
+        ],
       ),
     );
   }
