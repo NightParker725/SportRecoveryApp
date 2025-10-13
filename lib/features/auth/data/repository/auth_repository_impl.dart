@@ -3,6 +3,8 @@ import 'package:moviles252/features/auth/data/source/auth_data_source.dart';
 import 'package:moviles252/features/auth/domain/repository/auth_repository.dart';
 import 'package:moviles252/features/profile/data/source/profile_data_source.dart';
 
+import 'package:supabase_flutter/supabase_flutter.dart';
+
 class AuthRepositoryImpl extends AuthRepository {
   final AuthDataSource _authDataSource = AuthDataSourceImpl();
   final ProfileDataSource _profileDataSource = ProfileDataSourceImpl();
@@ -10,6 +12,12 @@ class AuthRepositoryImpl extends AuthRepository {
   @override
   Future<void> registerUser(Profile profile, String password) async {
     await _authDataSource.signUp(profile.email, password);
+  }
+
+  @override
+  Future<bool> isUserLoggedIn() async {
+    final user = Supabase.instance.client.auth.currentUser;
+    return user != null;
   }
 
   @override
