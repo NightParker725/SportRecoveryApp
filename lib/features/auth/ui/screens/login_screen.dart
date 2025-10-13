@@ -11,7 +11,6 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  // Controladores y validación de formulario
   final _formKey = GlobalKey<FormState>();
   final _emailCtrl = TextEditingController();
   final _passwordCtrl = TextEditingController();
@@ -38,7 +37,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Inyectamos el BLoC aquí. Alternativamente, proveerlo desde un nivel superior (p.ej., en rutas).
     return BlocProvider(
       create: (_) => LoginBloc(),
       child: BlocConsumer<LoginBloc, LoginState>(
@@ -217,7 +215,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   ),
                                   TextButton(
                                     onPressed: () {
-                                      // TODO: Implementar recuperación de contraseña (Supabase auth.resetPasswordForEmail)
+                                    //aun no está implementada la recuperacion de contraseña lol
                                     },
                                     child: const Text(
                                       '¿Olvidaste tu contraseña?',
@@ -229,7 +227,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                               const SizedBox(height: 20),
 
-                              // Botón principal
+
                               SizedBox(
                                 width: double.infinity,
                                 child: ElevatedButton(
@@ -256,7 +254,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
                               const SizedBox(height: 25),
 
-                              // Social login (sin implementar)
                               const Text('Inicia sesión con',
                                   style: TextStyle(color: Colors.white54)),
                               const SizedBox(height: 10),
