@@ -16,19 +16,22 @@ class SubmmitSignupEvent extends SignupEvent {
   });
 }
 
-//States
+// States
 abstract class SignupState {}
 
 class SignupIdleState extends SignupState {}
-
-class SignupErrorState extends SignupState {}
 
 class SignupLoadingState extends SignupState {}
 
 class SignupSuccessState extends SignupState {}
 
+class SignupErrorState extends SignupState {
+  final String message;
+  SignupErrorState(this.message);
+}
+
 class SignupBloc extends Bloc<SignupEvent, SignupState> {
-  RegisterUserUsecase _registerUserUsecase = RegisterUserUsecase();
+  final RegisterUserUsecase _registerUserUsecase = RegisterUserUsecase();
 
   SignupBloc() : super(SignupIdleState()) {
     on<SubmmitSignupEvent>(_registerUser);
@@ -40,18 +43,23 @@ class SignupBloc extends Bloc<SignupEvent, SignupState> {
   ) async {
     emit(SignupLoadingState());
     try {
+      final name = event.name.trim();
+      final email = event.email.trim();
+      final pass = event.password;
+
+      if (name.isEmpty || email.isEmpty || pass.isEmpty) {
+        emit(SignupErrorState("Todos los campos son obligatorios"));
+        return;
+      }
+
       await _registerUserUsecase.execute(
-        Profile(
-          id: "",
-          name: event.name,
-          email: event.email,
-          createdAt: DateTime.now(),
-        ),
-        event.password,
+        Profile(id: "", name: name, email: email, createdAt: DateTime.now()),
+        pass,
       );
       emit(SignupSuccessState());
-    } on Exception catch (e) {
-      emit(SignupErrorState());
+    } catch (e, st) {
+      print("No se puedo registra, razon: $st");
+      emit(SignupErrorState(e.toString()));
     }
   }
 }
