@@ -3,8 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:moviles252/features/auth/ui/bloc/login_bloc.dart';
 
 class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
   @override
-  State<StatefulWidget> createState() => LoginScreenState();
+  State<StatefulWidget> createState() => _LoginScreenState();
 }
 
 class _LoginScreenState extends State<LoginScreen> {
@@ -244,7 +245,7 @@ class _LoginScreenState extends State<LoginScreen> {
           TextButton(
             onPressed: loading
                 ? null
-                : () => Navigator.pushReplacementNamed(context, '/register'),
+                : () => Navigator.pushReplacementNamed(context, '/signup'),
             child: const Text(
               'Regístrate',
               style: TextStyle(

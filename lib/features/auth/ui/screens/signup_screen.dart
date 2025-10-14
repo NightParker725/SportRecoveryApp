@@ -211,7 +211,7 @@ class SignupScreenState extends State<SignupScreen> {
             height: 50,
             decoration: BoxDecoration(borderRadius: BorderRadius.circular(25)),
             child: Image.asset(
-              'images/google_logo.png', // Ruta de tu imagen de Google
+              'assets/images/google_logo.png', // Ruta de tu imagen de Google
               width: 24,
               height: 24,
             ),
@@ -223,7 +223,7 @@ class SignupScreenState extends State<SignupScreen> {
             height: 50,
             decoration: BoxDecoration(borderRadius: BorderRadius.circular(25)),
             child: Image.asset(
-              'images/facebook_logo.png', // Ruta de tu imagen de Facebook
+              'assets/images/facebook_logo.png', // Ruta de tu imagen de Facebook
               width: 24,
               height: 24,
             ),
@@ -235,7 +235,7 @@ class SignupScreenState extends State<SignupScreen> {
             height: 50,
             decoration: BoxDecoration(borderRadius: BorderRadius.circular(25)),
             child: Image.asset(
-              'images/apple_logo.png', // Ruta de tu imagen de Apple
+              'assets/images/apple_logo.png', // Ruta de tu imagen de Apple
               width: 24,
               height: 24,
             ),
@@ -293,7 +293,7 @@ class SignupScreenState extends State<SignupScreen> {
                 // Fondo
                 Positioned.fill(
                   child: Image.asset(
-                    'images/signup/image_back.png',
+                    'assets/images/signup/image_back.png',
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -302,7 +302,7 @@ class SignupScreenState extends State<SignupScreen> {
                 Positioned(
                   top: 60,
                   left: 24, // Agregar padding izquierdo
-                  child: Image.asset('images/logo.png', width: 140),
+                  child: Image.asset('assets/images/logo.png', width: 140),
                 ),
 
                 // Contenedor sólido para el formulario (comienza más abajo)

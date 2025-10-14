@@ -57,6 +57,9 @@ flutter:
   assets:
     - assets/images/
     - assets/signup/
+    - assets/images/signup/
+    - assets/images/splash/
+    - assets/images/welcome/
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
