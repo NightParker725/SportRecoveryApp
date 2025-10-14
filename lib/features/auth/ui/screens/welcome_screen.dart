@@ -38,7 +38,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
           // Fondo con imagen
           Positioned.fill(
             child: Image.asset(
-              'images/welcome/back_welcome.png',
+              'assets/images/welcome/back_welcome.png',
               fit: BoxFit.cover,
             ),
           ),
@@ -61,7 +61,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Logo
-                    Image.asset('images/logo.png', width: 200),
+                    Image.asset('assets/images/logo.png', width: 200),
                     const SizedBox(height: 8),
                     // Descripción - CON LA VERSIÓN SOLICITADA
                     Align(
