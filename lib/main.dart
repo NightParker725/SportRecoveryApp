@@ -6,6 +6,11 @@ import 'package:moviles252/features/auth/ui/screens/login_screen.dart';
 import 'package:moviles252/features/profile/ui/screens/my_profile_page.dart';
 import 'package:moviles252/features/profile/ui/screens/profile_screen.dart';
 import 'package:moviles252/features/auth/ui/screens/signup_screen.dart';
+import 'features/auth/ui/screens/splash_screen.dart';
+import 'features/auth/ui/screens/welcome_screen.dart';
+import 'features/auth/ui/bloc/splash_bloc.dart';
+import 'features/auth/data/repository/auth_repository_impl.dart';
+import 'features/auth/domain/usecases/check_user_logged_in_usecase.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:moviles252/features/auth/ui/bloc/login_bloc.dart';
 
@@ -31,8 +36,14 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      initialRoute: '/login',
+      initialRoute: '/splash',
       routes: {
+        '/welcome': (_) => WelcomeScreen(),
+        '/splash': (_) => BlocProvider(
+          create: (_) =>
+              SplashBloc(CheckUserLoggedInUseCase(AuthRepositoryImpl())),
+          child: SplashScreen(),
+        ),
         '/signup': (_) =>
             BlocProvider(create: (_) => SignupBloc(), child: SignupScreen()),
         '/login': (_) =>
