@@ -44,22 +44,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Editar Perfil")),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
+      backgroundColor: const Color(0xFF121212), // Fondo oscuro
+      body: SafeArea(
         child: BlocConsumer<ProfileBloc, ProfileState>(
           listener: (context, state) {
             if (state is ProfileSaved) {
               Navigator.pushReplacementNamed(context, '/my_profile');
-              return;
             } else if (state is ProfileLoaded) {
               final p = state.profile;
               nameCtrl.text = p.name;
               birthCtrl.text = p.birthDate == null
                   ? ''
                   : "${p.birthDate!.day.toString().padLeft(2, '0')}/"
-                        "${p.birthDate!.month.toString().padLeft(2, '0')}/"
-                        "${p.birthDate!.year}";
+                  "${p.birthDate!.month.toString().padLeft(2, '0')}/"
+                  "${p.birthDate!.year}";
               sexCtrl.text = p.sex ?? '';
               heightCtrl.text = p.heightCm?.toString() ?? '';
               weightCtrl.text = p.weightKg?.toString() ?? '';
@@ -73,66 +71,177 @@ class _ProfileScreenState extends State<ProfileScreen> {
             }
           },
           builder: (context, state) {
-            if (state is ProfileLoading) {
-              return const Center(child: CircularProgressIndicator());
-            }
             final saving = state is ProfileSaving;
-            return ListView(
+
+            return Stack(
               children: [
-                TextField(
-                  controller: nameCtrl,
-                  decoration: const InputDecoration(label: Text('Nombre')),
-                ),
-                const SizedBox(height: 8),
-                TextField(
-                  controller: birthCtrl,
-                  decoration: const InputDecoration(
-                    label: Text('Fecha nac. (DD/MM/YYYY)'),
-                  ),
-                ),
-                const SizedBox(height: 8),
-                TextField(
-                  controller: sexCtrl,
-                  decoration: const InputDecoration(
-                    label: Text('Sexo (M/F/O)'),
-                  ),
-                ),
-                const SizedBox(height: 8),
-                TextField(
-                  controller: heightCtrl,
-                  decoration: const InputDecoration(label: Text('Altura (cm)')),
-                  keyboardType: TextInputType.number,
-                ),
-                const SizedBox(height: 8),
-                TextField(
-                  controller: weightCtrl,
-                  decoration: const InputDecoration(label: Text('Peso (kg)')),
-                  keyboardType: TextInputType.number,
-                ),
-                const SizedBox(height: 24),
-                ElevatedButton(
-                  onPressed: saving
-                      ? null
-                      : () {
-                          context.read<ProfileBloc>().add(
-                            SaveMyProfile(
-                              name: nameCtrl.text,
-                              birthDate: _parseDate(birthCtrl.text),
-                              sex: sexCtrl.text,
-                              heightCm: _parseNum(heightCtrl.text),
-                              weightKg: _parseNum(weightCtrl.text),
+                // Contenedor inferior con bordes curvos
+                Positioned(
+                  top: 80,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  child: Container(
+                    decoration: const BoxDecoration(
+                      color: Color(0xFF1F242A),
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(30),
+                        topRight: Radius.circular(30),
+                      ),
+                    ),
+                    child: SingleChildScrollView(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 24, vertical: 24),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Center(
+                            child: Text(
+                              "Editar Perfil",
+                              style: TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
                             ),
-                          );
-                        },
-                  child: saving
-                      ? const CircularProgressIndicator()
-                      : const Text('Guardar cambios'),
+                          ),
+                          const SizedBox(height: 30),
+
+                          _buildLabel("Nombre"),
+                          _buildTextField(nameCtrl, "Introduce tu nombre"),
+
+                          const SizedBox(height: 16),
+                          _buildLabel("Fecha nac. (DD/MM/YYYY)"),
+                          _buildTextField(
+                            birthCtrl,
+                            "Ej: 12/05/2000",
+                            keyboard: TextInputType.datetime,
+                          ),
+
+                          const SizedBox(height: 16),
+                          _buildLabel("Sexo (M/F/O)"),
+                          _buildTextField(sexCtrl, "Ej: M"),
+
+                          const SizedBox(height: 16),
+                          _buildLabel("Altura (cm)"),
+                          _buildTextField(
+                            heightCtrl,
+                            "Ej: 170",
+                            keyboard: TextInputType.number,
+                          ),
+
+                          const SizedBox(height: 16),
+                          _buildLabel("Peso (kg)"),
+                          _buildTextField(
+                            weightCtrl,
+                            "Ej: 65",
+                            keyboard: TextInputType.number,
+                          ),
+
+                          const SizedBox(height: 30),
+
+                          SizedBox(
+                            width: double.infinity,
+                            child: ElevatedButton(
+                              onPressed: saving
+                                  ? null
+                                  : () {
+                                context.read<ProfileBloc>().add(
+                                  SaveMyProfile(
+                                    name: nameCtrl.text,
+                                    birthDate:
+                                    _parseDate(birthCtrl.text),
+                                    sex: sexCtrl.text,
+                                    heightCm:
+                                    _parseNum(heightCtrl.text),
+                                    weightKg:
+                                    _parseNum(weightCtrl.text),
+                                  ),
+                                );
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xFF00FFFF),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                padding:
+                                const EdgeInsets.symmetric(vertical: 16),
+                              ),
+                              child: saving
+                                  ? const SizedBox(
+                                height: 20,
+                                width: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: Colors.black,
+                                ),
+                              )
+                                  : const Text(
+                                "Guardar cambios",
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                 ),
+
+                // Capa de carga
+                if (saving)
+                  Positioned.fill(
+                    child: Container(
+                      color: Colors.black45,
+                      child: const Center(
+                        child: CircularProgressIndicator(
+                          color: Color(0xFF00FFFF),
+                        ),
+                      ),
+                    ),
+                  ),
               ],
             );
           },
         ),
       ),
+    );
+  }
+
+  Widget _buildLabel(String text) => Text(
+    text,
+    style: const TextStyle(
+      color: Color(0xFFB0B0B0),
+      fontSize: 14,
+      fontWeight: FontWeight.w500,
+    ),
+  );
+
+  Widget _buildTextField(
+      TextEditingController ctrl,
+      String hint, {
+        TextInputType keyboard = TextInputType.text,
+      }) {
+    return TextField(
+      controller: ctrl,
+      keyboardType: keyboard,
+      decoration: InputDecoration(
+        hintText: hint,
+        hintStyle: const TextStyle(color: Color(0xFF666666)),
+        filled: true,
+        fillColor: const Color(0xFF2A2A2A),
+        border: const OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(12)),
+          borderSide: BorderSide.none,
+        ),
+        contentPadding:
+        const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      ),
+      style: const TextStyle(color: Colors.white),
     );
   }
 }
