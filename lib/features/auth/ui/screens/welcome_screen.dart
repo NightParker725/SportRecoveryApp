@@ -6,20 +6,19 @@ class WelcomeScreen extends StatefulWidget {
 }
 
 class _WelcomeScreenState extends State<WelcomeScreen> {
-  double _slideValue = 8;
-  double _slideMaxWidth = 0.0; // Se calculará dinámicamente
+  double _slideValue = 8.0;
+  double _slideMaxWidth = 0.0;
+  double _buttonWidth = 120.0;
 
-  void _onSlideUpdate(DragUpdateDetails details) {
-    if (details.primaryDelta != null) {
-      setState(() {
-        _slideValue += details.primaryDelta!;
-        _slideValue = _slideValue.clamp(0.0, _slideMaxWidth);
-      });
-    }
+  void _onHorizontalDragUpdate(DragUpdateDetails details) {
+    setState(() {
+      _slideValue += details.delta.dx;
+      _slideValue = _slideValue.clamp(8.0, _slideMaxWidth - _buttonWidth);
+    });
   }
 
-  void _onSlideEnd(DragEndDetails details) {
-    if (_slideValue >= _slideMaxWidth - 50) {
+  void _onHorizontalDragEnd(DragEndDetails details) {
+    if (_slideValue >= _slideMaxWidth - _buttonWidth - 8.0) {
       Navigator.pushReplacementNamed(context, '/signup');
     } else {
       setState(() {
@@ -30,9 +29,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Calcular el ancho máximo basado en el ancho de la pantalla
     final screenWidth = MediaQuery.of(context).size.width;
-    _slideMaxWidth = screenWidth - 72; // 36 + 36 = 72 de padding total
+    _slideMaxWidth = screenWidth - 72; // 36 + 36 = 72 de padding horizontal
 
     return Scaffold(
       body: Stack(
@@ -53,11 +51,11 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
             child: Align(
               alignment: Alignment.bottomLeft,
               child: Container(
-                width: screenWidth, // Ocupa todo el ancho de la pantalla
+                width: screenWidth,
                 padding: const EdgeInsets.symmetric(
                   horizontal: 36,
                   vertical: 24,
-                ), // 36 a ambos lados
+                ),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -81,9 +79,9 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                       ),
                     ),
                     const SizedBox(height: 32),
-                    // Botón deslizable
+                    // Botón deslizable - ahora ocupa el ancho disponible
                     Container(
-                      width: double.infinity, // Ocupa todo el ancho disponible
+                      width: double.infinity,
                       height: 56,
                       decoration: BoxDecoration(
                         color: Color(0xFF31373F),
@@ -94,7 +92,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                           // Fondo con >>>
                           Container(
                             width:
-                                double.infinity, // También ocupa todo el ancho
+                            double.infinity, // También ocupa todo el ancho
                             height: 56,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(35),
@@ -120,10 +118,10 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                             duration: const Duration(milliseconds: 200),
                             left: _slideValue,
                             child: GestureDetector(
-                              onPanUpdate: _onSlideUpdate,
-                              onPanEnd: _onSlideEnd,
+                              onHorizontalDragUpdate: _onHorizontalDragUpdate,
+                              onHorizontalDragEnd: _onHorizontalDragEnd,
                               child: Container(
-                                width: 120,
+                                width: _buttonWidth,
                                 height: 40,
                                 decoration: BoxDecoration(
                                   color: Colors.white,
