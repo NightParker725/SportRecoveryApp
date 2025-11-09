@@ -11,7 +11,21 @@ class AuthRepositoryImpl extends AuthRepository {
 
   @override
   Future<void> registerUser(Profile profile, String password) async {
-    await _authDataSource.signUp(profile.email, password);
+    // Sign up via Supabase and, if successful, create a corresponding profile row
+    // using the returned user id. This prevents inserting an empty string as
+    // the UUID (which causes the Postgres error you saw).
+    final userId = await _authDataSource.signUp(profile.email, password);
+    if (userId == null) return;
+
+    // Build a server-side profile object with the canonical user id.
+    final toSave = Profile(
+      id: userId,
+      name: profile.name,
+      email: profile.email,
+      sex: profile.sex ?? 'O',
+      createdAt: DateTime.now(),
+    );
+    await _profileDataSource.createProfile(toSave);
   }
 
   @override

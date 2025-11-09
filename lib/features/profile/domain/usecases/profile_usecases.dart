@@ -34,6 +34,10 @@ class CompleteProfileUsecase {
   }
 
   Future<void> createInjury(Map<String, dynamic> injury) async {
-    await repository.createInjury('', injury);
+    // Resolve current user's id and create the injury linked to that user.
+    final current = await repository.getCurrentProfile();
+    final userId = current?.id;
+    if (userId == null) throw Exception('No authenticated user');
+    await repository.createInjury(userId, injury);
   }
 }
