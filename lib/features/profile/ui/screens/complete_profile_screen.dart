@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:moviles252/features/profile/ui/bloc/complete_profile_bloc.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:dotted_border/dotted_border.dart';
 
 class CompleteProfileScreen extends StatefulWidget {
   @override
@@ -23,6 +24,8 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
   final TextEditingController _preferredNameCtrl = TextEditingController();
   final TextEditingController _profilePictureCtrl = TextEditingController();
   String? _uploadedAvatarUrl;
+  String? _uploadedFileName;
+  bool _uploadingImage = false;
   static const String _avatarsBucket = 'avatars';
 
   // Step 2
@@ -111,6 +114,11 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
         return;
       }
 
+      setState(() {
+        _uploadingImage = true;
+        _uploadedFileName = file.name;
+      });
+
       final user = Supabase.instance.client.auth.currentUser;
       if (user == null) {
         if (mounted) {
@@ -142,6 +150,7 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
       setState(() {
         _uploadedAvatarUrl = publicUrl;
         _profilePictureCtrl.text = publicUrl;
+        _uploadingImage = false;
       });
 
       if (mounted) {
@@ -155,6 +164,9 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
           SnackBar(content: Text('Error al subir imagen: $e')),
         );
       }
+      setState(() {
+        _uploadingImage = false;
+      });
     }
   }
 
@@ -206,6 +218,122 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
     );
   }
 
+  Widget _buildAvatarUploader() {
+    final borderColor = const Color(0xFF00DFC1);
+    if (_uploadedAvatarUrl == null || _uploadedAvatarUrl!.isEmpty) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildFieldLabel('Sube una foto de perfil'),
+          DottedBorder(
+            color: borderColor,
+            strokeWidth: 2,
+            dashPattern: const [8, 6],
+            borderType: BorderType.RRect,
+            radius: const Radius.circular(12),
+            child: InkWell(
+              onTap: _uploadingImage ? null : _pickAndUploadProfileImage,
+              child: Container(
+                width: double.infinity,
+                height: 140,
+                alignment: Alignment.center,
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.cloud_upload_outlined, size: 36, color: borderColor),
+                    const SizedBox(height: 10),
+                    const Text(
+                      'Arrastra tus archivos aquí\n o selecciona',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(color: Colors.black87, fontSize: 16, height: 1.3),
+                    ),
+                    const SizedBox(height: 8),
+                    const Text('Formato png, jpg.', style: TextStyle(color: Color(0xFF7A7A7A), fontSize: 12)),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          if (_uploadingImage) ...[
+            const SizedBox(height: 8),
+            const LinearProgressIndicator(minHeight: 4, color: Color(0xFF00DFC1)),
+          ],
+        ],
+      );
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildFieldLabel('Sube una foto de perfil'),
+        Container(
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: const Color(0xFFE6E6E6)),
+            boxShadow: [
+              BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 8, offset: const Offset(0, 2)),
+            ],
+          ),
+          child: Row(
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: Image.network(
+                  _uploadedAvatarUrl!,
+                  width: 48,
+                  height: 48,
+                  fit: BoxFit.cover,
+                  errorBuilder: (_, __, ___) => Container(
+                    width: 48,
+                    height: 48,
+                    color: const Color(0xFFF2F2F2),
+                    child: const Icon(Icons.image_not_supported_outlined, color: Color(0xFF9E9E9E)),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      _uploadedFileName ?? 'imagen_subida',
+                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 4),
+                    Row(
+                      children: const [
+                        Icon(Icons.check_circle, size: 16, color: Color(0xFF2ECC71)),
+                        SizedBox(width: 6),
+                        Text('Completado', style: TextStyle(color: Color(0xFF2ECC71))),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              IconButton(
+                tooltip: 'Eliminar',
+                onPressed: () {
+                  setState(() {
+                    _uploadedAvatarUrl = null;
+                    _uploadedFileName = null;
+                    _profilePictureCtrl.clear();
+                  });
+                },
+                icon: const Icon(Icons.delete_outline, color: Color(0xFF9E9E9E)),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 6),
+        const Text('Subido correctamente', style: TextStyle(color: Color(0xFF7A7A7A), fontSize: 12)),
+      ],
+    );
+  }
   Widget _buildRadioGroup({
     required String label,
     String? helper,
@@ -362,37 +490,7 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
               decoration: _inputDecoration(hint: ''),
             ),
             const SizedBox(height: 12),
-            _buildFieldLabel('Foto de perfil (opcional)'),
-            Row(
-              children: [
-                ElevatedButton(
-                  onPressed: _pickAndUploadProfileImage,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF00DFC1),
-                    foregroundColor: Colors.black,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(999)),
-                  ),
-                  child: const Text('Subir desde archivos'),
-                ),
-                const SizedBox(width: 12),
-                if (_uploadedAvatarUrl != null)
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
-                    child: Image.network(
-                      _uploadedAvatarUrl!,
-                      width: 48,
-                      height: 48,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            _buildFieldLabel('URL de la foto (se completa automáticamente)'),
-            TextFormField(
-              controller: _profilePictureCtrl,
-              decoration: _inputDecoration(hint: ''),
-            ),
+        _buildAvatarUploader(),
           ],
         );
       case 1:
