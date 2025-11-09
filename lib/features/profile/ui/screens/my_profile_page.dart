@@ -237,19 +237,30 @@ class _MyProfilePageState extends State<MyProfilePage> {
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: const [
-                        Icon(Icons.home_outlined, color: Colors.black87),
-                        Icon(
+                      children: [
+                        const Icon(Icons.home_outlined, color: Colors.black87),
+                        const Icon(
                           Icons.library_books_outlined,
                           color: Colors.black87,
                         ),
-                        CircleAvatar(
-                          radius: 20,
-                          backgroundColor: Colors.black87,
-                          child: Icon(Icons.add, color: Colors.white),
+
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.pushNamed(context, '/checkin_form');
+                          },
+                          child: const CircleAvatar(
+                            radius: 20,
+                            backgroundColor: Colors.black87,
+                            child: Icon(Icons.add, color: Colors.white),
+                          ),
                         ),
-                        Icon(Icons.favorite_border, color: Colors.black87),
-                        Icon(Icons.person_outline, color: Colors.black87),
+
+                        const Icon(
+                          Icons.favorite_outline,
+                          color: Colors.black87,
+                        ),
+
+                        const Icon(Icons.person_outline, color: Colors.black87),
                       ],
                     ),
                   ),
