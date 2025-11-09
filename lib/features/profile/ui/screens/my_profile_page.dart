@@ -34,7 +34,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                   ? state.profile
                   : (state as ProfileSaved).profile;
 
-              return Column(
+              return Stack(
                 children: [
                   // ---------- HEADER ----------
                   Container(
@@ -47,185 +47,228 @@ class _MyProfilePageState extends State<MyProfilePage> {
                       ),
                     ),
                     padding: const EdgeInsets.symmetric(
-                        vertical: 32, horizontal: 20),
+                      vertical: 32,
+                      horizontal: 20,
+                    ),
                     child: Row(
                       children: [
                         Align(
                           alignment: Alignment.centerLeft,
-                        child:CircleAvatar(
-                          radius: 45,
-                          backgroundImage: NetworkImage(
-                                'https://cdn-icons-png.flaticon.com/512/847/847969.png',
-                          ),
-                        )
-                        ),
-                        Expanded(child:
-                        Column(
-                        children: [ SizedBox(height: 12),
-
-                        Text(
-                          profile.name ?? 'Usuario',
-                          style: const TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black87,
+                          child: CircleAvatar(
+                            radius: 45,
+                            backgroundImage: const NetworkImage(
+                              'https://cdn-icons-png.flaticon.com/512/847/847969.png',
+                            ),
                           ),
                         ),
-                        Text(
-                          profile.email ?? '',
-                          style: const TextStyle(
-                              color: Colors.black54, fontSize: 14),
-                        ),
-                        const SizedBox(height: 8),
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              "Deportista",
-                              style: const TextStyle(color: Colors.black87),
-                            ),
-                            const SizedBox(width: 8),
-                            Text(
-                              "${profile.birthDate}",
-                              style: const TextStyle(color: Colors.black54),
-                            ),
-                          ],
-                        ),
-                      ]
-                        ),
+                        Expanded(
+                          child: Column(
+                            children: [
+                              const SizedBox(height: 12),
+                              Text(
+                                profile.name ?? 'Usuario',
+                                style: const TextStyle(
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black87,
+                                ),
+                              ),
+                              Text(
+                                profile.email ?? '',
+                                style: const TextStyle(
+                                  color: Colors.black54,
+                                  fontSize: 14,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  const Text(
+                                    "Deportista",
+                                    style: TextStyle(color: Colors.black87),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    "${profile.birthDate}",
+                                    style: const TextStyle(color: Colors.black54),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     ),
                   ),
 
                   // ---------- BODY ----------
-                  Expanded(
-
-                    child: SingleChildScrollView(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 20, vertical: 24),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // --- Estadísticas ---
-                          const Text(
-                            "Estadísticas",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
+                  Positioned(
+                    top: 210,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    child: Container(
+                      decoration: const BoxDecoration(
+                        color: Color(0xFF1F242A),
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(30),
+                          topRight: Radius.circular(30),
+                        ),
+                      ),
+                      child: SingleChildScrollView(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 24,
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SizedBox(height: 24),
+                            // --- Estadísticas ---
+                            const Text(
+                              "Estadísticas",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                          ),
-                          const SizedBox(height: 16),
-                          GridView.count(
-                            crossAxisCount: 2,
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            mainAxisSpacing: 12,
-                            crossAxisSpacing: 12,
-                            childAspectRatio: 1.4,
-                            children: [
-                              _StatCard(
+                            const SizedBox(height: 16),
+                            GridView.count(
+                              crossAxisCount: 2,
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              mainAxisSpacing: 12,
+                              crossAxisSpacing: 12,
+                              childAspectRatio: 1.4,
+                              children: const [
+                                _StatCard(
                                   title: "Información",
                                   icon: Icons.info_outline,
                                   image:
-                                  "https://cdn-icons-png.flaticon.com/512/992/992651.png"),
-                              _StatCard(
+                                  "https://cdn-icons-png.flaticon.com/512/992/992651.png",
+                                ),
+                                _StatCard(
                                   title: "Mis lesiones",
-                                  icon: Icons.healing_outlined),
-                              _StatCard(
+                                  icon: Icons.healing_outlined,
+                                ),
+                                _StatCard(
                                   title: "Historial",
-                                  icon: Icons.history_outlined),
-                              _StatCard(
+                                  icon: Icons.history_outlined,
+                                ),
+                                _StatCard(
                                   title: "Mis tareas",
-                                  icon: Icons.assignment_outlined),
-                            ],
-                          ),
-
-                          const SizedBox(height: 32),
-                          const Text(
-                            "Configuración",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
+                                  icon: Icons.assignment_outlined,
+                                ),
+                              ],
                             ),
-                          ),
-                          const SizedBox(height: 16),
+                            const SizedBox(height: 32),
 
-                          _ConfigItem(
-                            icon: Icons.edit_outlined,
-                            label: "Editar información",
-                            onTap: () => Navigator.pushNamed(
-                                context, '/edit_profile'),
-                          ),
-                          _ConfigItem(
-                            icon: Icons.lock_outline,
-                            label: "Cambiar contraseña",
-                            onTap: () {},
-                          ),
-                          const SizedBox(height: 8),
-                          _ConfigItem(
-                            icon: Icons.logout_outlined,
-                            label: "Cerrar sesión",
-                            onTap: () async {
-                              await Supabase.instance.client.auth.signOut();
-                              if (context.mounted) {
-                                Navigator.pushReplacementNamed(
-                                    context, '/login');
-                              }
-                            },
-                            color: Colors.redAccent,
-                          ),
-                        ],
+                            const Text(
+                              "Configuración",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+
+                            _ConfigItem(
+                              icon: Icons.edit_outlined,
+                              label: "Editar información",
+                              onTap: () =>
+                                  Navigator.pushNamed(context, '/edit_profile'),
+                            ),
+                            _ConfigItem(
+                              icon: Icons.lock_outline,
+                              label: "Cambiar contraseña",
+                              onTap: () {},
+                            ),
+                            const SizedBox(height: 8),
+                            _ConfigItem(
+                              icon: Icons.logout_outlined,
+                              label: "Cerrar sesión",
+                              onTap: () async {
+                                await Supabase.instance.client.auth.signOut();
+                                if (context.mounted) {
+                                  Navigator.pushReplacementNamed(
+                                    context,
+                                    '/login',
+                                  );
+                                }
+                              },
+                              color: Colors.redAccent,
+                            ),
+                            const SizedBox(height: 8),
+                            _ConfigItem(
+                              icon: Icons.settings_outlined, label: '', onTap: () {  },
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
 
                   // ---------- NAV BAR ----------
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 14, horizontal: 24),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(40),
-                        topRight: Radius.circular(40),
+                  Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 14,
+                        horizontal: 24,
                       ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.2),
-                          blurRadius: 8,
-                          offset: const Offset(0, -3),
-                        )
-                      ],
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children:  [
-                        IconButton(
-                            icon: const Icon(Icons.home_outlined, color: Colors.black87),
-                            onPressed: () => Navigator.pushNamed(context, '/home')
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(40),
+                          topRight: Radius.circular(40),
                         ),
-                        Icon(Icons.library_books_outlined, color: Colors.black87),
-                        CircleAvatar(
-                          radius: 20,
-                          backgroundColor: Colors.black87,
-                          child: Icon(Icons.add, color: Colors.white),
-                        ),
-                        Icon(Icons.favorite_border, color: Colors.black87),
-                        IconButton(
-                        icon: const Icon(Icons.person, color: Colors.black87),
-                          onPressed: () => Navigator.pushNamed(context, '/my_profile')
-                        ),
-                      ],
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.2),
+                            blurRadius: 8,
+                            offset: const Offset(0, -3),
+                          ),
+                        ],
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          IconButton(
+                            icon: const Icon(
+                              Icons.home_outlined,
+                              color: Colors.black87,
+                            ),
+                            onPressed: () =>
+                                Navigator.pushNamed(context, '/home'),
+                          ),
+                          const Icon(Icons.library_books_outlined,
+                              color: Colors.black87),
+                          const CircleAvatar(
+                            radius: 20,
+                            backgroundColor: Colors.black87,
+                            child: Icon(Icons.add, color: Colors.white),
+                          ),
+                          const Icon(Icons.favorite_border,
+                              color: Colors.black87),
+                          IconButton(
+                            icon: const Icon(
+                              Icons.person,
+                              color: Colors.black87,
+                            ),
+                            onPressed: () =>
+                                Navigator.pushNamed(context, '/my_profile'),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ],
               );
-            } else {
-              return const SizedBox();
             }
+            return const SizedBox();
           },
         ),
       ),
@@ -239,7 +282,12 @@ class _StatCard extends StatelessWidget {
   final String title;
   final IconData icon;
   final String? image;
-  const _StatCard({required this.title, required this.icon, this.image});
+
+  const _StatCard({
+    required this.title,
+    required this.icon,
+    this.image,
+  });
 
   @override
   Widget build(BuildContext context) {

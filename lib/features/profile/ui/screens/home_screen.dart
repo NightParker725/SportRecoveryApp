@@ -8,7 +8,8 @@ class HomeScreen extends StatefulWidget {
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
-//V1 copie la misma estructura de my_profile_page para tener una estructura sobre la cual trabajar
+
+// V2: solo me falta acomodar el fondo y la imagen al lado de los botones "widgets y queda lista la homescreen
 class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
@@ -22,12 +23,11 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF1F242A),
+      // Fondo, logo y contenedor curvado como en LoginScreen
       body: SafeArea(
         child: BlocBuilder<ProfileBloc, ProfileState>(
-          buildWhen: (prev, curr) => curr is! ProfileSaving, // minimizar rebuilds
+          buildWhen: (prev, curr) => curr is! ProfileSaving,
           builder: (context, state) {
-           
             String displayName = 'Bienvenido';
             String displayEmail = '';
             if (state is ProfileLoaded) {
@@ -38,188 +38,215 @@ class _HomeScreenState extends State<HomeScreen> {
               displayEmail = state.profile.email;
             }
 
-            return Column(
+            return Stack(
               children: [
-                // ---------- HEADER ----------
-                Container(
-                  width: double.infinity,
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(40),
-                      bottomRight: Radius.circular(40),
-                    ),
-                  ),
-                  padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 20),
-                  child: Row(
-                    children: [
-                      const Align(
-                        alignment: Alignment.centerLeft,
-                        child: CircleAvatar(
-                          radius: 45,
-                          backgroundImage: NetworkImage(
-                            'https://cdn-icons-png.flaticon.com/512/847/847969.png',
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        child: Column(
-                          children: [
-                            const SizedBox(height: 12),
-                            Text(
-                              displayName,
-                              overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
-                                fontSize: 22,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black87,
-                              ),
-                            ),
-                            Text(
-                              displayEmail,
-                              overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
-                                color: Colors.black54,
-                                fontSize: 14,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: const [
-                                Text(
-                                  "Inicio",
-                                  style: TextStyle(color: Colors.black87),
-                                ),
-                                SizedBox(width: 8),
-                                Text(
-                                  "Resumen y accesos rápidos",
-                                  style: TextStyle(color: Colors.black54),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
+                Positioned.fill(
+                  child: Image.asset(
+                    'assets/images/user&home/fondomain.jpg',
+                    height: 300,
+                    fit: BoxFit.fitWidth,
                   ),
                 ),
 
-                // ---------- BODY ----------
-                Expanded(
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+
+                Positioned(
+                  top: 60,
+                  left: 24,
+                  child: Image.asset('assets/images/logo.png', width: 140),
+                ),
+
+
+                Positioned(
+                  top: 210,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  child: Container(
+                    decoration: const BoxDecoration(
+                      color: Color(0xFF1F242A),
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(30),
+                        topRight: Radius.circular(30),
+                      ),
+                    ),
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // --- Estadísticas ---
-                        const Text(
-                          "Estadísticas",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
+                        // Contenido scrolleable
+                        Expanded(
+                          child: SingleChildScrollView(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 24,
+                              vertical: 24,
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const SizedBox(height: 24),
+
+                                //Main content :b
+                                const Text(
+                                  "Favoritos",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const SizedBox(height: 16),
+                                Row(
+                                  children: [
+
+                                    Image.asset("assets/images/user&home/inscreen.jpg",
+                                      width: 100,
+                                      fit: BoxFit.cover,
+
+                                    ),
+
+                                    Expanded(
+                                  child:
+                                  GridView.count(
+                                    crossAxisCount: 2,
+                                    shrinkWrap: true,
+                                    physics:
+                                    const NeverScrollableScrollPhysics(),
+                                    mainAxisSpacing: 5,
+                                    crossAxisSpacing: 5,
+                                    children: const [
+                                      _HomeStatCard(
+                                        title: "Progreso",
+                                        icon: Icons.show_chart,
+                                      ),
+                                      _HomeStatCard(
+                                        title: "Mis tareas",
+                                        icon: Icons.checklist_outlined,
+                                      ),
+                                      _HomeStatCard(
+                                        title: "Tutoriales",
+                                        icon: Icons.lightbulb_outline,
+                                      ),
+                                      _HomeStatCard(
+                                        title: "Timer",
+                                        icon: Icons.access_time,
+                                      ),
+                                  ],
+                                      ),
+
+                                  ),
+                                  ],
+
+                                ),
+
+                                const SizedBox(height: 5),
+                                //Boton de agregar lesion
+                                InkWell(
+                                  onTap: () {
+                                    Navigator.pushNamed(context, '/injury_register');
+                                  },
+                                  child: Container(
+                                    width: double.infinity,
+                                    margin: const EdgeInsets.symmetric(vertical: 8),
+                                    padding: const EdgeInsets.all(16),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(16),
+                                    color: Color(0xFF019193) ,
+                                    ),
+                                    child: Row(
+                                      children: [
+
+                                        Container(
+                                          padding: const EdgeInsets.all(8),
+                                          decoration: BoxDecoration(
+                                            color: Colors.white.withOpacity(0.2),
+                                            shape: BoxShape.circle,
+                                          ),
+                                          child: const Icon(
+                                            Icons.medical_services_outlined,
+                                            color: Colors.white,
+                                            size: 28,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 16),
+                                        const Expanded(
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                "Nueva lesión",
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                              SizedBox(height: 4),
+                                              Text(
+                                                "Registra aquí tu nueva lesión y recibe tu plan de recuperación.",
+                                                style: TextStyle(
+                                                  color: Colors.white70,
+                                                  fontSize: 13,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+
+                                        const Icon(
+                                          Icons.arrow_forward_ios_rounded,
+                                          color: Colors.white70,
+                                          size: 18,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+
+
+                              ],
+
+                            ),
                           ),
                         ),
-                        const SizedBox(height: 16),
-                        GridView.count(
-                          crossAxisCount: 2,
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          mainAxisSpacing: 12,
-                          crossAxisSpacing: 12,
-                          childAspectRatio: 1.4,
-                          children: const [
-                            _HomeStatCard(
-                              title: "Progreso",
-                              icon: Icons.show_chart,
-                            ),
-                            _HomeStatCard(
-                              title: "Tareas de hoy",
-                              icon: Icons.checklist_outlined,
-                            ),
-                            _HomeStatCard(
-                              title: "Recomendaciones",
-                              icon: Icons.lightbulb_outline,
-                            ),
-                            _HomeStatCard(
-                              title: "Última sesión",
-                              icon: Icons.access_time,
-                            ),
-                          ],
-                        ),
 
-                        const SizedBox(height: 32),
-                        const Text(
-                          "Acciones rápidas",
-                          style: TextStyle(
+                        // NAV BAR
+                        Container(
+                          padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 24),
+                          decoration: BoxDecoration(
                             color: Colors.white,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
+                            borderRadius: const BorderRadius.only(
+                              topLeft: Radius.circular(40),
+                              topRight: Radius.circular(40),
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.2),
+                                blurRadius: 8,
+                                offset: const Offset(0, -3),
+                              )
+                            ],
                           ),
-                        ),
-                        const SizedBox(height: 16),
-
-                        _HomeActionItem(
-                          icon: Icons.person_outline,
-                          label: "Mi perfil",
-                          onTap: () => Navigator.pushNamed(context, '/my_profile'),
-                        ),
-                        _HomeActionItem(
-                          icon: Icons.assignment_outlined,
-                          label: "Mis tareas",
-                          onTap: () {
-                            // TODO: Navegar a tareas cuando exista la ruta
-                          },
-                        ),
-                        _HomeActionItem(
-                          icon: Icons.library_books_outlined,
-                          label: "Historial",
-                          onTap: () {
-                            // TODO: Navegar a historial cuando exista la ruta
-                          },
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              IconButton(
+                                  icon: const Icon(Icons.home, color: Colors.black87),
+                                  onPressed: () => Navigator.pushNamed(context, '/home')
+                              ),
+                              const Icon(Icons.library_books_outlined, color: Colors.black87),
+                              const CircleAvatar(
+                                radius: 20,
+                                backgroundColor: Colors.black87,
+                                child: Icon(Icons.add, color: Colors.white),
+                              ),
+                              const Icon(Icons.favorite_border, color: Colors.black87),
+                              IconButton(
+                                  icon: const Icon(Icons.person_outline, color: Colors.black87),
+                                  onPressed: () => Navigator.pushNamed(context, '/my_profile')
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     ),
-                  ),
-                ),
-
-                // ---------- NAV BAR ----------
-                Container(
-                  padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 24),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(40),
-                      topRight: Radius.circular(40),
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.2),
-                        blurRadius: 8,
-                        offset: const Offset(0, -3),
-                      )
-                    ],
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      IconButton(
-                          icon: const Icon(Icons.home, color: Colors.black87),
-                          onPressed: () => Navigator.pushNamed(context, '/home')
-                      ),
-                      const Icon(Icons.library_books_outlined, color: Colors.black87),
-                      const CircleAvatar(
-                        radius: 20,
-                        backgroundColor: Colors.black87,
-                        child: Icon(Icons.add, color: Colors.white),
-                      ),
-                      const Icon(Icons.favorite_border, color: Colors.black87),
-                      IconButton(
-                          icon: const Icon(Icons.person_outline, color: Colors.black87),
-                          onPressed: () => Navigator.pushNamed(context, '/my_profile')
-                      ),
-                    ],
                   ),
                 ),
               ],
