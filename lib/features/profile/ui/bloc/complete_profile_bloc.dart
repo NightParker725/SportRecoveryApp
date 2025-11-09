@@ -77,6 +77,16 @@ class CompleteProfileBloc
         createdAt: DateTime.now(),
       );
 
+      // Debug: log the payloads that will be sent to the data sources
+      try {
+        print('[CompleteProfileBloc] profile payload=${profile.toJson()}');
+        if (event.injuriesLastYear != null) {
+          print(
+            '[CompleteProfileBloc] injuries payload=${event.injuriesLastYear}',
+          );
+        }
+      } catch (_) {}
+
       await usecase.execute(profile);
       if (event.injuriesLastYear != null) {
         await usecase.createInjury(event.injuriesLastYear!);

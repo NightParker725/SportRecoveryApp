@@ -42,11 +42,7 @@ class Profile {
     'email': email,
     if (profilePicture != null) 'profile_picture': profilePicture,
     if (birthDate != null)
-      'birth_date': {
-        'year': birthDate!.year,
-        'month': birthDate!.month,
-        'date': birthDate!.day,
-      },
+      'birth_date': birthDate!.toIso8601String().split('T').first,
     // Map sex to DB allowed values: 'M', 'F', 'O'. Default to 'O' if missing/unknown.
     'sex': _mapSex(sex),
     if (heightCm != null) 'height_cm': heightCm,

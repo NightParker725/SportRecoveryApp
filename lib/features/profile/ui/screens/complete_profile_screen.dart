@@ -120,11 +120,7 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
         'injury_type': _injuryTypeCtrl.text.trim(),
         'injury_status': _injuryStatus,
         if (_injuryDate != null)
-          'injury_date': {
-            'year': _injuryDate!.year,
-            'month': _injuryDate!.month,
-            'date': _injuryDate!.day,
-          },
+          'injury_date': _injuryDate!.toIso8601String().split('T').first,
       };
     }
 
