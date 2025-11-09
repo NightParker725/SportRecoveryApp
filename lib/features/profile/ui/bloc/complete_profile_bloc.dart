@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:moviles252/domain/model/profile.dart';
-import '../../domain/usecases/complete_profile_usecase.dart';
+import 'package:moviles252/features/profile/domain/usecases/profile_usecases.dart';
 
 abstract class CompleteProfileEvent {}
 
@@ -33,25 +33,32 @@ class SubmitCompleteProfileEvent extends CompleteProfileEvent {
 }
 
 abstract class CompleteProfileState {}
+
 class CompleteProfileIdle extends CompleteProfileState {}
+
 class CompleteProfileLoading extends CompleteProfileState {}
+
 class CompleteProfileSuccess extends CompleteProfileState {}
+
 class CompleteProfileError extends CompleteProfileState {
   final String message;
   CompleteProfileError(this.message);
 }
 
-class CompleteProfileBloc extends Bloc<CompleteProfileEvent, CompleteProfileState> {
+class CompleteProfileBloc
+    extends Bloc<CompleteProfileEvent, CompleteProfileState> {
   final CompleteProfileUsecase usecase;
 
   CompleteProfileBloc(this.usecase) : super(CompleteProfileIdle()) {
     on<SubmitCompleteProfileEvent>(_onSubmit);
   }
 
-  Future<void> _onSubmit(SubmitCompleteProfileEvent event, Emitter<CompleteProfileState> emit) async {
+  Future<void> _onSubmit(
+    SubmitCompleteProfileEvent event,
+    Emitter<CompleteProfileState> emit,
+  ) async {
     emit(CompleteProfileLoading());
     try {
-      // Asumimos que el profile actual se obtiene por login y solo actualizamos campos adicionales
       final profile = Profile(
         id: '',
         name: '',
@@ -71,6 +78,9 @@ class CompleteProfileBloc extends Bloc<CompleteProfileEvent, CompleteProfileStat
       );
 
       await usecase.execute(profile);
+      if (event.injuriesLastYear != null) {
+        await usecase.createInjury(event.injuriesLastYear!);
+      }
       emit(CompleteProfileSuccess());
     } catch (e) {
       emit(CompleteProfileError(e.toString()));

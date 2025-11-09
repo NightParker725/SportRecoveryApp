@@ -21,20 +21,15 @@ class AuthRepositoryImpl extends AuthRepository {
   }
 
   @override
-  Future<void> updateProfile(Profile profile) async {
-    final user = Supabase.instance.client.auth.currentUser;
-    final userId = user?.id;
-    if (userId == null) throw Exception('No authenticated user');
-
-    final updated = profile.copyWith(id: userId);
-    await _profileDataSource.updateProfile(updated);
-  }
-
-  @override
   Future<Profile?> getCurrentProfile() async {
     final user = Supabase.instance.client.auth.currentUser;
     final userId = user?.id;
     if (userId == null) return null;
+    return await _profileDataSource.getProfileById(userId);
+  }
+
+  @override
+  Future<Profile?> getProfileById(String userId) async {
     return await _profileDataSource.getProfileById(userId);
   }
 
@@ -53,10 +48,23 @@ class AuthRepositoryImpl extends AuthRepository {
         sex: 'other',
         createdAt: DateTime.now(),
       );
-      await _profileDataSource.createProfile(newProfile);
+      // Use AuthRepository's createProfile implementation to create the profile
+      await createProfile(newProfile);
       profile = newProfile;
     }
 
     return profile;
+  }
+
+  @override
+  Future<void> createProfile(Profile profile) async {
+    // Ensure we use the authenticated user id if available
+    final user = Supabase.instance.client.auth.currentUser;
+    final userId = user?.id ?? profile.id;
+    // Ensure sex has a safe default to satisfy DB CHECK constraints
+    // Use 'O' (other) as default DB code. The Profile.toJson mapper will
+    // also normalize various representations to 'M'/'F'/'O'.
+    final toSave = profile.copyWith(id: userId, sex: profile.sex ?? 'O');
+    await _profileDataSource.createProfile(toSave);
   }
 }

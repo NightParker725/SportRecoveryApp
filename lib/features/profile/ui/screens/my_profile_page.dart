@@ -47,64 +47,78 @@ class _MyProfilePageState extends State<MyProfilePage> {
                       ),
                     ),
                     padding: const EdgeInsets.symmetric(
-                        vertical: 32, horizontal: 20),
+                      vertical: 32,
+                      horizontal: 20,
+                    ),
                     child: Row(
                       children: [
                         Align(
                           alignment: Alignment.centerLeft,
-                        child:CircleAvatar(
-                          radius: 45,
-                          backgroundImage: NetworkImage(
-                                'https://cdn-icons-png.flaticon.com/512/847/847969.png',
+                          child: CircleAvatar(
+                            radius: 45,
+                            backgroundImage: NetworkImage(
+                              'https://cdn-icons-png.flaticon.com/512/847/847969.png',
+                            ),
                           ),
-                        )
                         ),
-                        Expanded(child:
-                        Column(
-                        children: [ SizedBox(height: 12),
+                        Expanded(
+                          child: Column(
+                            children: [
+                              SizedBox(height: 12),
 
-                        Text(
-                          profile.name ?? 'Usuario',
-                          style: const TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black87,
+                              Text(
+                                profile.name ?? 'Usuario',
+                                style: const TextStyle(
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black87,
+                                ),
+                              ),
+                              Text(
+                                profile.email ?? '',
+                                style: const TextStyle(
+                                  color: Colors.black54,
+                                  fontSize: 14,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              // Botón para completar perfil
+                              ElevatedButton.icon(
+                                onPressed: () {
+                                  Navigator.pushNamed(
+                                    context,
+                                    '/complete_profile',
+                                  );
+                                },
+                                icon: const Icon(
+                                  Icons.person_add_alt_1_outlined,
+                                ),
+                                label: const Text('Completar perfil'),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.deepPurple,
+                                  foregroundColor: Colors.white,
+                                ),
+                              ),
+                              Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    "Deportista",
+                                    style: const TextStyle(
+                                      color: Colors.black87,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    "${profile.birthDate}",
+                                    style: const TextStyle(
+                                      color: Colors.black54,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
                           ),
-                        ),
-                        Text(
-                          profile.email ?? '',
-                          style: const TextStyle(
-                              color: Colors.black54, fontSize: 14),
-                        ),
-                        const SizedBox(height: 8),
-                        // Botón para completar perfil
-                        ElevatedButton.icon(
-                          onPressed: () {
-                            Navigator.pushNamed(context, '/complete_profile');
-                          },
-                          icon: const Icon(Icons.person_add_alt_1_outlined),
-                          label: const Text('Completar perfil'),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.deepPurple,
-                            foregroundColor: Colors.white,
-                          ),
-                        ),
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              "Deportista",
-                              style: const TextStyle(color: Colors.black87),
-                            ),
-                            const SizedBox(width: 8),
-                            Text(
-                              "${profile.birthDate}",
-                              style: const TextStyle(color: Colors.black54),
-                            ),
-                          ],
-                        ),
-                      ]
-                        ),
                         ),
                       ],
                     ),
@@ -112,10 +126,11 @@ class _MyProfilePageState extends State<MyProfilePage> {
 
                   // ---------- BODY ----------
                   Expanded(
-
                     child: SingleChildScrollView(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 20, vertical: 24),
+                        horizontal: 20,
+                        vertical: 24,
+                      ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -138,19 +153,23 @@ class _MyProfilePageState extends State<MyProfilePage> {
                             childAspectRatio: 1.4,
                             children: [
                               _StatCard(
-                                  title: "Información",
-                                  icon: Icons.info_outline,
-                                  image:
-                                  "https://cdn-icons-png.flaticon.com/512/992/992651.png"),
+                                title: "Información",
+                                icon: Icons.info_outline,
+                                image:
+                                    "https://cdn-icons-png.flaticon.com/512/992/992651.png",
+                              ),
                               _StatCard(
-                                  title: "Mis lesiones",
-                                  icon: Icons.healing_outlined),
+                                title: "Mis lesiones",
+                                icon: Icons.healing_outlined,
+                              ),
                               _StatCard(
-                                  title: "Historial",
-                                  icon: Icons.history_outlined),
+                                title: "Historial",
+                                icon: Icons.history_outlined,
+                              ),
                               _StatCard(
-                                  title: "Mis tareas",
-                                  icon: Icons.assignment_outlined),
+                                title: "Mis tareas",
+                                icon: Icons.assignment_outlined,
+                              ),
                             ],
                           ),
 
@@ -168,8 +187,8 @@ class _MyProfilePageState extends State<MyProfilePage> {
                           _ConfigItem(
                             icon: Icons.edit_outlined,
                             label: "Editar información",
-                            onTap: () => Navigator.pushNamed(
-                                context, '/edit_profile'),
+                            onTap: () =>
+                                Navigator.pushNamed(context, '/edit_profile'),
                           ),
                           _ConfigItem(
                             icon: Icons.lock_outline,
@@ -184,7 +203,9 @@ class _MyProfilePageState extends State<MyProfilePage> {
                               await Supabase.instance.client.auth.signOut();
                               if (context.mounted) {
                                 Navigator.pushReplacementNamed(
-                                    context, '/login');
+                                  context,
+                                  '/login',
+                                );
                               }
                             },
                             color: Colors.redAccent,
@@ -197,7 +218,9 @@ class _MyProfilePageState extends State<MyProfilePage> {
                   // ---------- NAV BAR ----------
                   Container(
                     padding: const EdgeInsets.symmetric(
-                        vertical: 14, horizontal: 24),
+                      vertical: 14,
+                      horizontal: 24,
+                    ),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: const BorderRadius.only(
@@ -209,14 +232,17 @@ class _MyProfilePageState extends State<MyProfilePage> {
                           color: Colors.black.withOpacity(0.2),
                           blurRadius: 8,
                           offset: const Offset(0, -3),
-                        )
+                        ),
                       ],
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: const [
                         Icon(Icons.home_outlined, color: Colors.black87),
-                        Icon(Icons.library_books_outlined, color: Colors.black87),
+                        Icon(
+                          Icons.library_books_outlined,
+                          color: Colors.black87,
+                        ),
                         CircleAvatar(
                           radius: 20,
                           backgroundColor: Colors.black87,
@@ -262,10 +288,7 @@ class _StatCard extends StatelessWidget {
               ? Image.network(image!, height: 40)
               : Icon(icon, color: Colors.white, size: 36),
           const SizedBox(height: 12),
-          Text(
-            title,
-            style: const TextStyle(color: Colors.white),
-          ),
+          Text(title, style: const TextStyle(color: Colors.white)),
         ],
       ),
     );
