@@ -11,6 +11,9 @@ import 'features/auth/ui/screens/welcome_screen.dart';
 import 'features/auth/ui/bloc/splash_bloc.dart';
 import 'features/auth/data/repository/auth_repository_impl.dart';
 import 'features/auth/domain/usecases/check_user_logged_in_usecase.dart';
+import 'features/auth/ui/screens/complete_profile_screen.dart';
+import 'features/auth/ui/bloc/complete_profile_bloc.dart';
+import 'features/auth/domain/usecases/complete_profile_usecase.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:moviles252/features/auth/ui/bloc/login_bloc.dart';
 
@@ -44,10 +47,14 @@ class MyApp extends StatelessWidget {
               SplashBloc(CheckUserLoggedInUseCase(AuthRepositoryImpl())),
           child: SplashScreen(),
         ),
-        '/signup': (_) =>
-            BlocProvider(create: (_) => SignupBloc(), child: SignupScreen()),
-        '/login': (_) =>
-            BlocProvider(create: (_) => LoginBloc(), child: LoginScreen()),
+    '/signup': (_) =>
+      BlocProvider(create: (_) => SignupBloc(), child: SignupScreen()),
+    '/complete_profile': (_) => BlocProvider(
+      create: (_) => CompleteProfileBloc(CompleteProfileUsecase(AuthRepositoryImpl())),
+      child: CompleteProfileScreen(),
+    ),
+    '/login': (_) =>
+      BlocProvider(create: (_) => LoginBloc(), child: LoginScreen()),
         '/my_profile': (_) => BlocProvider(
           create: (_) => ProfileBloc(),
           child: const MyProfilePage(),

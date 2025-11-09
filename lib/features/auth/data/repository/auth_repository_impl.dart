@@ -21,6 +21,24 @@ class AuthRepositoryImpl extends AuthRepository {
   }
 
   @override
+  Future<void> updateProfile(Profile profile) async {
+    final user = Supabase.instance.client.auth.currentUser;
+    final userId = user?.id;
+    if (userId == null) throw Exception('No authenticated user');
+
+    final updated = profile.copyWith(id: userId);
+    await _profileDataSource.updateProfile(updated);
+  }
+
+  @override
+  Future<Profile?> getCurrentProfile() async {
+    final user = Supabase.instance.client.auth.currentUser;
+    final userId = user?.id;
+    if (userId == null) return null;
+    return await _profileDataSource.getProfileById(userId);
+  }
+
+  @override
   Future<Profile?> loginUser(String email, String password) async {
     final String? userId = await _authDataSource.signIn(email, password);
     if (userId == null) return null;
@@ -32,6 +50,7 @@ class AuthRepositoryImpl extends AuthRepository {
         id: userId,
         name: email.split('@').first,
         email: email,
+        sex: 'other',
         createdAt: DateTime.now(),
       );
       await _profileDataSource.createProfile(newProfile);

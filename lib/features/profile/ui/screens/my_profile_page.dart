@@ -77,6 +77,18 @@ class _MyProfilePageState extends State<MyProfilePage> {
                               color: Colors.black54, fontSize: 14),
                         ),
                         const SizedBox(height: 8),
+                        // Botón para completar perfil
+                        ElevatedButton.icon(
+                          onPressed: () {
+                            Navigator.pushNamed(context, '/complete_profile');
+                          },
+                          icon: const Icon(Icons.person_add_alt_1_outlined),
+                          label: const Text('Completar perfil'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.deepPurple,
+                            foregroundColor: Colors.white,
+                          ),
+                        ),
                         Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
