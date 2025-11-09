@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:moviles252/features/profile/ui/bloc/complete_profile_bloc.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class CompleteProfileScreen extends StatefulWidget {
   @override
@@ -20,6 +22,8 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
   // Step 1
   final TextEditingController _preferredNameCtrl = TextEditingController();
   final TextEditingController _profilePictureCtrl = TextEditingController();
+  String? _uploadedAvatarUrl;
+  static const String _avatarsBucket = 'avatars';
 
   // Step 2
   DateTime? _birthDate;
@@ -85,6 +89,73 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
       ),
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
     );
+  }
+
+  Future<void> _pickAndUploadProfileImage() async {
+    try {
+      final result = await FilePicker.platform.pickFiles(
+        type: FileType.image,
+        allowMultiple: false,
+        withData: true,
+      );
+      if (result == null || result.files.isEmpty) return;
+
+      final file = result.files.first;
+      final bytes = file.bytes;
+      if (bytes == null) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('No se pudo leer el archivo seleccionado')),
+          );
+        }
+        return;
+      }
+
+      final user = Supabase.instance.client.auth.currentUser;
+      if (user == null) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Debes iniciar sesión para subir una imagen')),
+          );
+        }
+        return;
+      }
+
+      final ext = (file.extension ?? 'jpg').toLowerCase();
+      final contentType = {
+        'png': 'image/png',
+        'jpg': 'image/jpeg',
+        'jpeg': 'image/jpeg',
+        'gif': 'image/gif',
+        'webp': 'image/webp',
+      }[ext] ?? 'application/octet-stream';
+
+      final filePath = 'users/${user.id}/${DateTime.now().millisecondsSinceEpoch}.${ext}';
+
+      await Supabase.instance.client.storage.from(_avatarsBucket).uploadBinary(
+            filePath,
+            bytes,
+            fileOptions: FileOptions(contentType: contentType, upsert: true),
+          );
+
+      final publicUrl = Supabase.instance.client.storage.from(_avatarsBucket).getPublicUrl(filePath);
+      setState(() {
+        _uploadedAvatarUrl = publicUrl;
+        _profilePictureCtrl.text = publicUrl;
+      });
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Imagen subida correctamente')),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error al subir imagen: $e')),
+        );
+      }
+    }
   }
 
   Widget _buildFieldLabel(String text) {
@@ -291,7 +362,33 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
               decoration: _inputDecoration(hint: ''),
             ),
             const SizedBox(height: 12),
-            _buildFieldLabel('URL de la foto de perfil (opcional)'),
+            _buildFieldLabel('Foto de perfil (opcional)'),
+            Row(
+              children: [
+                ElevatedButton(
+                  onPressed: _pickAndUploadProfileImage,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF00DFC1),
+                    foregroundColor: Colors.black,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(999)),
+                  ),
+                  child: const Text('Subir desde archivos'),
+                ),
+                const SizedBox(width: 12),
+                if (_uploadedAvatarUrl != null)
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: Image.network(
+                      _uploadedAvatarUrl!,
+                      width: 48,
+                      height: 48,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            _buildFieldLabel('URL de la foto (se completa automáticamente)'),
             TextFormField(
               controller: _profilePictureCtrl,
               decoration: _inputDecoration(hint: ''),
