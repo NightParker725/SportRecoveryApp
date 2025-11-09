@@ -202,8 +202,11 @@ class _MyProfilePageState extends State<MyProfilePage> {
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: const [
-                        Icon(Icons.home_outlined, color: Colors.black87),
+                      children:  [
+                        IconButton(
+                            icon: const Icon(Icons.home_outlined, color: Colors.black87),
+                            onPressed: () => Navigator.pushNamed(context, '/home')
+                        ),
                         Icon(Icons.library_books_outlined, color: Colors.black87),
                         CircleAvatar(
                           radius: 20,
@@ -211,7 +214,10 @@ class _MyProfilePageState extends State<MyProfilePage> {
                           child: Icon(Icons.add, color: Colors.white),
                         ),
                         Icon(Icons.favorite_border, color: Colors.black87),
-                        Icon(Icons.person_outline, color: Colors.black87),
+                        IconButton(
+                        icon: const Icon(Icons.person, color: Colors.black87),
+                          onPressed: () => Navigator.pushNamed(context, '/my_profile')
+                        ),
                       ],
                     ),
                   ),
