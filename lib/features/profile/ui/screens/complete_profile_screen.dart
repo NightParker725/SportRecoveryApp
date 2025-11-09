@@ -12,6 +12,11 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
   bool _showIntro = true;
   int _step = 0;
 
+  // Intro slider state
+  double _introSlideValue = 8.0;
+  double _introMaxWidth = 0.0;
+  double _introButtonWidth = 120.0;
+
   // Step 1
   final TextEditingController _preferredNameCtrl = TextEditingController();
   final TextEditingController _profilePictureCtrl = TextEditingController();
@@ -59,6 +64,114 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
     super.dispose();
   }
 
+  // Input decoration style for white background with light gray stroke
+  InputDecoration _inputDecoration({String? hint}) {
+    return InputDecoration(
+      hintText: hint,
+      hintStyle: const TextStyle(color: Color(0xFFAAAAAA)),
+      filled: true,
+      fillColor: Colors.white,
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: const BorderSide(color: Color(0xFFDADADA), width: 1),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: const BorderSide(color: Color(0xFFDADADA), width: 1),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: const BorderSide(color: Color(0xFF00DFC1), width: 2),
+      ),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+    );
+  }
+
+  Widget _buildFieldLabel(String text) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          text,
+          style: const TextStyle(color: Color(0xFF666666), fontSize: 13),
+        ),
+        const SizedBox(height: 8),
+      ],
+    );
+  }
+
+  Widget _buildDateField({
+    required String label,
+    required String display,
+    required VoidCallback onPressed,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(color: Color(0xFF666666), fontSize: 13),
+        ),
+        const SizedBox(height: 8),
+        InkWell(
+          onTap: onPressed,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: const Color(0xFFDADADA), width: 1),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(display, style: const TextStyle(color: Colors.black87)),
+                const Icon(Icons.calendar_today, color: Color(0xFF666666)),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildRadioGroup({
+    required String label,
+    String? helper,
+    required String? value,
+    required List<MapEntry<String, String>> options,
+    required ValueChanged<String?> onChanged,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildFieldLabel(label),
+        if (helper != null)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 8),
+            child: Text(
+              helper,
+              style: const TextStyle(color: Color(0xFF9E9E9E), fontSize: 13),
+            ),
+          ),
+        ...options.map(
+          (opt) => RadioListTile<String>(
+            value: opt.key,
+            groupValue: value,
+            onChanged: onChanged,
+            activeColor: const Color(0xFF00DFC1),
+            contentPadding: EdgeInsets.zero,
+            title: Text(
+              opt.value,
+              style: const TextStyle(fontSize: 18, color: Colors.black87),
+            ),
+            dense: true,
+          ),
+        ),
+      ],
+    );
+  }
+
   Future<void> _pickDate() async {
     final now = DateTime.now();
     final picked = await showDatePicker(
@@ -102,6 +215,27 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
       _showIntro = false;
       _step = 0;
     });
+  }
+
+  void _onIntroDragUpdate(DragUpdateDetails details) {
+    setState(() {
+      _introSlideValue += details.delta.dx;
+      final maxLeft = _introMaxWidth - _introButtonWidth;
+      final clampedMax = maxLeft < 8.0 ? 8.0 : maxLeft;
+      if (_introSlideValue < 8.0) _introSlideValue = 8.0;
+      if (_introSlideValue > clampedMax) _introSlideValue = clampedMax;
+    });
+  }
+
+  void _onIntroDragEnd() {
+    final maxLeft = _introMaxWidth - _introButtonWidth - 8.0;
+    if (_introSlideValue >= maxLeft && maxLeft >= 8.0) {
+      _start();
+    } else {
+      setState(() {
+        _introSlideValue = 8.0;
+      });
+    }
   }
 
   void _submit() {
@@ -151,109 +285,107 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            _buildFieldLabel('Nombre preferido'),
             TextFormField(
               controller: _preferredNameCtrl,
-              decoration: const InputDecoration(labelText: 'Nombre preferido'),
+              decoration: _inputDecoration(hint: ''),
             ),
             const SizedBox(height: 12),
+            _buildFieldLabel('URL de la foto de perfil (opcional)'),
             TextFormField(
               controller: _profilePictureCtrl,
-              decoration: const InputDecoration(
-                labelText: 'URL de la foto de perfil (opcional)',
-              ),
+              decoration: _inputDecoration(hint: ''),
             ),
           ],
         );
       case 1:
         return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ListTile(
-              title: Text(
-                _birthDate == null
-                    ? 'Selecciona fecha de nacimiento'
-                    : _birthDate!.toLocal().toString().split(' ')[0],
-              ),
-              trailing: IconButton(
-                icon: const Icon(Icons.calendar_today),
-                onPressed: _pickDate,
-              ),
+            _buildDateField(
+              label: 'Fecha de nacimiento',
+              display: _birthDate == null
+                  ? 'Selecciona fecha de nacimiento'
+                  : _birthDate!.toLocal().toString().split(' ')[0],
+              onPressed: _pickDate,
             ),
-            DropdownButtonFormField<String>(
+            const SizedBox(height: 12),
+            _buildRadioGroup(
+              label: 'Género',
               value: _sex,
-              items: const [
-                DropdownMenuItem(value: 'male', child: Text('Masculino')),
-                DropdownMenuItem(value: 'female', child: Text('Femenino')),
-                DropdownMenuItem(value: 'other', child: Text('Otro')),
+              options: const [
+                MapEntry('male', 'Masculino'),
+                MapEntry('female', 'Femenino'),
+                MapEntry('other', 'Otro'),
               ],
               onChanged: (v) => setState(() => _sex = v),
-              decoration: const InputDecoration(labelText: 'Género'),
             ),
           ],
         );
       case 2:
         return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            _buildFieldLabel('Altura (cm)'),
             TextFormField(
               controller: _heightCtrl,
               keyboardType: TextInputType.number,
-              decoration: const InputDecoration(labelText: 'Altura (cm)'),
+              decoration: _inputDecoration(hint: ''),
             ),
             const SizedBox(height: 12),
+            _buildFieldLabel('Peso (kg)'),
             TextFormField(
               controller: _weightCtrl,
               keyboardType: TextInputType.number,
-              decoration: const InputDecoration(labelText: 'Peso (kg)'),
+              decoration: _inputDecoration(hint: ''),
             ),
           ],
         );
       case 3:
         return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            _buildFieldLabel('Actividad física principal'),
             TextFormField(
               controller: TextEditingController(text: _primaryActivity),
               onChanged: (v) => _primaryActivity = v,
-              decoration: const InputDecoration(
-                labelText: 'Actividad física principal',
-              ),
+              decoration: _inputDecoration(hint: ''),
             ),
             const SizedBox(height: 12),
+            _buildFieldLabel('Actividad complementaria (opcional)'),
             TextFormField(
               controller: TextEditingController(text: _complementaryActivity),
               onChanged: (v) => _complementaryActivity = v,
-              decoration: const InputDecoration(
-                labelText: 'Actividad complementaria (opcional)',
-              ),
+              decoration: _inputDecoration(hint: ''),
             ),
           ],
         );
       case 4:
-        return DropdownButtonFormField<String>(
+        return _buildRadioGroup(
+          label: 'Frecuencia de actividad física',
+          helper: 'Selecciona una sola opción.',
           value: _activityFrequency,
-          items: const [
-            DropdownMenuItem(value: 'never', child: Text('Nunca')),
-            DropdownMenuItem(value: '1_time_week', child: Text('1 vez/semana')),
-            DropdownMenuItem(
-              value: '2_times_week',
-              child: Text('2 veces/semana'),
-            ),
-            DropdownMenuItem(
-              value: '3_times_week',
-              child: Text('3 veces/semana'),
-            ),
-            DropdownMenuItem(value: 'daily', child: Text('Diario')),
+          options: const [
+            MapEntry('daily', 'Todos los días'),
+            MapEntry('3_times_week', '3-5 veces por semana'),
+            MapEntry('2_times_week', '1-2 veces por semana'),
+            MapEntry('never', 'Menos de una vez por semana'),
           ],
           onChanged: (v) => setState(() => _activityFrequency = v),
-          decoration: const InputDecoration(
-            labelText: 'Frecuencia de actividad física',
-          ),
         );
       case 5:
         return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             ..._goalsOptions.map(
               (g) => CheckboxListTile(
                 value: _selectedGoals.contains(g),
-                title: Text(g),
+                title: Text(
+                  g,
+                  style: const TextStyle(fontSize: 16, color: Colors.black87),
+                ),
+                controlAffinity: ListTileControlAffinity.leading,
+                contentPadding: EdgeInsets.zero,
                 onChanged: (v) => setState(() {
                   if (v == true)
                     _selectedGoals.add(g);
@@ -263,11 +395,15 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
               ),
             ),
             if (_selectedGoals.contains('Otros'))
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildFieldLabel('Otros (especifica)'),
               TextFormField(
                 controller: _otherGoalCtrl,
-                decoration: const InputDecoration(
-                  labelText: 'Otros (especifica)',
-                ),
+                decoration: _inputDecoration(hint: ''),
+              ),
+                ],
               ),
           ],
         );
@@ -281,52 +417,39 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
               ),
               value: _hadInjuries,
               onChanged: (v) => setState(() => _hadInjuries = v),
+              activeColor: const Color(0xFF019193),
+              activeTrackColor: const Color(0xFF019193).withOpacity(0.4),
             ),
           ],
         );
       case 7:
         return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            _buildFieldLabel('Tipo de lesión'),
             TextFormField(
               controller: _injuryTypeCtrl,
-              decoration: const InputDecoration(labelText: 'Tipo de lesión'),
+              decoration: _inputDecoration(hint: ''),
             ),
             const SizedBox(height: 12),
-            ListTile(
-              title: Text(
-                _injuryDate == null
-                    ? 'Selecciona la fecha de la lesión'
-                    : _injuryDate!.toLocal().toString().split(' ')[0],
-              ),
-              trailing: IconButton(
-                icon: const Icon(Icons.calendar_today),
-                onPressed: _pickInjuryDate,
-              ),
+            _buildDateField(
+              label: 'Fecha de la lesión',
+              display: _injuryDate == null
+                  ? 'Selecciona la fecha de la lesión'
+                  : _injuryDate!.toLocal().toString().split(' ')[0],
+              onPressed: _pickInjuryDate,
             ),
-            DropdownButtonFormField<String>(
+            const SizedBox(height: 12),
+            _buildRadioGroup(
+              label: 'Estado de la lesión',
               value: _injuryStatus,
-              items: const [
-                DropdownMenuItem(
-                  value: 'recovered',
-                  child: Text('Totalmente recuperado'),
-                ),
-                DropdownMenuItem(
-                  value: 'almost_recovered',
-                  child: Text('Casi recuperado, molestias leves'),
-                ),
-                DropdownMenuItem(
-                  value: 'in_recovery',
-                  child: Text('En proceso de recuperación'),
-                ),
-                DropdownMenuItem(
-                  value: 'not_recovered',
-                  child: Text('Nunca me recuperé bien'),
-                ),
+              options: const [
+                MapEntry('recovered', 'Totalmente recuperado'),
+                MapEntry('almost_recovered', 'Casi recuperado, molestias leves'),
+                MapEntry('in_recovery', 'En proceso de recuperación'),
+                MapEntry('not_recovered', 'Nunca me recuperé bien'),
               ],
               onChanged: (v) => setState(() => _injuryStatus = v),
-              decoration: const InputDecoration(
-                labelText: 'Estado de la lesión',
-              ),
             ),
           ],
         );
@@ -359,41 +482,152 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
             ).showSnackBar(SnackBar(content: Text(state.message)));
           }
         },
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: _showIntro ? _buildIntro(context) : _buildStepper(context),
-        ),
+        child: _showIntro ? _buildIntro(context) : _buildStepper(context),
       ),
     );
   }
 
   Widget _buildIntro(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        const Text(
-          '¡Queremos conocerte!',
-          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 12),
-        const Text(
-          'Este paso es opcional, pero te ayudará a obtener recomendaciones más relevantes.',
-          textAlign: TextAlign.center,
-        ),
-        const SizedBox(height: 24),
-        ElevatedButton.icon(
-          onPressed: _start,
-          icon: const Icon(Icons.arrow_forward),
-          label: const Text('Comenzar'),
-        ),
-        const SizedBox(height: 12),
-        TextButton.icon(
-          onPressed: () =>
-              Navigator.pushReplacementNamed(context, '/my_profile'),
-          icon: const Icon(Icons.exit_to_app),
-          label: const Text('Volver al perfil'),
-        ),
-      ],
+    return Container(
+      margin: const EdgeInsets.all(16.0),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: Stack(
+        children: [
+          // Imagen de fondo
+          Positioned.fill(
+            child: Image.asset(
+              'assets/images/signup/image_back.png',
+              fit: BoxFit.cover,
+            ),
+          ),
+          // Degradado para texto
+          Positioned.fill(
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.transparent,
+                    Colors.black.withOpacity(0.55),
+                  ],
+                  stops: const [0.4, 1.0],
+                ),
+              ),
+            ),
+          ),
+          // Contenido inferior con textos y slider
+          Positioned.fill(
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Align(
+                alignment: Alignment.bottomLeft,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      '¡Queremos conocerte!',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 24,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    const Text(
+                      'Este paso es opcional, pero te ayudará a obtener recomendaciones más relevantes.',
+                      style: TextStyle(color: Colors.white70),
+                    ),
+                    const SizedBox(height: 16),
+                    // Slider button (similar a welcome)
+                    LayoutBuilder(
+                      builder: (context, constraints) {
+                        _introMaxWidth = constraints.maxWidth;
+                        // Asegurar posición válida si cambia el ancho
+                        final maxLeftNow = _introMaxWidth - _introButtonWidth - 8.0;
+                        if (maxLeftNow > 8.0 && _introSlideValue > maxLeftNow) {
+                          _introSlideValue = maxLeftNow;
+                        }
+                        return Container(
+                          width: double.infinity,
+                          height: 56,
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF31373F),
+                            borderRadius: BorderRadius.circular(35),
+                          ),
+                          child: Stack(
+                            children: [
+                              const Positioned.fill(
+                                child: Center(
+                                  child: Text(
+                                    '       > > > ',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w500,
+                                      letterSpacing: 3,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              AnimatedPositioned(
+                                top: 8,
+                                duration: const Duration(milliseconds: 150),
+                                left: _introSlideValue,
+                                child: GestureDetector(
+                                  onHorizontalDragUpdate: (d) => _onIntroDragUpdate(d),
+                                  onHorizontalDragEnd: (_) => _onIntroDragEnd(),
+                                  child: Container(
+                                    width: _introButtonWidth,
+                                    height: 40,
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(35),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black.withOpacity(0.3),
+                                          blurRadius: 8,
+                                          offset: const Offset(0, 3),
+                                        ),
+                                      ],
+                                    ),
+                                    child: const Center(
+                                      child: Text(
+                                        'Empezar',
+                                        style: TextStyle(
+                                          color: Color(0xFF31373F),
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -411,33 +645,104 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
 
     final currentTitle = titles[_step];
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          currentTitle,
-          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 12),
-        Expanded(child: SingleChildScrollView(child: _stepContent())),
-        const SizedBox(height: 12),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return Container(
+      margin: const EdgeInsets.all(16.0),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            TextButton(onPressed: _back, child: const Text('Atrás')),
-            BlocBuilder<CompleteProfileBloc, CompleteProfileState>(
-              builder: (context, state) {
-                if (state is CompleteProfileLoading)
-                  return const CircularProgressIndicator();
-                final isLast = _hadInjuries ? _step == 7 : _step == 6;
+            _buildStepHeader(context, _step, currentTitle, titles.length),
+            const SizedBox(height: 12),
+            Expanded(child: SingleChildScrollView(child: _stepContent())),
+            const SizedBox(height: 12),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                TextButton(onPressed: _back, child: const Text('Atrás')),
+                BlocBuilder<CompleteProfileBloc, CompleteProfileState>(
+                  builder: (context, state) {
+                    if (state is CompleteProfileLoading)
+                      return const CircularProgressIndicator();
+                    final isLast = _hadInjuries ? _step == 7 : _step == 6;
                 return ElevatedButton(
-                  onPressed: _next,
-                  child: Text(isLast ? 'Enviar' : 'Siguiente'),
-                );
-              },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF00DFC1),
+                    foregroundColor: Colors.black,
+                    textStyle: const TextStyle(fontWeight: FontWeight.bold),
+                    padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 18),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(999)),
+                  ),
+                      onPressed: _next,
+                      child: Text(isLast ? 'Enviar' : 'Siguiente'),
+                    );
+                  },
+                ),
+              ],
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildStepHeader(
+    BuildContext context,
+    int step,
+    String title,
+    int total,
+  ) {
+    // Stepper active color
+    const primary = Color(0xFF019193);
+    final inactive = Colors.grey.shade300;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Progress indicator - each step takes equal width
+        Row(
+          children: List.generate(total, (i) {
+            final active = i <= step;
+            return Expanded(
+              child: Container(
+                margin: EdgeInsets.only(right: i < total - 1 ? 4.0 : 0.0),
+                height: 6,
+                decoration: BoxDecoration(
+                  color: active ? primary : inactive,
+                  borderRadius: BorderRadius.circular(6),
+                ),
+              ),
+            );
+          }),
+        ),
+        const SizedBox(height: 12),
+        // Question number small
+        Text(
+          'Pregunta ${step + 1}',
+          style: TextStyle(
+            fontSize: 13,
+            fontWeight: FontWeight.w600,
+            color: Colors.black,
+          ),
+        ),
+        const SizedBox(height: 8),
+        // Title
+        Text(
+          title,
+          style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w600, color: Colors.black),
+        ),
+        const SizedBox(height: 16),
       ],
     );
   }
