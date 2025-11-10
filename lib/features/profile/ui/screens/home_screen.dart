@@ -343,28 +343,28 @@ class _RecoveryPhaseCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(top: 24), // Espaciado superior para separarlo
+      margin: const EdgeInsets.only(top: 24),
       decoration: BoxDecoration(
-        color: const Color(0xFF2C2C2C), // Fondo oscuro de las tarjetas
+        color: const Color(0xFF2C2C2C),
         borderRadius: BorderRadius.circular(16),
       ),
       padding: const EdgeInsets.only(right: 16, top: 16, bottom: 16),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // 1. Imagen y Botón de Favorito
+
           Stack(
             children: [
               ClipRRect(
                 borderRadius: BorderRadius.circular(16),
                 child: Image.asset(
-                  "assets/images/user&home/piemalo.png", // Debes reemplazar esto con la ruta de tu imagen real
-                  width: 140, // Ancho de la imagen para que encaje
-                  height: 120, // Altura adecuada para este card
+                  "assets/images/user&home/piemalo.png",
+                  width: 140,
+                  height: 120,
                   fit: BoxFit.cover,
                 ),
               ),
-              // Icono de corazón (Favorito)
+
               Positioned(
                 top: 8,
                 left: 8,
@@ -382,7 +382,7 @@ class _RecoveryPhaseCard extends StatelessWidget {
                   ),
                   child: const Icon(
                     Icons.favorite_border,
-                    color: Color(0xFF2C2C2C), // Color oscuro para el corazón
+                    color: Color(0xFF2C2C2C),
                     size: 18,
                   ),
                 ),
@@ -391,7 +391,7 @@ class _RecoveryPhaseCard extends StatelessWidget {
           ),
           const SizedBox(width: 16),
 
-          // 2. Contenido de Texto y Botón "Ver más"
+
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -416,16 +416,16 @@ class _RecoveryPhaseCard extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: 12),
-                // Botón "Ver más"
+
                 Align(
                   alignment: Alignment.bottomLeft,
                   child: ElevatedButton(
                     onPressed: () {
-                      // Acción al presionar "Ver más"
+
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF00C897), // El color verde brillante de tu diseño
-                      foregroundColor: Colors.black, // Color del texto
+                      backgroundColor: const Color(0xFF00C897),
+                      foregroundColor: Colors.black,
                       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20),

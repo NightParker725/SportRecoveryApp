@@ -18,6 +18,16 @@ class _MyProfilePageState extends State<MyProfilePage> {
     context.read<ProfileBloc>().add(LoadMyProfile());
   }
 
+  int _calculateAge(DateTime birthDate) {
+    final now = DateTime.now();
+    int age = now.year - birthDate.year;
+    if (now.month < birthDate.month ||
+        (now.month == birthDate.month && now.day < birthDate.day)) {
+      age--;
+    }
+    return age;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,11 +49,22 @@ class _MyProfilePageState extends State<MyProfilePage> {
                   // ---------- HEADER ----------
                   Container(
                     width: double.infinity,
-                    decoration: const BoxDecoration(
+                    decoration: BoxDecoration(
                       color: Colors.white,
-                      borderRadius: BorderRadius.only(
+                      borderRadius: const BorderRadius.only(
                         bottomLeft: Radius.circular(40),
                         bottomRight: Radius.circular(40),
+                      ),
+                      // Subtle teal arc pattern background
+                      gradient: LinearGradient(
+                        begin: Alignment.bottomRight,
+                        end: Alignment.topLeft,
+                        colors: [
+                          Colors.white,
+                          Colors.white,
+                          const Color(0xFF00CED1).withOpacity(0.05),
+                        ],
+                        stops: const [0.0, 0.6, 1.0],
                       ),
                     ),
                     padding: const EdgeInsets.symmetric(
@@ -51,49 +72,125 @@ class _MyProfilePageState extends State<MyProfilePage> {
                       horizontal: 20,
                     ),
                     child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Align(
-                          alignment: Alignment.centerLeft,
+                        // Avatar with teal border
+                        Container(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: const Color(0xFF00CED1),
+                              width: 3,
+                            ),
+                          ),
                           child: CircleAvatar(
                             radius: 45,
-                            backgroundImage:  NetworkImage(
-                              'https://cdn-icons-png.flaticon.com/512/847/847969.png',
+                            backgroundColor: Colors.grey[300],
+                            child: ClipOval(
+                              child: Image.network(
+                                'https://cdn-icons-png.flaticon.com/512/847/847969.png',
+                                width: 90,
+                                height: 90,
+                                fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) {
+                                  return Icon(
+                                    Icons.person,
+                                    size: 45,
+                                    color: Colors.grey[600],
+                                  );
+                                },
+                                loadingBuilder: (context, child, loadingProgress) {
+                                  if (loadingProgress == null) return child;
+                                  return Center(
+                                    child: CircularProgressIndicator(
+                                      value: loadingProgress.expectedTotalBytes != null
+                                          ? loadingProgress.cumulativeBytesLoaded /
+                                              loadingProgress.expectedTotalBytes!
+                                          : null,
+                                    ),
+                                  );
+                                },
+                              ),
                             ),
                           ),
                         ),
-
+                        const SizedBox(width: 16),
                         Expanded(
                           child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const SizedBox(height: 12),
+                              // Name
                               Text(
                                 profile.name ?? 'Usuario',
                                 style: const TextStyle(
-                                  fontSize: 22,
+                                  fontSize: 24,
                                   fontWeight: FontWeight.bold,
                                   color: Colors.black87,
                                 ),
                               ),
+                              const SizedBox(height: 4),
+                              // Email
                               Text(
                                 profile.email ?? '',
                                 style: const TextStyle(
                                   color: Colors.black54,
                                   fontSize: 14,
+                                  fontWeight: FontWeight.normal,
                                 ),
                               ),
-                              const SizedBox(height: 8),
-                              Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
+                              const SizedBox(height: 12),
+                              // Sport and Age side by side
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const Text(
-                                    "Deportista",
-                                    style: TextStyle(color: Colors.black87),
+                                  // Sport section
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      const Text(
+                                        "Deportista",
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black87,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 2),
+                                      Text(
+                                        profile.sex ?? "N/A",
+                                        style: const TextStyle(
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.normal,
+                                          color: Colors.black54,
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                  const SizedBox(width: 8),
-                                  Text(
-                                    "${profile.birthDate}",
-                                    style: const TextStyle(color: Colors.black54),
-                                  ),
+                                  const SizedBox(width: 24),
+                                  // Age section
+                                  if (profile.birthDate != null)
+                                    Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          _calculateAge(profile.birthDate!).toString(),
+                                          style: const TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.black87,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 2),
+                                        const Text(
+                                          "años",
+                                          style: TextStyle(
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.normal,
+                                            color: Colors.black54,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                 ],
                               ),
                             ],
@@ -136,15 +233,33 @@ class _MyProfilePageState extends State<MyProfilePage> {
                               ),
                             ),
                             const SizedBox(height: 16),
-
-                            GridView.count(
-                              crossAxisCount: 2,
-                              shrinkWrap: true,
-                              physics: const NeverScrollableScrollPhysics(),
-                              mainAxisSpacing: 12,
-                              crossAxisSpacing: 12,
-                              childAspectRatio: 1.4,
-                              children: const [
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            ClipRRect(
+                              borderRadius: const BorderRadius.only(
+                                bottomLeft: Radius.circular(30),
+                                bottomRight: Radius.circular(30),
+                                topRight: Radius.circular(30),
+                                topLeft: Radius.circular(30),
+                              ),
+                              child: Image.asset(
+                                "assets/images/user&home/inscreen.jpg",
+                                width: 105,
+                                height: 200,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: GridView.count(
+                                crossAxisCount: 2,
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                crossAxisSpacing: 8,
+                                mainAxisSpacing: 8,
+                                childAspectRatio: 1.0,
+                                children: const [
                                 _StatCard(
                                   title: "Información",
                                   icon: Icons.info_outline,
@@ -152,7 +267,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                                   "https://cdn-icons-png.flaticon.com/512/992/992651.png",
                                 ),
                                 _StatCard(
-                                  title: "Mis lesiones",
+                                  title: "Lesiones",
                                   icon: Icons.healing_outlined,
                                 ),
                                 _StatCard(
@@ -165,6 +280,9 @@ class _MyProfilePageState extends State<MyProfilePage> {
                                 ),
                               ],
                             ),
+                            ),
+                          ],
+                        ),
                             const SizedBox(height: 32),
 
                             const Text(
@@ -301,14 +419,23 @@ class _StatCard extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
         children: [
           image != null
               ? Image.network(image!, height: 40)
               : Icon(icon, color: Colors.white, size: 36),
-          const SizedBox(height: 12),
-          Text(
-            title,
-            style: const TextStyle(color: Colors.white),
+          const SizedBox(height: 8),
+          Flexible(
+            child: Text(
+              title,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 12,
+              ),
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
         ],
       ),
