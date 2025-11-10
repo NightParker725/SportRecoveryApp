@@ -19,6 +19,7 @@ class _InjuryAssessmentSummaryScreenState
   void initState() {
     super.initState();
     // Dispara el evento automáticamente con datos de prueba
+    _generateAssessment();
   }
 
   void _generateAssessment() {
