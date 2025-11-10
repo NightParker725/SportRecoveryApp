@@ -202,16 +202,31 @@ class _MyProfilePageState extends State<MyProfilePage> {
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: const [
-                        Icon(Icons.home_outlined, color: Colors.black87),
-                        Icon(Icons.library_books_outlined, color: Colors.black87),
-                        CircleAvatar(
-                          radius: 20,
-                          backgroundColor: Colors.black87,
-                          child: Icon(Icons.add, color: Colors.white),
+                      children: [
+                        const Icon(Icons.home_outlined, color: Colors.black87),
+                        const Icon(Icons.library_books_outlined, color: Colors.black87),
+                        GestureDetector(
+                          onTap: () {
+                            final userId = Supabase.instance.client.auth.currentUser?.id ?? '';
+                            if (userId.isNotEmpty) {
+                              Navigator.pushNamed(context, '/injury_location');
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Error: Usuario no autenticado'),
+                                  backgroundColor: Colors.red,
+                                ),
+                              );
+                            }
+                          },
+                          child: const CircleAvatar(
+                            radius: 20,
+                            backgroundColor: Colors.black87,
+                            child: Icon(Icons.add, color: Colors.white),
+                          ),
                         ),
-                        Icon(Icons.favorite_border, color: Colors.black87),
-                        Icon(Icons.person_outline, color: Colors.black87),
+                        const Icon(Icons.favorite_border, color: Colors.black87),
+                        const Icon(Icons.person_outline, color: Colors.black87),
                       ],
                     ),
                   ),
@@ -233,28 +248,37 @@ class _StatCard extends StatelessWidget {
   final String title;
   final IconData icon;
   final String? image;
-  const _StatCard({required this.title, required this.icon, this.image});
+  final VoidCallback? onTap;
+  const _StatCard({
+    required this.title,
+    required this.icon,
+    this.image,
+    this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: const Color(0xFF2C2C2C),
-        borderRadius: BorderRadius.circular(16),
-      ),
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          image != null
-              ? Image.network(image!, height: 40)
-              : Icon(icon, color: Colors.white, size: 36),
-          const SizedBox(height: 12),
-          Text(
-            title,
-            style: const TextStyle(color: Colors.white),
-          ),
-        ],
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        decoration: BoxDecoration(
+          color: const Color(0xFF2C2C2C),
+          borderRadius: BorderRadius.circular(16),
+        ),
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            image != null
+                ? Image.network(image!, height: 40)
+                : Icon(icon, color: Colors.white, size: 36),
+            const SizedBox(height: 12),
+            Text(
+              title,
+              style: const TextStyle(color: Colors.white),
+            ),
+          ],
+        ),
       ),
     );
   }

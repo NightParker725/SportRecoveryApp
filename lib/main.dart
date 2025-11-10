@@ -76,7 +76,7 @@ class MyApp extends StatelessWidget {
         // Rutas de evaluación de lesiones
         '/injury_location': (_) => BlocProvider(
           create: (_) => InjuryLocationBloc(),
-          child: const InjuryLocationScreen(userId: ''),
+          child: const InjuryLocationScreen(userId: 'fetch_from_auth'),
         ),
         '/injury_mechanism': (_) => BlocProvider(
           create: (_) => InjuryMechanismBloc(),

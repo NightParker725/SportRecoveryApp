@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../domain/entities/injury_assessment.dart';
 import '../bloc/injury_assessment_bloc.dart';
@@ -14,6 +15,39 @@ class InjuryAssessmentSummaryScreen extends StatefulWidget {
 
 class _InjuryAssessmentSummaryScreenState
     extends State<InjuryAssessmentSummaryScreen> {
+  @override
+  void initState() {
+    super.initState();
+    // Dispara el evento automáticamente con datos de prueba
+  }
+
+  void _generateAssessment() {
+    final userId = Supabase.instance.client.auth.currentUser?.id ?? 'test-user';
+
+    context.read<InjuryAssessmentBloc>().add(
+      GenerateAssessmentEvent(
+        userId: userId,
+        location: 'Rodilla',
+        side: 'Derecho',
+        timing: 'Hace 2 días',
+        mechanism: 'Movimiento brusco',
+        hasPopping: false,
+        frequency: 'Ocasional',
+        painIntensity: 7,
+        painTypes: ['Dolor agudo'],
+        painTriggers: ['Movimiento'],
+        weightBearingCapacity: 'Sí, pero con molestia',
+        basicActivities: ['Caminar normalmente'],
+        stabilityLevel: 'Un poco inestable',
+        symptoms: ['Inflamación'],
+        hasCriticalSymptoms: false,
+        activityType: 'Fútbol',
+        preexistingConditions: ['Ninguna'],
+        additionalFactors: ['Ninguno aplica'],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocListener<InjuryAssessmentBloc, InjuryAssessmentState>(

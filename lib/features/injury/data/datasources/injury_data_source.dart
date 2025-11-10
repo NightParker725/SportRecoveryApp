@@ -52,8 +52,8 @@ class InjuryDataSourceImpl implements InjuryDataSource {
       final response = await supabaseClient
           .from('injury_evaluations')
           .select()
-          .eq('userId', userId)
-          .order('createdAt', ascending: false);
+          .eq('user_id', userId)
+          .order('created_at', ascending: false);
 
       return (response as List)
           .map((item) => InjuryAssessment.fromJson(item))
@@ -84,8 +84,8 @@ class InjuryDataSourceImpl implements InjuryDataSource {
       final response = await supabaseClient
           .from('injury_evaluations')
           .select()
-          .eq('userId', userId)
-          .order('createdAt', ascending: false)
+          .eq('user_id', userId)
+          .order('created_at', ascending: false)
           .limit(limit);
 
       return (response as List)
