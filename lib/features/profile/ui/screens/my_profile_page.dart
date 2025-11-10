@@ -139,6 +139,24 @@ class _MyProfilePageState extends State<MyProfilePage> {
                                 ),
                               ),
                               const SizedBox(height: 12),
+                                  // Botón para completar perfil
+                              ElevatedButton.icon(
+                                onPressed: () {
+                                  Navigator.pushNamed(
+                                    context,
+                                    '/complete_profile',
+                                  );
+                                },
+                                icon: const Icon(
+                                  Icons.person_add_alt_1_outlined,
+                                ),
+                                label: const Text('Completar perfil'),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.deepPurple,
+                                  foregroundColor: Colors.white,
+                                ),
+                              ),
+                                  
                               // Sport and Age side by side
                               Row(
                                 crossAxisAlignment: CrossAxisAlignment.start,
