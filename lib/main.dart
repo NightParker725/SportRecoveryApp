@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:moviles252/features/auth/ui/bloc/signup_bloc.dart';
+import 'package:moviles252/features/checkin/ui/bloc/checkin_bloc.dart';
+import 'package:moviles252/features/checkin/ui/screens/checkin_form_screen.dart';
 import 'package:moviles252/features/profile/ui/bloc/profile_bloc.dart';
 import 'package:moviles252/features/auth/ui/screens/login_screen.dart';
 import 'package:moviles252/features/profile/ui/screens/my_profile_page.dart';
@@ -67,9 +69,9 @@ class MyApp extends StatelessWidget {
           create: (_) => ProfileBloc(),
           child: const ProfileScreen(),
         ),
-        '/home':(_)=> BlocProvider(
-          create: (_)=>ProfileBloc(),
-          child: const HomeScreen(),
+        '/checkin_form': (_) => BlocProvider(
+          create: (_) => CheckinBloc(),
+          child: const CheckinFormScreen(),
         ),
       },
     );

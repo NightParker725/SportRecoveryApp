@@ -357,6 +357,28 @@ class _MyProfilePageState extends State<MyProfilePage> {
                         vertical: 14,
                         horizontal: 24,
                       ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.2),
+                          blurRadius: 8,
+                          offset: const Offset(0, -3),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Icon(Icons.home_outlined, color: Colors.black87),
+                        const Icon(
+                          Icons.library_books_outlined,
+                          color: Colors.black87,
+                        ),
+
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.pushNamed(context, '/checkin_form');
+                          },
+                          child: const CircleAvatar(
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: const BorderRadius.only(
