@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../domain/entities/associated_symptoms.dart';
+import '../../data/services/injury_evaluation_service.dart';
 import '../bloc/injury_symptoms_bloc.dart';
 
 class InjurySymptomsScreen extends StatefulWidget {
@@ -285,6 +286,11 @@ class _InjurySymptomsScreenState extends State<InjurySymptomsScreen> {
           child: ElevatedButton(
             onPressed: isFormValid
                 ? () {
+                    // Guardar datos en el singleton
+                    final service = InjuryEvaluationService();
+                    service.symptoms = selectedSymptoms.toList();
+                    service.hasCriticalSymptoms = hasCriticalSymptoms;
+
                     context.read<InjurySymptomsBloc>().add(
                           SaveInjurySymptomsEvent(
                             symptoms: selectedSymptoms.toList(),

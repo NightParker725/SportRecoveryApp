@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../data/services/injury_evaluation_service.dart';
 import '../bloc/injury_location_bloc.dart';
 
 class InjuryLocationScreen extends StatefulWidget {
@@ -145,6 +146,11 @@ class _InjuryLocationScreenState extends State<InjuryLocationScreen> {
                   child: ElevatedButton(
                     onPressed: isFormValid
                         ? () {
+                            // Guardar datos en el singleton
+                            final service = InjuryEvaluationService();
+                            service.location = selectedLocation;
+                            service.side = selectedSide;
+
                             context.read<InjuryLocationBloc>().add(
                                   SaveInjuryLocationEvent(
                                     location: selectedLocation!,

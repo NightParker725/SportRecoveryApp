@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../domain/entities/injury_assessment.dart';
+import '../../data/services/injury_evaluation_service.dart';
 import '../bloc/injury_assessment_bloc.dart';
 
 class InjuryAssessmentSummaryScreen extends StatefulWidget {
@@ -24,29 +25,33 @@ class _InjuryAssessmentSummaryScreenState
 
   void _generateAssessment() {
     final userId = Supabase.instance.client.auth.currentUser?.id ?? 'test-user';
+    final service = InjuryEvaluationService();
 
     context.read<InjuryAssessmentBloc>().add(
       GenerateAssessmentEvent(
         userId: userId,
-        location: 'Rodilla',
-        side: 'Derecho',
-        timing: 'Hace 2 días',
-        mechanism: 'Movimiento brusco',
-        hasPopping: false,
-        frequency: 'Ocasional',
-        painIntensity: 7,
-        painTypes: ['Dolor agudo'],
-        painTriggers: ['Movimiento'],
-        weightBearingCapacity: 'Sí, pero con molestia',
-        basicActivities: ['Caminar normalmente'],
-        stabilityLevel: 'Un poco inestable',
-        symptoms: ['Inflamación'],
-        hasCriticalSymptoms: false,
-        activityType: 'Fútbol',
-        preexistingConditions: ['Ninguna'],
-        additionalFactors: ['Ninguno aplica'],
+        location: service.location ?? 'Rodilla',
+        side: service.side ?? 'Derecho',
+        timing: service.timing ?? 'Hace 2 días',
+        mechanism: service.mechanism ?? 'Movimiento brusco',
+        hasPopping: service.hasPopping ?? false,
+        frequency: service.frequency ?? 'Ocasional',
+        painIntensity: service.painIntensity ?? 7,
+        painTypes: service.painTypes ?? ['Dolor agudo'],
+        painTriggers: service.painTriggers ?? ['Movimiento'],
+        weightBearingCapacity: service.weightBearingCapacity ?? 'Sí, pero con molestia',
+        basicActivities: service.basicActivities ?? ['Caminar normalmente'],
+        stabilityLevel: service.stabilityLevel ?? 'Un poco inestable',
+        symptoms: service.symptoms ?? ['Inflamación'],
+        hasCriticalSymptoms: service.hasCriticalSymptoms ?? false,
+        activityType: service.activityType ?? 'Fútbol',
+        preexistingConditions: service.preexistingConditions ?? ['Ninguna'],
+        additionalFactors: service.additionalFactors ?? ['Ninguno aplica'],
       ),
     );
+
+    // Limpiar los datos del singleton después de usarlos
+    service.clearAll();
   }
 
   @override

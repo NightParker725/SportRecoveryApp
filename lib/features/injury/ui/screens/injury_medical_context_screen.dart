@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../data/services/injury_evaluation_service.dart';
 import '../bloc/injury_medical_context_bloc.dart';
 
 class InjuryMedicalContextScreen extends StatefulWidget {
@@ -304,6 +305,12 @@ class _InjuryMedicalContextScreenState extends State<InjuryMedicalContextScreen>
           child: ElevatedButton(
             onPressed: isFormValid
                 ? () {
+                    // Guardar datos en el singleton
+                    final service = InjuryEvaluationService();
+                    service.activityType = selectedActivity;
+                    service.preexistingConditions = selectedConditions.toList();
+                    service.additionalFactors = selectedFactors.toList();
+
                     context.read<InjuryMedicalContextBloc>().add(
                           SaveMedicalContextEvent(
                             activityType: selectedActivity!,

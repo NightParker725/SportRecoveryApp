@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../data/services/injury_evaluation_service.dart';
 import '../bloc/injury_pain_bloc.dart';
 
 class InjuryPainScreen extends StatefulWidget {
@@ -325,6 +326,12 @@ class _InjuryPainScreenState extends State<InjuryPainScreen> {
           child: ElevatedButton(
             onPressed: isFormValid
                 ? () {
+                    // Guardar datos en el singleton
+                    final service = InjuryEvaluationService();
+                    service.painIntensity = selectedIntensity;
+                    service.painTypes = selectedPainTypes.toList();
+                    service.painTriggers = selectedTriggerFactors.toList();
+
                     context.read<InjuryPainBloc>().add(
                           SaveInjuryPainEvent(
                             intensity: selectedIntensity!,

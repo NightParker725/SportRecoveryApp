@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../data/services/injury_evaluation_service.dart';
 import '../bloc/injury_mechanism_bloc.dart';
 
 class InjuryMechanismScreen extends StatefulWidget {
@@ -227,6 +228,13 @@ class _InjuryMechanismScreenState extends State<InjuryMechanismScreen> {
           child: ElevatedButton(
             onPressed: isFormValid
                 ? () {
+                    // Guardar datos en el singleton
+                    final service = InjuryEvaluationService();
+                    service.timing = selectedTiming;
+                    service.mechanism = selectedMechanism;
+                    service.hasPopping = selectedPopping == 'Sí';
+                    service.frequency = selectedFrequency;
+
                     context.read<InjuryMechanismBloc>().add(
                           SaveInjuryMechanismEvent(
                             timing: selectedTiming!,

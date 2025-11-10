@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../data/services/injury_evaluation_service.dart';
 import '../bloc/injury_functional_capacity_bloc.dart';
 
 class InjuryFunctionalCapacityScreen extends StatefulWidget {
@@ -293,6 +294,12 @@ class _InjuryFunctionalCapacityScreenState
           child: ElevatedButton(
             onPressed: isFormValid
                 ? () {
+                    // Guardar datos en el singleton
+                    final service = InjuryEvaluationService();
+                    service.weightBearingCapacity = selectedWeightBearing;
+                    service.basicActivities = selectedActivities.toList();
+                    service.stabilityLevel = selectedStability;
+
                     context.read<InjuryFunctionalCapacityBloc>().add(
                           SaveFunctionalCapacityEvent(
                             weightBearingCapacity: selectedWeightBearing!,
