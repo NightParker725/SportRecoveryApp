@@ -13,7 +13,11 @@ class ProfileDataSourceImpl extends ProfileDataSource {
 
   @override
   Future<void> createProfile(Profile profile) async {
-    await _db.from(tableName).insert(profile.toJson());
+    final payload = profile.toJson();
+    try {
+      print('[ProfileDataSource] create payload=$payload');
+    } catch (_) {}
+    await _db.from(tableName).insert(payload);
   }
 
   @override
@@ -31,6 +35,9 @@ class ProfileDataSourceImpl extends ProfileDataSource {
   Future<void> updateProfile(Profile profile) async {
     final data = profile.toJson();
     data.remove('created_at');
+    try {
+      print('[ProfileDataSource] update id=${profile.id} payload=$data');
+    } catch (_) {}
     await _db.from(tableName).update(data).eq('id', profile.id);
   }
 }

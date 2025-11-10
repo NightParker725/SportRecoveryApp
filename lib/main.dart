@@ -1,16 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:moviles252/features/auth/ui/bloc/signup_bloc.dart';
+import 'package:moviles252/features/checkin/ui/bloc/checkin_bloc.dart';
+import 'package:moviles252/features/checkin/ui/screens/checkin_form_screen.dart';
 import 'package:moviles252/features/profile/ui/bloc/profile_bloc.dart';
 import 'package:moviles252/features/auth/ui/screens/login_screen.dart';
 import 'package:moviles252/features/profile/ui/screens/my_profile_page.dart';
 import 'package:moviles252/features/profile/ui/screens/profile_screen.dart';
 import 'package:moviles252/features/auth/ui/screens/signup_screen.dart';
+import 'package:moviles252/features/profile/ui/screens/home_screen.dart';
 import 'features/auth/ui/screens/splash_screen.dart';
 import 'features/auth/ui/screens/welcome_screen.dart';
 import 'features/auth/ui/bloc/splash_bloc.dart';
 import 'features/auth/data/repository/auth_repository_impl.dart';
 import 'features/auth/domain/usecases/check_user_logged_in_usecase.dart';
+import 'features/profile/ui/screens/complete_profile_screen.dart';
+import 'features/profile/ui/bloc/complete_profile_bloc.dart';
+import 'features/profile/domain/usecases/profile_usecases.dart';
+import 'features/profile/data/repository/profile_repository_impl.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:moviles252/features/auth/ui/bloc/login_bloc.dart';
 import 'features/injury/ui/screens/injury_location_screen.dart';
@@ -63,6 +70,12 @@ class MyApp extends StatelessWidget {
         ),
         '/signup': (_) =>
             BlocProvider(create: (_) => SignupBloc(), child: SignupScreen()),
+        '/complete_profile': (_) => BlocProvider(
+          create: (_) => CompleteProfileBloc(
+            CompleteProfileUsecase(ProfileRepositoryImpl()),
+          ),
+          child: CompleteProfileScreen(),
+        ),
         '/login': (_) =>
             BlocProvider(create: (_) => LoginBloc(), child: LoginScreen()),
         '/my_profile': (_) => BlocProvider(
