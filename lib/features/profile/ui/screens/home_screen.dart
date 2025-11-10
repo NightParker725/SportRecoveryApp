@@ -40,11 +40,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
             return Stack(
               children: [
+
                 Positioned.fill(
                   child: Image.asset(
                     'assets/images/user&home/fondomain.jpg',
-                    height: 300,
-                    fit: BoxFit.fitWidth,
+                    width: double.infinity,
+                    height: 250,
+                    fit: BoxFit.cover,
                   ),
                 ),
 
@@ -96,12 +98,21 @@ class _HomeScreenState extends State<HomeScreen> {
                                 Row(
                                   children: [
 
+                                    ClipRRect(
+                                      borderRadius: const BorderRadius.only(
+                                        bottomLeft: Radius.circular(30),
+                                        bottomRight: Radius.circular(30),
+                                        topRight: Radius.circular(30),
+                                        topLeft: Radius.circular(30),
+                                       ),
+                                      child:
                                     Image.asset("assets/images/user&home/inscreen.jpg",
-                                      width: 100,
+                                      width: 105,
+                                      height: 200,
                                       fit: BoxFit.cover,
 
                                     ),
-
+                                    ),
                                     Expanded(
                                   child:
                                   GridView.count(
@@ -199,6 +210,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                     ),
                                   ),
                                 ),
+                                const _RecoveryPhaseCard(),
+
 
 
                               ],
@@ -317,6 +330,122 @@ class _HomeActionItem extends StatelessWidget {
         ),
       ),
       onTap: onTap,
+    );
+  }
+
+
+}
+// ---------- Nuevo Widget Auxiliar ----------
+
+class _RecoveryPhaseCard extends StatelessWidget {
+  const _RecoveryPhaseCard({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(top: 24), // Espaciado superior para separarlo
+      decoration: BoxDecoration(
+        color: const Color(0xFF2C2C2C), // Fondo oscuro de las tarjetas
+        borderRadius: BorderRadius.circular(16),
+      ),
+      padding: const EdgeInsets.only(right: 16, top: 16, bottom: 16),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 1. Imagen y Botón de Favorito
+          Stack(
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(16),
+                child: Image.asset(
+                  "assets/images/user&home/piemalo.png", // Debes reemplazar esto con la ruta de tu imagen real
+                  width: 140, // Ancho de la imagen para que encaje
+                  height: 120, // Altura adecuada para este card
+                  fit: BoxFit.cover,
+                ),
+              ),
+              // Icono de corazón (Favorito)
+              Positioned(
+                top: 8,
+                left: 8,
+                child: Container(
+                  padding: const EdgeInsets.all(4),
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.3),
+                          blurRadius: 3,
+                        )
+                      ]
+                  ),
+                  child: const Icon(
+                    Icons.favorite_border,
+                    color: Color(0xFF2C2C2C), // Color oscuro para el corazón
+                    size: 18,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(width: 16),
+
+          // 2. Contenido de Texto y Botón "Ver más"
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  "Fase de desinflamación",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                const Text(
+                  "Continúa explorando sobre tu fase actual.",
+                  style: TextStyle(
+                    color: Colors.white70,
+                    fontSize: 13,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 12),
+                // Botón "Ver más"
+                Align(
+                  alignment: Alignment.bottomLeft,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      // Acción al presionar "Ver más"
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF00C897), // El color verde brillante de tu diseño
+                      foregroundColor: Colors.black, // Color del texto
+                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      elevation: 0,
+                    ),
+                    child: const Text(
+                      "Ver más",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

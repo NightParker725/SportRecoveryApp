@@ -56,11 +56,12 @@ class _MyProfilePageState extends State<MyProfilePage> {
                           alignment: Alignment.centerLeft,
                           child: CircleAvatar(
                             radius: 45,
-                            backgroundImage: const NetworkImage(
+                            backgroundImage:  NetworkImage(
                               'https://cdn-icons-png.flaticon.com/512/847/847969.png',
                             ),
                           ),
                         ),
+
                         Expanded(
                           child: Column(
                             children: [
@@ -135,6 +136,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                               ),
                             ),
                             const SizedBox(height: 16),
+
                             GridView.count(
                               crossAxisCount: 2,
                               shrinkWrap: true,
