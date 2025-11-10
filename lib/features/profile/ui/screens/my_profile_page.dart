@@ -369,6 +369,30 @@ class _MyProfilePageState extends State<MyProfilePage> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         const Icon(Icons.home_outlined, color: Colors.black87),
+                        const Icon(Icons.library_books_outlined, color: Colors.black87),
+                        const CircleAvatar(
+                          radius: 20,
+                          backgroundColor: Colors.black87,
+                          child: Icon(Icons.add, color: Colors.white),
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            final userId = Supabase.instance.client.auth.currentUser?.id ?? '';
+                            if (userId.isNotEmpty) {
+                              Navigator.pushNamed(context, '/injury_location');
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Error: Usuario no autenticado'),
+                                  backgroundColor: Colors.red,
+                                ),
+                              );
+                            }
+                          },
+                          child: const Icon(Icons.favorite_border, color: Colors.black87),
+                        ),
+                        const Icon(Icons.person_outline, color: Colors.black87),
+                      ],
                         const Icon(
                           Icons.library_books_outlined,
                           color: Colors.black87,
@@ -442,11 +466,12 @@ class _StatCard extends StatelessWidget {
   final String title;
   final IconData icon;
   final String? image;
-
+  final VoidCallback? onTap;
   const _StatCard({
     required this.title,
     required this.icon,
     this.image,
+    this.onTap,
   });
 
   @override

@@ -20,6 +20,23 @@ import 'features/profile/domain/usecases/profile_usecases.dart';
 import 'features/profile/data/repository/profile_repository_impl.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:moviles252/features/auth/ui/bloc/login_bloc.dart';
+import 'features/injury/ui/screens/injury_location_screen.dart';
+import 'features/injury/ui/screens/injury_mechanism_screen.dart';
+import 'features/injury/ui/screens/injury_pain_screen.dart';
+import 'features/injury/ui/screens/injury_functional_capacity_screen.dart';
+import 'features/injury/ui/screens/injury_symptoms_screen.dart';
+import 'features/injury/ui/screens/injury_medical_context_screen.dart';
+import 'features/injury/ui/screens/injury_assessment_summary_screen.dart';
+import 'features/injury/ui/bloc/injury_location_bloc.dart';
+import 'features/injury/ui/bloc/injury_mechanism_bloc.dart';
+import 'features/injury/ui/bloc/injury_pain_bloc.dart';
+import 'features/injury/ui/bloc/injury_functional_capacity_bloc.dart';
+import 'features/injury/ui/bloc/injury_symptoms_bloc.dart';
+import 'features/injury/ui/bloc/injury_medical_context_bloc.dart';
+import 'features/injury/ui/bloc/injury_assessment_bloc.dart';
+import 'features/injury/domain/usecases/start_injury_evaluation_flow_usecase.dart';
+import 'features/injury/data/repositories/injury_repository_impl.dart';
+import 'features/injury/data/datasources/injury_data_source.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -69,9 +86,41 @@ class MyApp extends StatelessWidget {
           create: (_) => ProfileBloc(),
           child: const ProfileScreen(),
         ),
-        '/checkin_form': (_) => BlocProvider(
-          create: (_) => CheckinBloc(),
-          child: const CheckinFormScreen(),
+        // Rutas de evaluación de lesiones
+        '/injury_location': (_) => BlocProvider(
+          create: (_) => InjuryLocationBloc(),
+          child: const InjuryLocationScreen(userId: 'fetch_from_auth'),
+        ),
+        '/injury_mechanism': (_) => BlocProvider(
+          create: (_) => InjuryMechanismBloc(),
+          child: const InjuryMechanismScreen(),
+        ),
+        '/injury_pain': (_) => BlocProvider(
+          create: (_) => InjuryPainBloc(),
+          child: const InjuryPainScreen(),
+        ),
+        '/injury_functional_capacity': (_) => BlocProvider(
+          create: (_) => InjuryFunctionalCapacityBloc(),
+          child: const InjuryFunctionalCapacityScreen(),
+        ),
+        '/injury_symptoms': (_) => BlocProvider(
+          create: (_) => InjurySymptomsBloc(),
+          child: const InjurySymptomsScreen(),
+        ),
+        '/injury_medical_context': (_) => BlocProvider(
+          create: (_) => InjuryMedicalContextBloc(),
+          child: const InjuryMedicalContextScreen(),
+        ),
+        '/injury_assessment_summary': (_) => BlocProvider(
+          create: (_) => InjuryAssessmentBloc(
+            startInjuryEvaluationFlowUseCase: StartInjuryEvaluationFlowUseCase(),
+            injuryRepository: InjuryRepositoryImpl(
+              injuryDataSource: InjuryDataSourceImpl(
+                supabaseClient: Supabase.instance.client,
+              ),
+            ),
+          ),
+          child: const InjuryAssessmentSummaryScreen(),
         ),
       },
     );
