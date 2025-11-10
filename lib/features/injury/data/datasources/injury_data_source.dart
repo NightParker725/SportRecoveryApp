@@ -20,7 +20,7 @@ class InjuryDataSourceImpl implements InjuryDataSource {
     try {
       final data = assessment.toJson();
       final response = await supabaseClient
-          .from('injury_assessments')
+          .from('injury_evaluations')
           .insert(data)
           .select()
           .single();
@@ -35,7 +35,7 @@ class InjuryDataSourceImpl implements InjuryDataSource {
   Future<InjuryAssessment> getAssessmentById(String assessmentId) async {
     try {
       final response = await supabaseClient
-          .from('injury_assessments')
+          .from('injury_evaluations')
           .select()
           .eq('id', assessmentId)
           .single();
@@ -50,7 +50,7 @@ class InjuryDataSourceImpl implements InjuryDataSource {
   Future<List<InjuryAssessment>> getUserAssessments(String userId) async {
     try {
       final response = await supabaseClient
-          .from('injury_assessments')
+          .from('injury_evaluations')
           .select()
           .eq('userId', userId)
           .order('createdAt', ascending: false);
@@ -67,7 +67,7 @@ class InjuryDataSourceImpl implements InjuryDataSource {
   Future<void> deleteAssessment(String assessmentId) async {
     try {
       await supabaseClient
-          .from('injury_assessments')
+          .from('injury_evaluations')
           .delete()
           .eq('id', assessmentId);
     } catch (e) {
@@ -82,7 +82,7 @@ class InjuryDataSourceImpl implements InjuryDataSource {
   ) async {
     try {
       final response = await supabaseClient
-          .from('injury_assessments')
+          .from('injury_evaluations')
           .select()
           .eq('userId', userId)
           .order('createdAt', ascending: false)
