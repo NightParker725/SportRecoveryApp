@@ -82,6 +82,10 @@ class MyApp extends StatelessWidget {
           create: (_) => ProfileBloc(),
           child: const MyProfilePage(),
         ),
+        '/home':(_)=> BlocProvider(
+          create: (_)=>ProfileBloc(),
+          child: const HomeScreen(),
+        ),
         '/edit_profile': (_) => BlocProvider(
           create: (_) => ProfileBloc(),
           child: const ProfileScreen(),
@@ -122,6 +126,11 @@ class MyApp extends StatelessWidget {
           ),
           child: const InjuryAssessmentSummaryScreen(),
         ),
+        '/checkin_form':(_)=> BlocProvider(
+            create: (_)=>CheckinBloc(),
+          child: const CheckinFormScreen(),
+        ),
+
       },
     );
   }

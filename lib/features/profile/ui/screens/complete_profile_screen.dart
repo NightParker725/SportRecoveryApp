@@ -6,8 +6,10 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:dotted_border/dotted_border.dart';
 
 class CompleteProfileScreen extends StatefulWidget {
+  const CompleteProfileScreen({super.key});
+
   @override
-  _CompleteProfileScreenState createState() => _CompleteProfileScreenState();
+  State<CompleteProfileScreen> createState() => _CompleteProfileScreenState();
 }
 
 class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
@@ -39,6 +41,8 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
   // Step 4
   String? _primaryActivity;
   String? _complementaryActivity;
+  late final TextEditingController _primaryActivityCtrl;
+  late final TextEditingController _complementaryActivityCtrl;
 
   // Step 5
   String? _activityFrequency;
@@ -61,6 +65,13 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
   DateTime? _injuryDate;
 
   @override
+  void initState() {
+    super.initState();
+    _primaryActivityCtrl = TextEditingController(text: _primaryActivity ?? '');
+    _complementaryActivityCtrl = TextEditingController(text: _complementaryActivity ?? '');
+  }
+
+  @override
   void dispose() {
     _preferredNameCtrl.dispose();
     _profilePictureCtrl.dispose();
@@ -68,6 +79,8 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
     _weightCtrl.dispose();
     _otherGoalCtrl.dispose();
     _injuryTypeCtrl.dispose();
+    _primaryActivityCtrl.dispose();
+    _complementaryActivityCtrl.dispose();
     super.dispose();
   }
 
@@ -219,7 +232,7 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
   }
 
   Widget _buildAvatarUploader() {
-    final borderColor = const Color(0xFF00DFC1);
+    const borderColor = Color(0xFF00DFC1);
     if (_uploadedAvatarUrl == null || _uploadedAvatarUrl!.isEmpty) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -469,8 +482,12 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
         sex: _sex,
         heightCm: height,
         weightKg: weight,
-        primaryPhysicalActivity: _primaryActivity,
-        complementaryPhysicalActivity: _complementaryActivity,
+        primaryPhysicalActivity: _primaryActivityCtrl.text.trim().isEmpty
+            ? null
+            : _primaryActivityCtrl.text.trim(),
+        complementaryPhysicalActivity: _complementaryActivityCtrl.text.trim().isEmpty
+            ? null
+            : _complementaryActivityCtrl.text.trim(),
         physicalActivityFrequency: _activityFrequency,
         mainGoals: goals.isEmpty ? null : goals,
         injuriesLastYear: injuries,
@@ -542,15 +559,19 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
           children: [
             _buildFieldLabel('Actividad física principal'),
             TextFormField(
-              controller: TextEditingController(text: _primaryActivity),
-              onChanged: (v) => _primaryActivity = v,
+              controller: _primaryActivityCtrl,
+              onChanged: (v) {
+                _primaryActivity = v.isEmpty ? null : v;
+              },
               decoration: _inputDecoration(hint: ''),
             ),
             const SizedBox(height: 12),
             _buildFieldLabel('Actividad complementaria (opcional)'),
             TextFormField(
-              controller: TextEditingController(text: _complementaryActivity),
-              onChanged: (v) => _complementaryActivity = v,
+              controller: _complementaryActivityCtrl,
+              onChanged: (v) {
+                _complementaryActivity = v.isEmpty ? null : v;
+              },
               decoration: _inputDecoration(hint: ''),
             ),
           ],
