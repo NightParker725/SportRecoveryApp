@@ -6,6 +6,7 @@ import 'package:moviles252/features/auth/ui/screens/login_screen.dart';
 import 'package:moviles252/features/profile/ui/screens/my_profile_page.dart';
 import 'package:moviles252/features/profile/ui/screens/profile_screen.dart';
 import 'package:moviles252/features/auth/ui/screens/signup_screen.dart';
+import 'package:moviles252/features/profile/ui/screens/home_screen.dart';
 import 'features/auth/ui/screens/splash_screen.dart';
 import 'features/auth/ui/screens/welcome_screen.dart';
 import 'features/auth/ui/bloc/splash_bloc.dart';
@@ -65,6 +66,10 @@ class MyApp extends StatelessWidget {
         '/edit_profile': (_) => BlocProvider(
           create: (_) => ProfileBloc(),
           child: const ProfileScreen(),
+        ),
+        '/home':(_)=> BlocProvider(
+          create: (_)=>ProfileBloc(),
+          child: const HomeScreen(),
         ),
       },
     );

@@ -92,7 +92,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                           // Fondo con >>>
                           Container(
                             width:
-                                double.infinity, // También ocupa todo el ancho
+                            double.infinity, // También ocupa todo el ancho
                             height: 56,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(35),
