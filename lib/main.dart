@@ -37,6 +37,21 @@ import 'features/injury/ui/bloc/injury_assessment_bloc.dart';
 import 'features/injury/domain/usecases/start_injury_evaluation_flow_usecase.dart';
 import 'features/injury/data/repositories/injury_repository_impl.dart';
 import 'features/injury/data/datasources/injury_data_source.dart';
+import 'features/education/ui/screens/encyclopedia_screen.dart';
+import 'features/education/ui/screens/common_injuries_screen.dart';
+import 'features/education/ui/screens/prevention_tips_screen.dart';
+import 'features/education/ui/screens/myths_screen.dart';
+import 'features/education/ui/screens/glossary_screen.dart';
+import 'features/education/ui/bloc/common_injuries_bloc.dart';
+import 'features/education/ui/bloc/prevention_tips_bloc.dart';
+import 'features/education/ui/bloc/myths_bloc.dart';
+import 'features/education/ui/bloc/glossary_bloc.dart';
+import 'features/education/domain/usecases/view_common_injuries_flow_usecase.dart';
+import 'features/education/domain/usecases/view_prevention_tips_flow_usecase.dart';
+import 'features/education/domain/usecases/view_myths_flow_usecase.dart';
+import 'features/education/domain/usecases/view_glossary_flow_usecase.dart';
+import 'features/education/data/repositories/education_repository_impl.dart';
+import 'features/education/data/datasources/education_datasource_impl.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -130,6 +145,64 @@ class MyApp extends StatelessWidget {
             create: (_)=>CheckinBloc(),
           child: const CheckinFormScreen(),
         ),
+        // Rutas de Educación/Enciclopedia
+        '/education': (_) => const EncyclopediaScreen(),
+        '/education/common-injuries': (_) {
+          final repository = EducationRepositoryImpl(
+            educationDataSource: EducationDataSourceImpl(
+              supabaseClient: Supabase.instance.client,
+              useMockData: true,
+            ),
+          );
+          return BlocProvider(
+            create: (_) => CommonInjuriesBloc(
+              useCase: ViewCommonInjuriesFlowUseCase(repository: repository),
+            ),
+            child: const CommonInjuriesScreen(),
+          );
+        },
+        '/education/prevention-tips': (_) {
+          final repository = EducationRepositoryImpl(
+            educationDataSource: EducationDataSourceImpl(
+              supabaseClient: Supabase.instance.client,
+              useMockData: true,
+            ),
+          );
+          return BlocProvider(
+            create: (_) => PreventionTipsBloc(
+              useCase: ViewPreventionTipsFlowUseCase(repository: repository),
+            ),
+            child: const PreventionTipsScreen(),
+          );
+        },
+        '/education/myths': (_) {
+          final repository = EducationRepositoryImpl(
+            educationDataSource: EducationDataSourceImpl(
+              supabaseClient: Supabase.instance.client,
+              useMockData: true,
+            ),
+          );
+          return BlocProvider(
+            create: (_) => MythsBloc(
+              useCase: ViewMythsFlowUseCase(repository: repository),
+            ),
+            child: const MythsScreen(),
+          );
+        },
+        '/education/glossary': (_) {
+          final repository = EducationRepositoryImpl(
+            educationDataSource: EducationDataSourceImpl(
+              supabaseClient: Supabase.instance.client,
+              useMockData: true,
+            ),
+          );
+          return BlocProvider(
+            create: (_) => GlossaryBloc(
+              useCase: ViewGlossaryFlowUseCase(repository: repository),
+            ),
+            child: const GlossaryScreen(),
+          );
+        },
 
       },
     );
