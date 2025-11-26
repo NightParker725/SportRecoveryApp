@@ -3,12 +3,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:moviles252/features/auth/ui/bloc/signup_bloc.dart';
 import 'package:moviles252/features/checkin/ui/bloc/checkin_bloc.dart';
 import 'package:moviles252/features/checkin/ui/screens/checkin_form_screen.dart';
+import 'package:moviles252/features/education/ui/screens/pain_map.dart';
 import 'package:moviles252/features/profile/ui/bloc/profile_bloc.dart';
 import 'package:moviles252/features/auth/ui/screens/login_screen.dart';
 import 'package:moviles252/features/profile/ui/screens/my_profile_page.dart';
 import 'package:moviles252/features/profile/ui/screens/profile_screen.dart';
 import 'package:moviles252/features/auth/ui/screens/signup_screen.dart';
 import 'package:moviles252/features/profile/ui/screens/home_screen.dart';
+import 'package:moviles252/ui/widgets/bottom_navigation_bar.dart';
 import 'package:moviles252/features/recovery/data/repositories/recovery_repository_impl.dart';
 import 'package:moviles252/features/recovery/domain/usecases/advance_recovery_day.dart';
 import 'package:moviles252/features/recovery/domain/usecases/complete_recovery_task.dart';
@@ -18,6 +20,7 @@ import 'package:moviles252/features/recovery/domain/usecases/get_tasks_by_phase.
 import 'package:moviles252/features/recovery/ui/bloc/recovery_bloc.dart';
 import 'package:moviles252/features/recovery/ui/screens/recovery_overview_screen.dart';
 import 'package:moviles252/features/recovery/ui/screens/recovery_phase_screen.dart';
+import 'package:moviles252/features/education/ui/screens/pain_map.dart';
 import 'features/auth/ui/screens/splash_screen.dart';
 import 'features/auth/ui/screens/welcome_screen.dart';
 import 'features/auth/ui/bloc/splash_bloc.dart';
@@ -85,6 +88,38 @@ void main() async {
   runApp(const MyApp());
 }
 
+/// Widget para la barra de navegacion(ya funciona epaaa :D
+class _ScreenWithBottomNav extends StatelessWidget {
+  final Widget child;
+
+  const _ScreenWithBottomNav({required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFF1F242A),
+      body: SafeArea(
+        child: Column(
+          children: [
+            Expanded(child: child),
+            Container(
+              height: 40,
+              decoration: const BoxDecoration(
+                color: Color(0xFF1F242A),
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(40),
+                  bottomRight: Radius.circular(40),
+                ),
+              ),
+            ),
+            const AppBottomNavigationBar(),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -115,11 +150,15 @@ class MyApp extends StatelessWidget {
             BlocProvider(create: (_) => LoginBloc(), child: LoginScreen()),
         '/my_profile': (_) => BlocProvider(
           create: (_) => ProfileBloc(),
-          child: const MyProfilePage(),
+          child: const _ScreenWithBottomNav(
+            child: MyProfilePage(),
+          ),
         ),
         '/home': (_) => BlocProvider(
           create: (_) => ProfileBloc(),
-          child: const HomeScreen(),
+          child: const _ScreenWithBottomNav(
+            child: HomeScreen(),
+          ),
         ),
         '/edit_profile': (_) => BlocProvider(
           create: (_) => ProfileBloc(),
@@ -219,16 +258,26 @@ class MyApp extends StatelessWidget {
             ),
           );
 
+
           return BlocProvider(
             create: (_) => GlossaryBloc(
               useCase: ViewGlossaryFlowUseCase(repository: repository),
             ),
             child: const GlossaryScreen(),
           );
+
         },
+        '/pain_map': (_) => BlocProvider.value(
+          value: recoveryBloc,
+          child: const _ScreenWithBottomNav(
+            child: PainMapScreen(),
+          ),
+        ),
         '/recovery_overview': (_) => BlocProvider.value(
           value: recoveryBloc,
-          child: const RecoveryOverviewScreen(),
+          child: const _ScreenWithBottomNav(
+            child: RecoveryOverviewScreen(),
+          ),
         ),
         '/recovery_phase': (_) => BlocProvider.value(
           value: recoveryBloc,

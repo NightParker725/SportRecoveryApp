@@ -65,6 +65,7 @@ flutter:
     - assets/images/splash/
     - assets/images/welcome/
     - assets/images/user&home/
+    - assets/images/mapdolor/
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
