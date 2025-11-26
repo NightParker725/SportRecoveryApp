@@ -1,11 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../ui/bloc/recovery_bloc.dart';
 import '../../domain/entities/recovery_phase.dart';
 import '../../domain/entities/recovery_plan.dart';
 
-class RecoveryOverviewScreen extends StatelessWidget {
+class RecoveryOverviewScreen extends StatefulWidget {
   const RecoveryOverviewScreen({super.key});
+
+  @override
+  State<RecoveryOverviewScreen> createState() => _RecoveryOverviewScreenState();
+}
+
+class _RecoveryOverviewScreenState extends State<RecoveryOverviewScreen> {
+  @override
+  void initState() {
+    super.initState();
+    // Disparar la carga del overview al entrar a la pantalla
+    final uid = Supabase.instance.client.auth.currentUser?.id;
+    if (uid != null) {
+      context.read<RecoveryBloc>().add(LoadRecoveryOverview(uid));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,13 +43,13 @@ class RecoveryOverviewScreen extends StatelessWidget {
               return const Center(child: Text('No hay lesión activa o plan.'));
             }
 
-            // Safety when finding current phase:
+            // Safety when finding current phase (avoid generic type mismatch)
             RecoveryPhase? currentPhase;
             if (progress != null && phases.isNotEmpty) {
-              currentPhase = phases.firstWhere(
+              final idx = phases.indexWhere(
                 (p) => p.phaseIndex == progress.currentPhase,
-                orElse: () => phases[0],
               );
+              currentPhase = idx >= 0 ? phases[idx] : phases[0];
             } else {
               currentPhase = phases.isNotEmpty ? phases[0] : null;
             }
@@ -64,14 +80,11 @@ class RecoveryOverviewScreen extends StatelessWidget {
                       itemCount: phases.length,
                       itemBuilder: (context, i) {
                         final p = phases[i];
-                        final isCurrent =
-                            (currentPhase != null && currentPhase.id == p.id);
+                        final isCurrent = (currentPhase != null && currentPhase.id == p.id);
                         return ListTile(
                           title: Text('${p.phaseIndex}. ${p.name}'),
                           subtitle: Text(p.description ?? ''),
-                          trailing: isCurrent
-                              ? const Icon(Icons.play_arrow)
-                              : null,
+                          trailing: isCurrent ? const Icon(Icons.play_arrow) : null,
                           onTap: () {
                             Navigator.pushNamed(
                               context,
