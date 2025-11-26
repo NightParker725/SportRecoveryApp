@@ -1,17 +1,19 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:moviles252/features/recovery/domain/usecases/get_tasks_by_phase.dart';
+import '../../domain/entities/injury_evaluation.dart';
+import '../../domain/entities/recovery_plan.dart';
+import '../../domain/entities/recovery_phase.dart';
+import '../../domain/entities/recovery_progress.dart';
+import '../../domain/entities/recovery_task.dart';
+
 import '../../domain/usecases/get_recovery_overview.dart';
 import '../../domain/usecases/get_phases_by_plan.dart';
 import '../../domain/usecases/get_tasks_by_phase.dart';
 import '../../domain/usecases/complete_recovery_task.dart';
 import '../../domain/usecases/advance_recovery_day.dart';
 
-import '../../domain/entities/recovery_phase.dart';
-import '../../domain/entities/recovery_task.dart';
-import '../../domain/entities/recovery_progress.dart';
-import '../../domain/entities/recovery_plan.dart';
-import '../../domain/entities/injury_evaluation.dart';
-
+// ---------------------------------------------------------
+// EVENTS
+// ---------------------------------------------------------
 abstract class RecoveryEvent {}
 
 class LoadRecoveryOverview extends RecoveryEvent {
@@ -19,15 +21,20 @@ class LoadRecoveryOverview extends RecoveryEvent {
   LoadRecoveryOverview(this.userId);
 }
 
-class RefreshOverview extends RecoveryEvent {
+class RefreshRecovery extends RecoveryEvent {
   final String userId;
-  RefreshOverview(this.userId);
+  RefreshRecovery(this.userId);
+}
+
+class LoadPhaseTasks extends RecoveryEvent {
+  final String phaseId;
+  LoadPhaseTasks(this.phaseId);
 }
 
 class CompleteTaskEvent extends RecoveryEvent {
   final String taskId;
   final String planId;
-  CompleteTaskEvent({required this.taskId, required this.planId});
+  CompleteTaskEvent(this.taskId, this.planId);
 }
 
 class AdvanceDayEvent extends RecoveryEvent {
@@ -35,6 +42,9 @@ class AdvanceDayEvent extends RecoveryEvent {
   AdvanceDayEvent(this.planId);
 }
 
+// ---------------------------------------------------------
+// STATES
+// ---------------------------------------------------------
 abstract class RecoveryState {}
 
 class RecoveryLoading extends RecoveryState {}
@@ -45,10 +55,10 @@ class RecoveryError extends RecoveryState {
 }
 
 class RecoveryLoaded extends RecoveryState {
-  final InjuryEvaluation? injury;
-  final RecoveryPlan? plan;
+  final InjuryEvaluation injury;
+  final RecoveryPlan plan;
   final List<RecoveryPhase> phases;
-  final RecoveryProgress? progress;
+  final RecoveryProgress progress;
 
   RecoveryLoaded({
     required this.injury,
@@ -58,43 +68,68 @@ class RecoveryLoaded extends RecoveryState {
   });
 }
 
-class RecoveryTaskCompleting extends RecoveryState {}
+class PhaseTasksLoading extends RecoveryState {}
 
-class RecoveryTaskCompleted extends RecoveryState {}
+class PhaseTasksLoaded extends RecoveryState {
+  final List<RecoveryTask> tasks;
+  PhaseTasksLoaded(this.tasks);
+}
 
+class TaskCompleting extends RecoveryState {}
+
+class TaskCompleted extends RecoveryState {}
+
+// ---------------------------------------------------------
+// BLOC
+// ---------------------------------------------------------
 class RecoveryBloc extends Bloc<RecoveryEvent, RecoveryState> {
   final GetRecoveryOverviewUseCase getOverview;
-  final GetPhasesByPlan getPhasesByPlan;
-  final GetTasksByPhase getTasksByPhase;
+  final GetPhasesByPlan getPhases;
+  final GetTasksByPhase getTasks;
   final CompleteRecoveryTaskUseCase completeTask;
   final AdvanceRecoveryDayUseCase advanceDay;
 
   RecoveryBloc({
     required this.getOverview,
-    required this.getPhasesByPlan,
-    required this.getTasksByPhase,
+    required this.getPhases,
+    required this.getTasks,
     required this.completeTask,
     required this.advanceDay,
   }) : super(RecoveryLoading()) {
-    on<LoadRecoveryOverview>(_onLoad);
-    on<RefreshOverview>(_onLoad);
+    on<LoadRecoveryOverview>(_onLoadOverview);
+    on<RefreshRecovery>(_onLoadOverview);
+    on<LoadPhaseTasks>(_onLoadTasks);
     on<CompleteTaskEvent>(_onCompleteTask);
     on<AdvanceDayEvent>(_onAdvanceDay);
   }
 
-  Future<void> _onLoad(RecoveryEvent event, Emitter<RecoveryState> emit) async {
-    final userId = (event is LoadRecoveryOverview)
+  // ---------------------------------------------------------
+  // LOAD OVERVIEW
+  // ---------------------------------------------------------
+  Future<void> _onLoadOverview(
+    RecoveryEvent event,
+    Emitter<RecoveryState> emit,
+  ) async {
+    final String userId = (event is LoadRecoveryOverview)
         ? event.userId
-        : (event as RefreshOverview).userId;
+        : (event as RefreshRecovery).userId;
+
     emit(RecoveryLoading());
+
     try {
       final overview = await getOverview.execute(userId);
+
+      if (overview.injury == null || overview.plan == null) {
+        emit(RecoveryError("No hay lesión activa ni plan de recuperación."));
+        return;
+      }
+
       emit(
         RecoveryLoaded(
-          injury: overview.injury,
-          plan: overview.plan,
+          injury: overview.injury!,
+          plan: overview.plan!,
           phases: overview.phases,
-          progress: overview.progress,
+          progress: overview.progress!,
         ),
       );
     } catch (e) {
@@ -102,37 +137,66 @@ class RecoveryBloc extends Bloc<RecoveryEvent, RecoveryState> {
     }
   }
 
-  Future<void> _onCompleteTask(
-    CompleteTaskEvent e,
+  // ---------------------------------------------------------
+  // LOAD TASKS OF A PHASE
+  // ---------------------------------------------------------
+  Future<void> _onLoadTasks(
+    LoadPhaseTasks event,
     Emitter<RecoveryState> emit,
   ) async {
-    emit(RecoveryTaskCompleting());
+    emit(PhaseTasksLoading());
     try {
-      await completeTask.execute(e.taskId, e.planId);
-      emit(RecoveryTaskCompleted());
-      // refresh
-      if (state is RecoveryLoaded && (state as RecoveryLoaded).plan != null) {
-        final userIdPlaceholder = (state as RecoveryLoaded).injury?.userId;
-        if (userIdPlaceholder != null) add(RefreshOverview(userIdPlaceholder));
-      }
-    } catch (ex) {
-      emit(RecoveryError(ex.toString()));
+      final tasks = await getTasks.execute(event.phaseId);
+      emit(PhaseTasksLoaded(tasks));
+    } catch (e) {
+      emit(RecoveryError(e.toString()));
     }
   }
 
+  // ---------------------------------------------------------
+  // COMPLETE TASK
+  // ---------------------------------------------------------
+  Future<void> _onCompleteTask(
+    CompleteTaskEvent event,
+    Emitter<RecoveryState> emit,
+  ) async {
+    emit(TaskCompleting());
+
+    try {
+      await completeTask.execute(event.taskId, event.planId);
+
+      emit(TaskCompleted());
+
+      // Refresh overview
+      if (state is RecoveryLoaded) {
+        final loaded = state as RecoveryLoaded;
+        if (loaded.injury.userId != null) {
+          add(RefreshRecovery(loaded.injury.userId!));
+        }
+      }
+    } catch (e) {
+      emit(RecoveryError(e.toString()));
+    }
+  }
+
+  // ---------------------------------------------------------
+  // ADVANCE DAY
+  // ---------------------------------------------------------
   Future<void> _onAdvanceDay(
-    AdvanceDayEvent e,
+    AdvanceDayEvent event,
     Emitter<RecoveryState> emit,
   ) async {
     try {
-      await advanceDay.execute(e.planId);
-      // refresh
-      final userIdPlaceholder = (state is RecoveryLoaded)
-          ? (state as RecoveryLoaded).injury?.userId
-          : null;
-      if (userIdPlaceholder != null) add(RefreshOverview(userIdPlaceholder));
-    } catch (ex) {
-      emit(RecoveryError(ex.toString()));
+      await advanceDay.execute(event.planId);
+
+      if (state is RecoveryLoaded) {
+        final loaded = state as RecoveryLoaded;
+        if (loaded.injury.userId != null) {
+          add(RefreshRecovery(loaded.injury.userId!));
+        }
+      }
+    } catch (e) {
+      emit(RecoveryError(e.toString()));
     }
   }
 }

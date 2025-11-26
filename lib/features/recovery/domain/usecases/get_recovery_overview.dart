@@ -23,8 +23,12 @@ class GetRecoveryOverviewUseCase {
   GetRecoveryOverviewUseCase(this.repository);
 
   Future<RecoveryOverview> execute(String userId) async {
+    print("🔵 UC: buscando lesión para $userId");
     final injury = await repository.getInjuryForUser(userId);
+    print("🟣 UC: injury = $injury");
+
     if (injury == null) {
+      print("⚠️ UC: NO hay lesión activa");
       return RecoveryOverview(
         injury: null,
         plan: null,
@@ -33,18 +37,17 @@ class GetRecoveryOverviewUseCase {
       );
     }
 
+    print("🔵 UC: buscando plan para lesion ${injury.id}");
     final plan = await repository.getPlanByInjury(injury.id);
-    if (plan == null) {
-      return RecoveryOverview(
-        injury: injury,
-        plan: null,
-        phases: [],
-        progress: null,
-      );
-    }
+    print("🟣 UC: plan = $plan");
 
-    final phases = await repository.getPhasesByPlan(plan.id);
+    print("🔵 UC: buscando fases del plan");
+    final phases = await repository.getPhasesByPlan(plan!.id);
+    print("🟣 UC: fases = ${phases.length}");
+
+    print("🔵 UC: buscando progreso");
     final progress = await repository.getProgressForPlan(plan.id);
+    print("🟣 UC: progress = $progress");
 
     return RecoveryOverview(
       injury: injury,

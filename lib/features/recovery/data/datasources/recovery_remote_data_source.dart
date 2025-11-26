@@ -38,9 +38,9 @@ class RecoveryRemoteDataSource {
     final res = await _db
         .from('recovery_phases')
         .select()
-        .eq('plan_id', planId)
-        .order('phase_index');
+        .eq('plan_id', planId);
 
+    print(" RAW phases response: $res");
     return (res as List)
         .map((e) => RecoveryPhaseModel.fromJson(Map<String, dynamic>.from(e)))
         .toList();
@@ -106,4 +106,6 @@ class RecoveryRemoteDataSource {
 
     return (res as List).map((e) => e['task_id'] as String).toList();
   }
+
+  Future<dynamic> getCompletionsForPlan(String planId) async {}
 }

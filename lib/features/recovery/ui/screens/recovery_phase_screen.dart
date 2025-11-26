@@ -51,7 +51,7 @@ class _RecoveryPhaseScreenState extends State<RecoveryPhaseScreen> {
     await complete.execute(taskId, planId);
     // Notify bloc to refresh overview
     context.read<RecoveryBloc>().add(
-      RefreshOverview(
+      RefreshRecovery(
         (context.read<RecoveryBloc>().state is RecoveryLoaded)
             ? (context.read<RecoveryBloc>().state as RecoveryLoaded)
                       .injury

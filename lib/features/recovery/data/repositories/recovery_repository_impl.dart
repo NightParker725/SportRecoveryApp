@@ -86,7 +86,7 @@ class RecoveryRepositoryImpl implements RecoveryRepository {
       planId: completion.planId,
       completedAt: completion.completedAt,
     );
-    await _remote.createTaskCompletion(model);
+    await _remote.createTaskCompletion(completion.planId, model.id);
   }
 
   @override

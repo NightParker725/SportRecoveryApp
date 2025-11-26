@@ -61,16 +61,18 @@ import 'features/education/domain/usecases/view_myths_flow_usecase.dart';
 import 'features/education/domain/usecases/view_glossary_flow_usecase.dart';
 import 'features/education/data/repositories/education_repository_impl.dart';
 import 'features/education/data/datasources/education_datasource_impl.dart';
+import 'package:moviles252/features/recovery/domain/usecases/get_phases_by_plan.dart';
+import 'package:moviles252/features/recovery/domain/usecases/get_tasks_by_phase.dart';
 
 final repo = RecoveryRepositoryImpl();
+
 final recoveryBloc = RecoveryBloc(
   getOverview: GetRecoveryOverviewUseCase(repo),
-  getPhasesByPlan: GetPhasesByPlan(repo),
-  getTasksByPhase: GetTasksByPhase(repo),
+  getPhases: GetPhasesByPlan(repo),
   completeTask: CompleteRecoveryTaskUseCase(repo),
   advanceDay: AdvanceRecoveryDayUseCase(repo),
+  getTasks: GetTasksByPhase(repo),
 );
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
