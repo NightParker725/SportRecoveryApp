@@ -99,17 +99,23 @@ class _MyProfilePageState extends State<MyProfilePage> {
                                     color: Colors.grey[600],
                                   );
                                 },
-                                loadingBuilder: (context, child, loadingProgress) {
-                                  if (loadingProgress == null) return child;
-                                  return Center(
-                                    child: CircularProgressIndicator(
-                                      value: loadingProgress.expectedTotalBytes != null
-                                          ? loadingProgress.cumulativeBytesLoaded /
-                                              loadingProgress.expectedTotalBytes!
-                                          : null,
-                                    ),
-                                  );
-                                },
+                                loadingBuilder:
+                                    (context, child, loadingProgress) {
+                                      if (loadingProgress == null) return child;
+                                      return Center(
+                                        child: CircularProgressIndicator(
+                                          value:
+                                              loadingProgress
+                                                      .expectedTotalBytes !=
+                                                  null
+                                              ? loadingProgress
+                                                        .cumulativeBytesLoaded /
+                                                    loadingProgress
+                                                        .expectedTotalBytes!
+                                              : null,
+                                        ),
+                                      );
+                                    },
                               ),
                             ),
                           ),
@@ -139,7 +145,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                                 ),
                               ),
                               const SizedBox(height: 12),
-                                  // Botón para completar perfil
+                              // Botón para completar perfil
                               ElevatedButton.icon(
                                 onPressed: () {
                                   Navigator.pushNamed(
@@ -156,14 +162,15 @@ class _MyProfilePageState extends State<MyProfilePage> {
                                   foregroundColor: Colors.white,
                                 ),
                               ),
-                                  
+
                               // Sport and Age side by side
                               Row(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   // Sport section
                                   Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       const Text(
                                         "Deportista",
@@ -188,10 +195,13 @@ class _MyProfilePageState extends State<MyProfilePage> {
                                   // Age section
                                   if (profile.birthDate != null)
                                     Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          _calculateAge(profile.birthDate!).toString(),
+                                          _calculateAge(
+                                            profile.birthDate!,
+                                          ).toString(),
                                           style: const TextStyle(
                                             fontSize: 16,
                                             fontWeight: FontWeight.bold,
@@ -251,56 +261,57 @@ class _MyProfilePageState extends State<MyProfilePage> {
                               ),
                             ),
                             const SizedBox(height: 16),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            ClipRRect(
-                              borderRadius: const BorderRadius.only(
-                                bottomLeft: Radius.circular(30),
-                                bottomRight: Radius.circular(30),
-                                topRight: Radius.circular(30),
-                                topLeft: Radius.circular(30),
-                              ),
-                              child: Image.asset(
-                                "assets/images/user&home/inscreen.jpg",
-                                width: 105,
-                                height: 200,
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: GridView.count(
-                                crossAxisCount: 2,
-                                shrinkWrap: true,
-                                physics: const NeverScrollableScrollPhysics(),
-                                crossAxisSpacing: 8,
-                                mainAxisSpacing: 8,
-                                childAspectRatio: 1.0,
-                                children: const [
-                                _StatCard(
-                                  title: "Información",
-                                  icon: Icons.info_outline,
-                                  image:
-                                  "https://cdn-icons-png.flaticon.com/512/992/992651.png",
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                ClipRRect(
+                                  borderRadius: const BorderRadius.only(
+                                    bottomLeft: Radius.circular(30),
+                                    bottomRight: Radius.circular(30),
+                                    topRight: Radius.circular(30),
+                                    topLeft: Radius.circular(30),
+                                  ),
+                                  child: Image.asset(
+                                    "assets/images/user&home/inscreen.jpg",
+                                    width: 105,
+                                    height: 200,
+                                    fit: BoxFit.cover,
+                                  ),
                                 ),
-                                _StatCard(
-                                  title: "Lesiones",
-                                  icon: Icons.healing_outlined,
-                                ),
-                                _StatCard(
-                                  title: "Historial",
-                                  icon: Icons.history_outlined,
-                                ),
-                                _StatCard(
-                                  title: "Mis tareas",
-                                  icon: Icons.assignment_outlined,
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: GridView.count(
+                                    crossAxisCount: 2,
+                                    shrinkWrap: true,
+                                    physics:
+                                        const NeverScrollableScrollPhysics(),
+                                    crossAxisSpacing: 8,
+                                    mainAxisSpacing: 8,
+                                    childAspectRatio: 1.0,
+                                    children: const [
+                                      _StatCard(
+                                        title: "Información",
+                                        icon: Icons.info_outline,
+                                        image:
+                                            "https://cdn-icons-png.flaticon.com/512/992/992651.png",
+                                      ),
+                                      _StatCard(
+                                        title: "Lesiones",
+                                        icon: Icons.healing_outlined,
+                                      ),
+                                      _StatCard(
+                                        title: "Historial",
+                                        icon: Icons.history_outlined,
+                                      ),
+                                      _StatCard(
+                                        title: "Mis tareas",
+                                        icon: Icons.assignment_outlined,
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ],
                             ),
-                            ),
-                          ],
-                        ),
                             const SizedBox(height: 32),
 
                             const Text(
@@ -341,7 +352,9 @@ class _MyProfilePageState extends State<MyProfilePage> {
                             ),
                             const SizedBox(height: 8),
                             _ConfigItem(
-                              icon: Icons.settings_outlined, label: '', onTap: () {  },
+                              icon: Icons.settings_outlined,
+                              label: '',
+                              onTap: () {},
                             ),
                           ],
                         ),
@@ -382,8 +395,14 @@ class _MyProfilePageState extends State<MyProfilePage> {
                             onPressed: () =>
                                 Navigator.pushNamed(context, '/home'),
                           ),
-                          const Icon(Icons.library_books_outlined,
-                              color: Colors.black87),
+                          IconButton(
+                            icon: const Icon(
+                              Icons.library_books_outlined,
+                              color: Colors.black87,
+                            ),
+                            onPressed: () =>
+                                Navigator.pushNamed(context, '/education'),
+                          ),
                           GestureDetector(
                             onTap: () {
                               Navigator.pushNamed(context, '/checkin_form');
@@ -396,19 +415,34 @@ class _MyProfilePageState extends State<MyProfilePage> {
                           ),
                           GestureDetector(
                             onTap: () {
-                              final userId = Supabase.instance.client.auth.currentUser?.id ?? '';
+                              final userId =
+                                  Supabase
+                                      .instance
+                                      .client
+                                      .auth
+                                      .currentUser
+                                      ?.id ??
+                                  '';
                               if (userId.isNotEmpty) {
-                                Navigator.pushNamed(context, '/injury_location');
+                                Navigator.pushNamed(
+                                  context,
+                                  '/recovery_overview',
+                                );
                               } else {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
-                                    content: Text('Error: Usuario no autenticado'),
+                                    content: Text(
+                                      'Error: Usuario no autenticado',
+                                    ),
                                     backgroundColor: Colors.red,
                                   ),
                                 );
                               }
                             },
-                            child: const Icon(Icons.favorite_border, color: Colors.black87),
+                            child: const Icon(
+                              Icons.favorite_border,
+                              color: Colors.black87,
+                            ),
                           ),
                           IconButton(
                             icon: const Icon(
@@ -466,10 +500,7 @@ class _StatCard extends StatelessWidget {
           Flexible(
             child: Text(
               title,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 12,
-              ),
+              style: const TextStyle(color: Colors.white, fontSize: 12),
               textAlign: TextAlign.center,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,

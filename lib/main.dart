@@ -9,6 +9,8 @@ import 'package:moviles252/features/profile/ui/screens/my_profile_page.dart';
 import 'package:moviles252/features/profile/ui/screens/profile_screen.dart';
 import 'package:moviles252/features/auth/ui/screens/signup_screen.dart';
 import 'package:moviles252/features/profile/ui/screens/home_screen.dart';
+import 'package:moviles252/features/recovery/ui/screens/recovery_overview_screen.dart';
+import 'package:moviles252/features/recovery/ui/screens/recovery_phase_screen.dart';
 import 'features/auth/ui/screens/splash_screen.dart';
 import 'features/auth/ui/screens/welcome_screen.dart';
 import 'features/auth/ui/bloc/splash_bloc.dart';
@@ -97,8 +99,8 @@ class MyApp extends StatelessWidget {
           create: (_) => ProfileBloc(),
           child: const MyProfilePage(),
         ),
-        '/home':(_)=> BlocProvider(
-          create: (_)=>ProfileBloc(),
+        '/home': (_) => BlocProvider(
+          create: (_) => ProfileBloc(),
           child: const HomeScreen(),
         ),
         '/edit_profile': (_) => BlocProvider(
@@ -132,7 +134,8 @@ class MyApp extends StatelessWidget {
         ),
         '/injury_assessment_summary': (_) => BlocProvider(
           create: (_) => InjuryAssessmentBloc(
-            startInjuryEvaluationFlowUseCase: StartInjuryEvaluationFlowUseCase(),
+            startInjuryEvaluationFlowUseCase:
+                StartInjuryEvaluationFlowUseCase(),
             injuryRepository: InjuryRepositoryImpl(
               injuryDataSource: InjuryDataSourceImpl(
                 supabaseClient: Supabase.instance.client,
@@ -141,8 +144,8 @@ class MyApp extends StatelessWidget {
           ),
           child: const InjuryAssessmentSummaryScreen(),
         ),
-        '/checkin_form':(_)=> BlocProvider(
-            create: (_)=>CheckinBloc(),
+        '/checkin_form': (_) => BlocProvider(
+          create: (_) => CheckinBloc(),
           child: const CheckinFormScreen(),
         ),
         // Rutas de Educación/Enciclopedia
@@ -189,6 +192,7 @@ class MyApp extends StatelessWidget {
             child: const MythsScreen(),
           );
         },
+
         '/education/glossary': (_) {
           final repository = EducationRepositoryImpl(
             educationDataSource: EducationDataSourceImpl(
@@ -196,6 +200,7 @@ class MyApp extends StatelessWidget {
               useMockData: true,
             ),
           );
+
           return BlocProvider(
             create: (_) => GlossaryBloc(
               useCase: ViewGlossaryFlowUseCase(repository: repository),
@@ -203,7 +208,8 @@ class MyApp extends StatelessWidget {
             child: const GlossaryScreen(),
           );
         },
-
+        '/recovery_overview': (_) => const RecoveryOverviewScreen(),
+        '/recovery_phase': (_) => const RecoveryPhaseScreen(),
       },
     );
   }

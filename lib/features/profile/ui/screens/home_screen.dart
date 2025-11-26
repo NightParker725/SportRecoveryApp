@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:moviles252/features/profile/ui/bloc/profile_bloc.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -40,7 +41,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
             return Stack(
               children: [
-
                 Positioned.fill(
                   child: Image.asset(
                     'assets/images/user&home/fondomain.jpg',
@@ -50,13 +50,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
 
-
                 Positioned(
                   top: 60,
                   left: 24,
                   child: Image.asset('assets/images/logo.png', width: 140),
                 ),
-
 
                 Positioned(
                   top: 210,
@@ -97,77 +95,78 @@ class _HomeScreenState extends State<HomeScreen> {
                                 const SizedBox(height: 16),
                                 Row(
                                   children: [
-
                                     ClipRRect(
                                       borderRadius: const BorderRadius.only(
                                         bottomLeft: Radius.circular(30),
                                         bottomRight: Radius.circular(30),
                                         topRight: Radius.circular(30),
                                         topLeft: Radius.circular(30),
-                                       ),
-                                      child:
-                                    Image.asset("assets/images/user&home/inscreen.jpg",
-                                      width: 105,
-                                      height: 200,
-                                      fit: BoxFit.cover,
-
-                                    ),
+                                      ),
+                                      child: Image.asset(
+                                        "assets/images/user&home/inscreen.jpg",
+                                        width: 105,
+                                        height: 200,
+                                        fit: BoxFit.cover,
+                                      ),
                                     ),
                                     Expanded(
-                                  child:
-                                  GridView.count(
-                                    crossAxisCount: 2,
-                                    shrinkWrap: true,
-                                    physics:
-                                    const NeverScrollableScrollPhysics(),
-                                    mainAxisSpacing: 5,
-                                    crossAxisSpacing: 5,
-                                    children: const [
-                                      _HomeStatCard(
-                                        title: "Progreso",
-                                        icon: Icons.show_chart,
+                                      child: GridView.count(
+                                        crossAxisCount: 2,
+                                        shrinkWrap: true,
+                                        physics:
+                                            const NeverScrollableScrollPhysics(),
+                                        mainAxisSpacing: 5,
+                                        crossAxisSpacing: 5,
+                                        children: const [
+                                          _HomeStatCard(
+                                            title: "Progreso",
+                                            icon: Icons.show_chart,
+                                          ),
+                                          _HomeStatCard(
+                                            title: "Mis tareas",
+                                            icon: Icons.checklist_outlined,
+                                          ),
+                                          _HomeStatCard(
+                                            title: "Tutoriales",
+                                            icon: Icons.lightbulb_outline,
+                                          ),
+                                          _HomeStatCard(
+                                            title: "Timer",
+                                            icon: Icons.access_time,
+                                          ),
+                                        ],
                                       ),
-                                      _HomeStatCard(
-                                        title: "Mis tareas",
-                                        icon: Icons.checklist_outlined,
-                                      ),
-                                      _HomeStatCard(
-                                        title: "Tutoriales",
-                                        icon: Icons.lightbulb_outline,
-                                      ),
-                                      _HomeStatCard(
-                                        title: "Timer",
-                                        icon: Icons.access_time,
-                                      ),
+                                    ),
                                   ],
-                                      ),
-
-                                  ),
-                                  ],
-
                                 ),
 
                                 const SizedBox(height: 5),
                                 //Boton de agregar lesion
                                 InkWell(
                                   onTap: () {
-                                    Navigator.pushNamed(context, '/injury_register');
+                                    Navigator.pushNamed(
+                                      context,
+                                      '/injury_location',
+                                    );
                                   },
                                   child: Container(
                                     width: double.infinity,
-                                    margin: const EdgeInsets.symmetric(vertical: 8),
+                                    margin: const EdgeInsets.symmetric(
+                                      vertical: 8,
+                                    ),
                                     padding: const EdgeInsets.all(16),
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(16),
-                                    color: Color(0xFF019193) ,
+                                      color: Color(0xFF019193),
                                     ),
                                     child: Row(
                                       children: [
-
                                         Container(
                                           padding: const EdgeInsets.all(8),
                                           decoration: BoxDecoration(
-                                            color: Colors.white.withOpacity(0.2),
+                                            color: Colors.white.withOpacity(
+                                              0.2,
+                                            ),
                                             shape: BoxShape.circle,
                                           ),
                                           child: const Icon(
@@ -179,7 +178,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                         const SizedBox(width: 16),
                                         const Expanded(
                                           child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
                                             children: [
                                               Text(
                                                 "Nueva lesión",
@@ -211,11 +211,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ),
                                 ),
                                 const _RecoveryPhaseCard(),
-
-
-
                               ],
-
                             ),
                           ),
                         ),
@@ -253,11 +249,22 @@ class _HomeScreenState extends State<HomeScreen> {
                                   onPressed: () =>
                                       Navigator.pushNamed(context, '/home'),
                                 ),
-                                const Icon(Icons.library_books_outlined,
-                                    color: Colors.black87),
+                                IconButton(
+                                  icon: const Icon(
+                                    Icons.library_books_outlined,
+                                    color: Colors.black87,
+                                  ),
+                                  onPressed: () => Navigator.pushNamed(
+                                    context,
+                                    '/education',
+                                  ),
+                                ),
                                 GestureDetector(
                                   onTap: () {
-                                    Navigator.pushNamed(context, '/checkin_form');
+                                    Navigator.pushNamed(
+                                      context,
+                                      '/checkin_form',
+                                    );
                                   },
                                   child: const CircleAvatar(
                                     radius: 20,
@@ -267,27 +274,47 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ),
                                 GestureDetector(
                                   onTap: () {
-                                    final userId = Supabase.instance.client.auth.currentUser?.id ?? '';
+                                    final userId =
+                                        Supabase
+                                            .instance
+                                            .client
+                                            .auth
+                                            .currentUser
+                                            ?.id ??
+                                        '';
                                     if (userId.isNotEmpty) {
-                                      Navigator.pushNamed(context, '/injury_location');
+                                      Navigator.pushNamed(
+                                        context,
+                                        '/recovery_overview',
+                                      );
                                     } else {
-                                      ScaffoldMessenger.of(context).showSnackBar(
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
                                         const SnackBar(
-                                          content: Text('Error: Usuario no autenticado'),
+                                          content: Text(
+                                            'Error: Usuario no autenticado',
+                                          ),
                                           backgroundColor: Colors.red,
                                         ),
                                       );
                                     }
                                   },
-                                  child: const Icon(Icons.favorite_border, color: Colors.black87),
+
+                                  child: const Icon(
+                                    Icons.favorite_border,
+                                    color: Colors.black87,
+                                  ),
                                 ),
                                 IconButton(
                                   icon: const Icon(
                                     Icons.person,
                                     color: Colors.black87,
                                   ),
-                                  onPressed: () =>
-                                      Navigator.pushNamed(context, '/my_profile'),
+                                  onPressed: () => Navigator.pushNamed(
+                                    context,
+                                    '/my_profile',
+                                  ),
                                 ),
                               ],
                             ),
@@ -329,10 +356,7 @@ class _HomeStatCard extends StatelessWidget {
               ? Image.network(image!, height: 40)
               : Icon(icon, color: Colors.white, size: 36),
           const SizedBox(height: 12),
-          Text(
-            title,
-            style: const TextStyle(color: Colors.white),
-          ),
+          Text(title, style: const TextStyle(color: Colors.white)),
         ],
       ),
     );
@@ -367,8 +391,6 @@ class _HomeActionItem extends StatelessWidget {
       onTap: onTap,
     );
   }
-
-
 }
 // ---------- Nuevo Widget Auxiliar ----------
 
@@ -387,7 +409,6 @@ class _RecoveryPhaseCard extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-
           Stack(
             children: [
               ClipRRect(
@@ -406,14 +427,14 @@ class _RecoveryPhaseCard extends StatelessWidget {
                 child: Container(
                   padding: const EdgeInsets.all(4),
                   decoration: BoxDecoration(
-                      color: Colors.white,
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.3),
-                          blurRadius: 3,
-                        )
-                      ]
+                    color: Colors.white,
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.3),
+                        blurRadius: 3,
+                      ),
+                    ],
                   ),
                   child: const Icon(
                     Icons.favorite_border,
@@ -425,7 +446,6 @@ class _RecoveryPhaseCard extends StatelessWidget {
             ],
           ),
           const SizedBox(width: 16),
-
 
           Expanded(
             child: Column(
@@ -443,10 +463,7 @@ class _RecoveryPhaseCard extends StatelessWidget {
                 const SizedBox(height: 4),
                 const Text(
                   "Continúa explorando sobre tu fase actual.",
-                  style: TextStyle(
-                    color: Colors.white70,
-                    fontSize: 13,
-                  ),
+                  style: TextStyle(color: Colors.white70, fontSize: 13),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -455,13 +472,14 @@ class _RecoveryPhaseCard extends StatelessWidget {
                 Align(
                   alignment: Alignment.bottomLeft,
                   child: ElevatedButton(
-                    onPressed: () {
-
-                    },
+                    onPressed: () {},
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF00C897),
                       foregroundColor: Colors.black,
-                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 24,
+                        vertical: 8,
+                      ),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20),
                       ),
