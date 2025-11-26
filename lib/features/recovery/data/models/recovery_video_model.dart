@@ -1,40 +1,43 @@
-import 'package:moviles252/features/recovery/domain/entities/recovery_video.dart';
+import '../../domain/entities/recovery_video.dart';
 
 class RecoveryVideoModel extends RecoveryVideo {
   RecoveryVideoModel({
     required String id,
+    String? taskId,
+    String? phaseId,
     required String title,
     required String url,
-    String? thumbnailUrl,
-    List<String>? recommendations,
+    String? thumbnail,
+    required DateTime createdAt,
   }) : super(
          id: id,
+         taskId: taskId,
+         phaseId: phaseId,
          title: title,
          url: url,
-         thumbnailUrl: thumbnailUrl,
-         recommendations: recommendations ?? [],
+         thumbnail: thumbnail,
+         createdAt: createdAt,
        );
 
   factory RecoveryVideoModel.fromJson(Map<String, dynamic> json) {
-    final recs =
-        (json['recommendations'] as List<dynamic>?)
-            ?.map((e) => e as String)
-            .toList() ??
-        [];
     return RecoveryVideoModel(
       id: json['id'] as String,
+      taskId: json['task_id'] as String?,
+      phaseId: json['phase_id'] as String?,
       title: json['title'] as String,
       url: json['url'] as String,
-      thumbnailUrl: json['thumbnail_url'] as String?,
-      recommendations: recs,
+      thumbnail: json['thumbnail'] as String?,
+      createdAt: DateTime.parse(json['created_at'] as String),
     );
   }
 
   Map<String, dynamic> toJson() => {
     'id': id,
+    'task_id': taskId,
+    'phase_id': phaseId,
     'title': title,
     'url': url,
-    'thumbnail_url': thumbnailUrl,
-    'recommendations': recommendations,
+    'thumbnail': thumbnail,
+    'created_at': createdAt.toIso8601String(),
   };
 }

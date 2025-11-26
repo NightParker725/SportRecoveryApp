@@ -1,17 +1,19 @@
 class RecoveryPhase {
   final String id;
-  final String injuryId;
-  final String title;
+  final String planId;
+  final String name;
   final String? description;
-  final int? dayStart;
-  final int? dayEnd;
+  final int phaseIndex;
+  final int durationDays;
+  final DateTime createdAt;
 
   RecoveryPhase({
     required this.id,
-    required this.injuryId,
-    required this.title,
-    required this.description,
-    required this.dayStart,
-    required this.dayEnd,
+    required this.planId,
+    required this.name,
+    this.description,
+    required this.phaseIndex,
+    required this.durationDays,
+    required this.createdAt,
   });
 }

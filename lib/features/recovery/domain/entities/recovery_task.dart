@@ -3,19 +3,17 @@ class RecoveryTask {
   final String phaseId;
   final String title;
   final String? description;
-  final String? taskType; // "video", "timer", "custom"
-  final int? duration; // minutes
-  final int? series;
-  final String? videoId;
+  final int dayIndex;
+  final bool isMandatory;
+  final DateTime createdAt;
 
   RecoveryTask({
     required this.id,
     required this.phaseId,
     required this.title,
-    required this.description,
-    required this.taskType,
-    required this.duration,
-    required this.series,
-    required this.videoId,
+    this.description,
+    required this.dayIndex,
+    required this.isMandatory,
+    required this.createdAt,
   });
 }

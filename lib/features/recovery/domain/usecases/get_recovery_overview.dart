@@ -1,21 +1,56 @@
 import '../repositories/recovery_repository.dart';
 import '../entities/injury_evaluation.dart';
+import '../entities/recovery_plan.dart';
 import '../entities/recovery_phase.dart';
-import '../entities/user_recovery_progress.dart';
+import '../entities/recovery_progress.dart';
 
-class GetRecoveryOverview {
+class RecoveryOverview {
+  final InjuryEvaluation? injury;
+  final RecoveryPlan? plan;
+  final List<RecoveryPhase> phases;
+  final RecoveryProgress? progress;
+
+  RecoveryOverview({
+    required this.injury,
+    required this.plan,
+    required this.phases,
+    required this.progress,
+  });
+}
+
+class GetRecoveryOverviewUseCase {
   final RecoveryRepository repository;
-  GetRecoveryOverview(this.repository);
+  GetRecoveryOverviewUseCase(this.repository);
 
-  /// Returns a tuple-like map:
-  /// { 'injury': InjuryEvaluation?, 'phases': List<RecoveryPhase>, 'progress': UserRecoveryProgress? }
-  Future<Map<String, dynamic>> execute(String userId) async {
+  Future<RecoveryOverview> execute(String userId) async {
     final injury = await repository.getInjuryForUser(userId);
     if (injury == null) {
-      return {'injury': null, 'phases': <RecoveryPhase>[], 'progress': null};
+      return RecoveryOverview(
+        injury: null,
+        plan: null,
+        phases: [],
+        progress: null,
+      );
     }
-    final phases = await repository.getPhasesByInjury(injury.id);
-    final progress = await repository.getProgressForUser(userId, injury.id);
-    return {'injury': injury, 'phases': phases, 'progress': progress};
+
+    final plan = await repository.getPlanByInjury(injury.id);
+    if (plan == null) {
+      return RecoveryOverview(
+        injury: injury,
+        plan: null,
+        phases: [],
+        progress: null,
+      );
+    }
+
+    final phases = await repository.getPhasesByPlan(plan.id);
+    final progress = await repository.getProgressForPlan(plan.id);
+
+    return RecoveryOverview(
+      injury: injury,
+      plan: plan,
+      phases: phases,
+      progress: progress,
+    );
   }
 }

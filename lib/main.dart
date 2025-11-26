@@ -9,6 +9,13 @@ import 'package:moviles252/features/profile/ui/screens/my_profile_page.dart';
 import 'package:moviles252/features/profile/ui/screens/profile_screen.dart';
 import 'package:moviles252/features/auth/ui/screens/signup_screen.dart';
 import 'package:moviles252/features/profile/ui/screens/home_screen.dart';
+import 'package:moviles252/features/recovery/data/repositories/recovery_repository_impl.dart';
+import 'package:moviles252/features/recovery/domain/usecases/advance_recovery_day.dart';
+import 'package:moviles252/features/recovery/domain/usecases/complete_recovery_task.dart';
+import 'package:moviles252/features/recovery/domain/usecases/get_phases_by_plan.dart';
+import 'package:moviles252/features/recovery/domain/usecases/get_recovery_overview.dart';
+import 'package:moviles252/features/recovery/domain/usecases/get_tasks_by_phase.dart';
+import 'package:moviles252/features/recovery/ui/bloc/recovery_bloc.dart';
 import 'package:moviles252/features/recovery/ui/screens/recovery_overview_screen.dart';
 import 'package:moviles252/features/recovery/ui/screens/recovery_phase_screen.dart';
 import 'features/auth/ui/screens/splash_screen.dart';
@@ -54,6 +61,15 @@ import 'features/education/domain/usecases/view_myths_flow_usecase.dart';
 import 'features/education/domain/usecases/view_glossary_flow_usecase.dart';
 import 'features/education/data/repositories/education_repository_impl.dart';
 import 'features/education/data/datasources/education_datasource_impl.dart';
+
+final repo = RecoveryRepositoryImpl();
+final recoveryBloc = RecoveryBloc(
+  getOverview: GetRecoveryOverviewUseCase(repo),
+  getPhasesByPlan: GetPhasesByPlan(repo),
+  getTasksByPhase: GetTasksByPhase(repo),
+  completeTask: CompleteRecoveryTaskUseCase(repo),
+  advanceDay: AdvanceRecoveryDayUseCase(repo),
+);
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -208,8 +224,14 @@ class MyApp extends StatelessWidget {
             child: const GlossaryScreen(),
           );
         },
-        '/recovery_overview': (_) => const RecoveryOverviewScreen(),
-        '/recovery_phase': (_) => const RecoveryPhaseScreen(),
+        '/recovery_overview': (_) => BlocProvider.value(
+          value: recoveryBloc,
+          child: const RecoveryOverviewScreen(),
+        ),
+        '/recovery_phase': (_) => BlocProvider.value(
+          value: recoveryBloc,
+          child: const RecoveryPhaseScreen(),
+        ),
       },
     );
   }

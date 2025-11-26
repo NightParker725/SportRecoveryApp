@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../bloc/recovery_bloc.dart';
-import 'package:moviles252/features/recovery/data/models/recovery_task_model.dart';
-import 'package:moviles252/features/recovery/data/datasources/recovery_remote_data_source.dart';
-import 'package:moviles252/features/recovery/data/models/recovery_task_model.dart';
+import '../../ui/bloc/recovery_bloc.dart';
+import '../../domain/entities/recovery_task.dart';
+import '../../domain/usecases/get_tasks_by_phase.dart';
+import '../../domain/repositories/recovery_repository.dart';
+import '../../data/repositories/recovery_repository_impl.dart';
+import '../../domain/usecases/complete_recovery_task.dart';
 
 class RecoveryPhaseScreen extends StatefulWidget {
   const RecoveryPhaseScreen({super.key});
@@ -13,64 +15,80 @@ class RecoveryPhaseScreen extends StatefulWidget {
 }
 
 class _RecoveryPhaseScreenState extends State<RecoveryPhaseScreen> {
-  final _remote = RecoveryRemoteDataSource();
+  late String planId;
+  late String phaseId;
+  late int phaseIndex;
   bool _loading = true;
-  List<RecoveryTaskModel> _tasks = [];
-  String? _phaseId;
+  List<RecoveryTask> _tasks = [];
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final args = ModalRoute.of(context)?.settings.arguments;
-    if (args is Map && args['phaseId'] != null) {
-      _phaseId = args['phaseId'] as String;
-      _loadTasks();
-    }
+    final args =
+        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+    if (args == null) return;
+    planId = args['planId'] as String;
+    phaseId = args['phaseId'] as String;
+    phaseIndex = args['phaseIndex'] as int;
+    _loadTasks();
   }
 
   Future<void> _loadTasks() async {
-    if (_phaseId == null) return;
     setState(() => _loading = true);
-    final list = await _remote.getTasksByPhase(_phaseId!);
-    setState(() {
-      _tasks = list;
-      _loading = false;
-    });
+    final repo = RecoveryRepositoryImpl();
+    final getTasks = GetTasksByPhase(repo);
+    _tasks = await getTasks.execute(phaseId);
+    setState(() => _loading = false);
+  }
+
+  Future<void> _completeTask(String taskId) async {
+    final repo = RecoveryRepositoryImpl();
+    final complete = CompleteRecoveryTaskUseCase(repo);
+    // UI optimistic: show snackbar then call
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('Marcando tarea...')));
+    await complete.execute(taskId, planId);
+    // Notify bloc to refresh overview
+    context.read<RecoveryBloc>().add(
+      RefreshOverview(
+        (context.read<RecoveryBloc>().state is RecoveryLoaded)
+            ? (context.read<RecoveryBloc>().state as RecoveryLoaded)
+                      .injury
+                      ?.userId ??
+                  ''
+            : '',
+      ),
+    );
+    await _loadTasks();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Tareas de la fase')),
+      appBar: AppBar(title: Text('Fase $phaseIndex')),
       body: _loading
           ? const Center(child: CircularProgressIndicator())
-          : ListView.separated(
+          : Padding(
               padding: const EdgeInsets.all(16),
-              itemCount: _tasks.length,
-              separatorBuilder: (_, __) => const SizedBox(height: 12),
-              itemBuilder: (_, i) {
-                final t = _tasks[i];
-                return ListTile(
-                  title: Text(t.title),
-                  subtitle: Text(t.description ?? ''),
-                  trailing: ElevatedButton(
-                    onPressed: () {
-                      // marcar completada
-                      context.read<RecoveryBloc>().add(CompleteTaskEvent(t.id));
-                    },
-                    child: const Text('Marcar'),
-                  ),
-                  onTap: () async {
-                    if (t.taskType == 'video' && t.videoId != null) {
-                      Navigator.pushNamed(
-                        context,
-                        '/recovery_video',
-                        arguments: {'videoId': t.videoId},
-                      );
-                    }
-                  },
-                );
-              },
+              child: ListView.builder(
+                itemCount: _tasks.length,
+                itemBuilder: (context, i) {
+                  final t = _tasks[i];
+                  return Card(
+                    child: ListTile(
+                      title: Text(t.title),
+                      subtitle: Text(
+                        'Día ${t.dayIndex} • ${t.description ?? ''}',
+                      ),
+                      trailing: ElevatedButton(
+                        onPressed: () => _completeTask(t.id),
+                        child: const Text('Marcar hecha'),
+                      ),
+                    ),
+                  );
+                },
+              ),
             ),
     );
   }

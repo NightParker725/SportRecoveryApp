@@ -1,29 +1,30 @@
-import 'package:moviles252/features/recovery/domain/entities/injury_evaluation.dart';
+import '../../domain/entities/injury_evaluation.dart';
 
 class InjuryEvaluationModel extends InjuryEvaluation {
   InjuryEvaluationModel({
     required String id,
-    required String? userId,
-    required String? location,
-    required String? side,
-    required String? timing,
-    required String? mechanism,
-    required bool? hasPopping,
-    required int? painIntensity,
-    required Map<String, dynamic>? painTypes,
-    required Map<String, dynamic>? painTriggers,
-    required String? weightBearingCapacity,
-    required Map<String, dynamic>? basicActivities,
-    required String? stabilityLevel,
-    required Map<String, dynamic>? symptoms,
-    required bool? hasCriticalSymptoms,
-    required String? activityType,
-    required Map<String, dynamic>? preexistingConditions,
-    required Map<String, dynamic>? additionalFactors,
-    required String? preliminaryDiagnosis,
-    required String? urgencyLevel,
-    required int? estimatedRecoveryDays,
-    required Map<String, dynamic>? initialRecommendations,
+    String? userId,
+    String? location,
+    String? side,
+    String? timing,
+    String? mechanism,
+    bool? hasPopping,
+    String? frequency,
+    int? painIntensity,
+    Map<String, dynamic>? painTypes,
+    Map<String, dynamic>? painTriggers,
+    String? weightBearingCapacity,
+    Map<String, dynamic>? basicActivities,
+    String? stabilityLevel,
+    Map<String, dynamic>? symptoms,
+    bool? hasCriticalSymptoms,
+    String? activityType,
+    Map<String, dynamic>? preexistingConditions,
+    Map<String, dynamic>? additionalFactors,
+    String? preliminaryDiagnosis,
+    String? urgencyLevel,
+    int? estimatedRecoveryDays,
+    Map<String, dynamic>? initialRecommendations,
     required DateTime createdAt,
   }) : super(
          id: id,
@@ -33,6 +34,7 @@ class InjuryEvaluationModel extends InjuryEvaluation {
          timing: timing,
          mechanism: mechanism,
          hasPopping: hasPopping,
+         frequency: frequency,
          painIntensity: painIntensity,
          painTypes: painTypes,
          painTriggers: painTriggers,
@@ -60,30 +62,26 @@ class InjuryEvaluationModel extends InjuryEvaluation {
       timing: json['timing'] as String?,
       mechanism: json['mechanism'] as String?,
       hasPopping: json['has_popping'] as bool?,
-      painIntensity: (json['pain_intensity'] as int?)?.toInt(),
-      painTypes: (json['pain_types'] as Map<String, dynamic>?)
-          ?.cast<String, dynamic>(),
-      painTriggers: (json['pain_triggers'] as Map<String, dynamic>?)
-          ?.cast<String, dynamic>(),
+      frequency: json['frequency'] as String?,
+      painIntensity: (json['pain_intensity'] as num?)?.toInt(),
+      painTypes: (json['pain_types'] as Map?)?.cast<String, dynamic>(),
+      painTriggers: (json['pain_triggers'] as Map?)?.cast<String, dynamic>(),
       weightBearingCapacity: json['weight_bearing_capacity'] as String?,
-      basicActivities: (json['basic_activities'] as Map<String, dynamic>?)
+      basicActivities: (json['basic_activities'] as Map?)
           ?.cast<String, dynamic>(),
       stabilityLevel: json['stability_level'] as String?,
-      symptoms: (json['symptoms'] as Map<String, dynamic>?)
-          ?.cast<String, dynamic>(),
+      symptoms: (json['symptoms'] as Map?)?.cast<String, dynamic>(),
       hasCriticalSymptoms: json['has_critical_symptoms'] as bool?,
       activityType: json['activity_type'] as String?,
-      preexistingConditions:
-          (json['preexisting_conditions'] as Map<String, dynamic>?)
-              ?.cast<String, dynamic>(),
-      additionalFactors: (json['additional_factors'] as Map<String, dynamic>?)
+      preexistingConditions: (json['preexisting_conditions'] as Map?)
+          ?.cast<String, dynamic>(),
+      additionalFactors: (json['additional_factors'] as Map?)
           ?.cast<String, dynamic>(),
       preliminaryDiagnosis: json['preliminary_diagnosis'] as String?,
       urgencyLevel: json['urgency_level'] as String?,
-      estimatedRecoveryDays: (json['estimated_recovery_days'] as int?)?.toInt(),
-      initialRecommendations:
-          (json['initial_recommendations'] as Map<String, dynamic>?)
-              ?.cast<String, dynamic>(),
+      estimatedRecoveryDays: (json['estimated_recovery_days'] as num?)?.toInt(),
+      initialRecommendations: (json['initial_recommendations'] as Map?)
+          ?.cast<String, dynamic>(),
       createdAt: DateTime.parse(json['created_at'] as String),
     );
   }

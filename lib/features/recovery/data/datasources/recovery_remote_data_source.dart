@@ -1,15 +1,16 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:moviles252/features/recovery/data/models/recovery_phase_model.dart';
-import 'package:moviles252/features/recovery/data/models/recovery_task_model.dart';
-import 'package:moviles252/features/recovery/data/models/user_recovery_progress_model.dart';
-import 'package:moviles252/features/recovery/data/models/recovery_video_model.dart';
-import 'package:moviles252/features/recovery/data/models/injury_evaluation_model.dart';
+import '../models/injury_evaluation_model.dart';
+import '../models/recovery_plan_model.dart';
+import '../models/recovery_phase_model.dart';
+import '../models/recovery_task_model.dart';
+import '../models/recovery_video_model.dart';
+import '../models/recovery_progress_model.dart';
+import '../models/recovery_task_completion_model.dart';
 
 class RecoveryRemoteDataSource {
   final _db = Supabase.instance.client;
 
-  // get injury evaluation by user (active injury). We'll pick the most recent.
-  Future<InjuryEvaluationModel?> getInjuryForUser(String userId) async {
+  Future<InjuryEvaluationModel?> getLatestInjuryForUser(String userId) async {
     final res = await _db
         .from('injury_evaluations')
         .select()
@@ -17,20 +18,32 @@ class RecoveryRemoteDataSource {
         .order('created_at', ascending: false)
         .limit(1)
         .maybeSingle();
+
     if (res == null) return null;
     return InjuryEvaluationModel.fromJson(Map<String, dynamic>.from(res));
   }
 
-  Future<List<RecoveryPhaseModel>> getPhasesByInjury(String injuryId) async {
+  Future<RecoveryPlanModel?> getPlanByInjury(String injuryId) async {
+    final res = await _db
+        .from('recovery_plans')
+        .select()
+        .eq('injury_id', injuryId)
+        .maybeSingle();
+
+    if (res == null) return null;
+    return RecoveryPlanModel.fromJson(Map<String, dynamic>.from(res));
+  }
+
+  Future<List<RecoveryPhaseModel>> getPhasesByPlan(String planId) async {
     final res = await _db
         .from('recovery_phases')
         .select()
-        .eq('injury_id', injuryId)
-        .order('day_start');
-    final list = (res as List)
+        .eq('plan_id', planId)
+        .order('phase_index');
+
+    return (res as List)
         .map((e) => RecoveryPhaseModel.fromJson(Map<String, dynamic>.from(e)))
         .toList();
-    return list;
   }
 
   Future<List<RecoveryTaskModel>> getTasksByPhase(String phaseId) async {
@@ -38,11 +51,11 @@ class RecoveryRemoteDataSource {
         .from('recovery_tasks')
         .select()
         .eq('phase_id', phaseId)
-        .order('id');
-    final list = (res as List)
+        .order('day_index');
+
+    return (res as List)
         .map((e) => RecoveryTaskModel.fromJson(Map<String, dynamic>.from(e)))
         .toList();
-    return list;
   }
 
   Future<RecoveryVideoModel?> getVideoById(String id) async {
@@ -51,32 +64,46 @@ class RecoveryRemoteDataSource {
         .select()
         .eq('id', id)
         .maybeSingle();
+
     if (res == null) return null;
     return RecoveryVideoModel.fromJson(Map<String, dynamic>.from(res));
   }
 
-  Future<UserRecoveryProgressModel?> getProgressForUser(
-    String userId,
-    String injuryId,
-  ) async {
+  Future<RecoveryProgressModel?> getProgressForPlan(String planId) async {
     final res = await _db
-        .from('user_recovery_progress')
+        .from('recovery_progress')
         .select()
-        .eq('user_id', userId)
-        .eq('injury_id', injuryId)
+        .eq('plan_id', planId)
         .maybeSingle();
+
     if (res == null) return null;
-    return UserRecoveryProgressModel.fromJson(Map<String, dynamic>.from(res));
+    return RecoveryProgressModel.fromJson(Map<String, dynamic>.from(res));
   }
 
-  Future<void> createProgress(UserRecoveryProgressModel model) async {
-    await _db.from('user_recovery_progress').insert(model.toJson());
+  Future<void> createProgress(RecoveryProgressModel model) async {
+    await _db.from('recovery_progress').insert(model.toJson());
   }
 
-  Future<void> updateProgress(UserRecoveryProgressModel model) async {
+  Future<void> updateProgress(RecoveryProgressModel model) async {
     await _db
-        .from('user_recovery_progress')
+        .from('recovery_progress')
         .update(model.toJson())
         .eq('id', model.id);
+  }
+
+  Future<void> createTaskCompletion(String planId, String taskId) async {
+    await _db.from('recovery_task_completions').insert({
+      'plan_id': planId,
+      'task_id': taskId,
+    });
+  }
+
+  Future<List<String>> getCompletedTasks(String planId) async {
+    final res = await _db
+        .from('recovery_task_completions')
+        .select()
+        .eq('plan_id', planId);
+
+    return (res as List).map((e) => e['task_id'] as String).toList();
   }
 }

@@ -1,15 +1,19 @@
 class RecoveryVideo {
   final String id;
+  final String? taskId;
+  final String? phaseId;
   final String title;
   final String url;
-  final String? thumbnailUrl;
-  final List<String> recommendations;
+  final String? thumbnail;
+  final DateTime createdAt;
 
   RecoveryVideo({
     required this.id,
+    this.taskId,
+    this.phaseId,
     required this.title,
     required this.url,
-    required this.thumbnailUrl,
-    required this.recommendations,
+    this.thumbnail,
+    required this.createdAt,
   });
 }

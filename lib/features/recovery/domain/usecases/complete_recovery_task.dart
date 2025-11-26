@@ -1,40 +1,21 @@
 import '../repositories/recovery_repository.dart';
-import '../entities/user_recovery_progress.dart';
+import '../entities/recovery_task_completion.dart';
+import 'package:uuid/uuid.dart';
 
-class CompleteRecoveryTask {
+class CompleteRecoveryTaskUseCase {
   final RecoveryRepository repository;
-  CompleteRecoveryTask(this.repository);
+  final _uuid = const Uuid();
 
-  /// Marks a task as completed: appends taskId to completedTasks (if missing)
-  Future<UserRecoveryProgress?> execute(
-    String userId,
-    String injuryId,
-    String taskId,
-  ) async {
-    final progress = await repository.getProgressForUser(userId, injuryId);
-    if (progress == null) {
-      // Create a new progress baseline
-      final newProgress = UserRecoveryProgress(
-        id: '', // server will gen - but we need an id; create placeholder and repository should handle server-side id generation if allowed.
-        userId: userId,
-        injuryId: injuryId,
-        currentDay: 1,
-        currentPhaseId: null,
-        completedTasks: [taskId],
-        lastCheckinDate: DateTime.now(),
-        createdAt: DateTime.now(),
-      );
-      await repository.createProgress(newProgress);
-      return await repository.getProgressForUser(userId, injuryId);
-    } else {
-      final list = List<String>.from(progress.completedTasks);
-      if (!list.contains(taskId)) list.add(taskId);
-      final updated = progress.copyWith(
-        completedTasks: list,
-        lastCheckinDate: DateTime.now(),
-      );
-      await repository.updateProgress(updated);
-      return updated;
-    }
+  CompleteRecoveryTaskUseCase(this.repository);
+
+  /// Completa la tarea (crea record en completions) y devuelve void.
+  Future<void> execute(String taskId, String planId) async {
+    final completion = RecoveryTaskCompletion(
+      id: _uuid.v4(),
+      taskId: taskId,
+      planId: planId,
+      completedAt: DateTime.now(),
+    );
+    await repository.createTaskCompletion(completion);
   }
 }
