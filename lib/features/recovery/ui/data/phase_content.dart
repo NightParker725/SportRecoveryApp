@@ -48,6 +48,12 @@ const List<PhaseContent> kPhaseContents = [
         title: 'Reposo',
         description:
             'Evita actividades que aumenten el dolor o la inflamación. Prioriza la inmovilidad relativa y protege la zona afectada.',
+        video: PhaseVideo(
+          thumbnailAsset: 'assets/images/recovery/1_enabled.png',
+          title: 'Reposo y protección',
+          shortDescription: 'Cómo proteger la zona y organizar el reposo inicial.',
+          url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+        ),
       ),
       PhaseTopic(
         title: 'Hielo',
@@ -64,6 +70,12 @@ const List<PhaseContent> kPhaseContents = [
         title: 'Compresión y elevación',
         description:
             'Usa un vendaje elástico firme pero cómodo y eleva la extremidad por encima del nivel del corazón para reducir el edema.',
+        video: PhaseVideo(
+          thumbnailAsset: 'assets/images/recovery/1_enabled.png',
+          title: 'Compresión y elevación',
+          shortDescription: 'Aplicación correcta del vendaje y elevación segura.',
+          url: 'https://www.youtube.com/watch?v=3JZ_D3ELwOQ',
+        ),
       ),
     ],
   ),
@@ -77,16 +89,34 @@ const List<PhaseContent> kPhaseContents = [
         title: 'Movilidad',
         description:
             'Ejercicios de rango de movimiento sin dolor para recuperar amplitud articular.',
+        video: PhaseVideo(
+          thumbnailAsset: 'assets/images/recovery/2_enabled.png',
+          title: 'Movilidad suave',
+          shortDescription: 'Secuencia de movilidad sin dolor para articulación.',
+          url: 'https://www.youtube.com/watch?v=04854XqcfCY',
+        ),
       ),
       PhaseTopic(
         title: 'Fuerza ligera',
         description:
             'Trabajo isométrico y cargas bajas enfocadas en la musculatura estabilizadora.',
+        video: PhaseVideo(
+          thumbnailAsset: 'assets/images/recovery/2_enabled.png',
+          title: 'Isométricos básicos',
+          shortDescription: 'Introducción segura a fuerza isométrica.',
+          url: 'https://www.youtube.com/watch?v=oHg5SJYRHA0',
+        ),
       ),
       PhaseTopic(
         title: 'Control de dolor',
         description:
             'Continuar con estrategias de manejo del dolor y monitorización de la respuesta al ejercicio.',
+        video: PhaseVideo(
+          thumbnailAsset: 'assets/images/recovery/2_enabled.png',
+          title: 'Estrategias de control del dolor',
+          shortDescription: 'Respiración, pacing y termoterapia.',
+          url: 'https://www.youtube.com/watch?v=9bZkp7q19f0',
+        ),
       ),
     ],
   ),
@@ -100,16 +130,34 @@ const List<PhaseContent> kPhaseContents = [
         title: 'Fuerza y potencia',
         description:
             'Progresión de cargas, pliometría y potencia, manteniendo una técnica segura.',
+        video: PhaseVideo(
+          thumbnailAsset: 'assets/images/recovery/3_enabled.png',
+          title: 'Potencia progresiva',
+          shortDescription: 'Pliometría básica y carga submáxima.',
+          url: 'https://www.youtube.com/watch?v=2vjPBrBU-TM',
+        ),
       ),
       PhaseTopic(
         title: 'Coordinación',
         description:
             'Ejercicios neuromusculares y de control motor orientados al gesto funcional.',
+        video: PhaseVideo(
+          thumbnailAsset: 'assets/images/recovery/3_enabled.png',
+          title: 'Coordinación y control',
+          shortDescription: 'Tareas neuromusculares para estabilidad dinámica.',
+          url: 'https://www.youtube.com/watch?v=uelHwf8o7_U',
+        ),
       ),
       PhaseTopic(
         title: 'Retorno al deporte',
         description:
             'Integración de tareas específicas, test funcionales y criterios de alta.',
+        video: PhaseVideo(
+          thumbnailAsset: 'assets/images/recovery/3_enabled.png',
+          title: 'Retorno progresivo',
+          shortDescription: 'Criterios y progresión de retorno al deporte.',
+          url: 'https://www.youtube.com/watch?v=60ItHLz5WEA',
+        ),
       ),
     ],
   ),
