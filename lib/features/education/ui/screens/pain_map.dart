@@ -1,14 +1,10 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import '../widgets/interactive_body_map.dart';
 
-class PainMapScreen extends StatefulWidget {
+class PainMapScreen extends StatelessWidget {
   const PainMapScreen({super.key});
 
-  @override
-  State<PainMapScreen> createState() => _PainMapScreenState();
-}
-
-class _PainMapScreenState extends State<PainMapScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -16,7 +12,7 @@ class _PainMapScreenState extends State<PainMapScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            // Cuerpo fondo(despues añado los botones)
+            // Cuerpo fondo con el mapa interactivo
             Expanded(
               flex: 3,
               child: Container(
@@ -30,7 +26,7 @@ class _PainMapScreenState extends State<PainMapScreen> {
                 ),
                 child: Stack(
                   children: [
-
+                    // Fondo con líneas onduladas
                     Positioned.fill(
                       child: Container(
                         color: Colors.white,
@@ -40,20 +36,19 @@ class _PainMapScreenState extends State<PainMapScreen> {
                         ),
                       ),
                     ),
-
+                    // Widget del mapa de dolor
                     Positioned.fill(
-                      child: Container(
-                        color: Colors.white,
-                        child: Center(
-                          child: Image.asset(
-                            'assets/images/mapdolor/muscular.jpeg',
-                            fit: BoxFit.contain,
-                            alignment: Alignment.center,
-                          ),
-                        ),
+                      child: InteractiveBodyMap(
+                        imagePath: 'assets/images/mapdolor/muscular.jpeg',
+                        onBodyPartSelected: (partKey) {
+                          // Navegar a la pantalla de afecciones de esa parte del cuerpo
+                          Navigator.pushNamed(
+                            context,
+                            '/body_part/$partKey',
+                          );
+                        },
                       ),
                     ),
-                    // Título en la parte superior izquierda
                     Positioned(
                       top: 20,
                       left: 24,
@@ -68,9 +63,9 @@ class _PainMapScreenState extends State<PainMapScreen> {
                               fontWeight: FontWeight.w400,
                             ),
                           ),
-                          Text(
+                          const Text(
                             'dolor',
-                            style: const TextStyle(
+                            style: TextStyle(
                               color: Color(0xFF00CED1),
                               fontSize: 20,
                               fontWeight: FontWeight.w600,
@@ -79,29 +74,34 @@ class _PainMapScreenState extends State<PainMapScreen> {
                         ],
                       ),
                     ),
-
+                    // Botón Biblioteca
                     Positioned(
                       bottom: 24,
                       right: 24,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: const Color(0xFF00CED1),
-                            width: 1.5,
+                      child: GestureDetector(
+                        onTap: () {
+                          Navigator.pushNamed(context, '/education');
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: const Color(0xFF00CED1),
+                              width: 1.5,
+                            ),
                           ),
-                        ),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 20,
-                          vertical: 12,
-                        ),
-                        child: const Text(
-                          'Biblioteca',
-                          style: TextStyle(
-                            color: Color(0xFF00CED1),
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 10,
+                          ),
+                          child: const Text(
+                            'Biblioteca',
+                            style: TextStyle(
+                              color: Color(0xFF00CED1),
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                         ),
                       ),
@@ -112,11 +112,8 @@ class _PainMapScreenState extends State<PainMapScreen> {
             ),
 
           
-            ClipRRect(
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(30),
-                topRight: Radius.circular(30),
-              ),
+            Material(
+              color: Colors.transparent,
               child: Container(
                 width: double.infinity,
                 padding: const EdgeInsets.symmetric(
@@ -130,6 +127,7 @@ class _PainMapScreenState extends State<PainMapScreen> {
                     topRight: Radius.circular(30),
                   ),
                 ),
+                clipBehavior: Clip.antiAlias,
                 child: RichText(
                   text: TextSpan(
                     style: const TextStyle(
@@ -160,6 +158,7 @@ class _PainMapScreenState extends State<PainMapScreen> {
     );
   }
 }
+
 
 // Custom painter para las líneas onduladas de fondo
 class _WavePainter extends CustomPainter {

@@ -43,7 +43,7 @@ class AppBottomNavigationBar extends StatelessWidget {
             ),
             onPressed: () => Navigator.pushNamed(
               context,
-              '/education',
+              '/pain_map',
             ),
           ),
           GestureDetector(

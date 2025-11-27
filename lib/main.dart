@@ -4,6 +4,7 @@ import 'package:moviles252/features/auth/ui/bloc/signup_bloc.dart';
 import 'package:moviles252/features/checkin/ui/bloc/checkin_bloc.dart';
 import 'package:moviles252/features/checkin/ui/screens/checkin_form_screen.dart';
 import 'package:moviles252/features/education/ui/screens/pain_map.dart';
+import 'package:moviles252/features/education/ui/screens/body_part_screen.dart';
 import 'package:moviles252/features/profile/ui/bloc/profile_bloc.dart';
 import 'package:moviles252/features/auth/ui/screens/login_screen.dart';
 import 'package:moviles252/features/profile/ui/screens/my_profile_page.dart';
@@ -103,7 +104,7 @@ class _ScreenWithBottomNav extends StatelessWidget {
           children: [
             Expanded(child: child),
             Container(
-              height: 40,
+              height: 20,
               decoration: const BoxDecoration(
                 color: Color(0xFF1F242A),
                 borderRadius: BorderRadius.only(
@@ -283,6 +284,42 @@ class MyApp extends StatelessWidget {
           value: recoveryBloc,
           child: const RecoveryPhaseScreen(),
         ),
+      },
+      onGenerateRoute: (settings) {
+        // Manejar rutas dinámicas para las partes del cuerpo
+        if (settings.name != null && settings.name!.startsWith('/body_part/')) {
+          final partKey = settings.name!.substring('/body_part/'.length);
+          
+          // Mapa de nombres de las partes del cuerpo
+          final partNames = {
+            'cabeza': 'Cabeza',
+            'cuello': 'Cuello',
+            'hombro_izquierdo': 'Hombro',
+            'hombro_derecho': 'Hombro',
+            'pecho': 'Pecho',
+            'brazo_izquierdo': 'Brazo',
+            'brazo_derecho': 'Brazo',
+            'abdomen': 'Abdomen',
+            'cadera_izquierda': 'Cadera',
+            'cadera_derecha': 'Cadera',
+            'muslo_izquierdo': 'Muslo',
+            'muslo_derecho': 'Muslo',
+            'rodilla_izquierda': 'Rodilla',
+            'rodilla_derecha': 'Rodilla',
+            'espinilla_izquierda': 'Espinilla',
+            'espinilla_derecha': 'Espinilla',
+          };
+          
+          final partName = partNames[partKey] ?? partKey;
+          
+          return MaterialPageRoute(
+            builder: (_) => BodyPartScreen(
+              partKey: partKey,
+              partName: partName,
+            ),
+          );
+        }
+        return null;
       },
     );
   }
