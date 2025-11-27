@@ -19,38 +19,109 @@ class _CommonInjuriesScreenState extends State<CommonInjuriesScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Lesiones Comunes'),
-        backgroundColor: const Color(0xFF1F242A),
-        foregroundColor: Colors.white,
-      ),
-      body: BlocBuilder<CommonInjuriesBloc, CommonInjuriesState>(
-        builder: (context, state) {
-          if (state is CommonInjuriesLoading) {
-            return const Center(
-              child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFE67F0D)),
-              ),
-            );
-          } else if (state is CommonInjuriesLoaded) {
-            return ListView.builder(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              itemCount: state.injuries.length,
-              itemBuilder: (context, index) {
-                final injury = state.injuries[index];
-                return InjuryCard(injury: injury);
-              },
-            );
-          } else if (state is CommonInjuriesError) {
-            return Center(
-              child: Text(
-                'Error: ${state.message}',
-                style: const TextStyle(color: Colors.red),
-              ),
-            );
-          }
-          return const SizedBox.shrink();
-        },
+      backgroundColor: const Color(0xFF1F242A),
+      body: SafeArea(
+        child: BlocBuilder<CommonInjuriesBloc, CommonInjuriesState>(
+          builder: (context, state) {
+            if (state is CommonInjuriesLoading) {
+              return const Center(
+                child: CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF019193)),
+                ),
+              );
+            } else if (state is CommonInjuriesLoaded) {
+              return Column(
+                children: [
+                  // Header
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                    child: Row(
+                      children: [
+                        GestureDetector(
+                          onTap: () => Navigator.pop(context),
+                          child: Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(12),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.1),
+                                  blurRadius: 4,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ],
+                            ),
+                            child: const Icon(
+                              Icons.arrow_back,
+                              color: Color(0xFF1F242A),
+                              size: 24,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                'Lesiones Comunes',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              const Text(
+                                'Información detallada',
+                                style: TextStyle(
+                                  color: Color(0xFFB0B5BA),
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  // List
+                  Expanded(
+                    child: ListView.builder(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                      itemCount: state.injuries.length,
+                      itemBuilder: (context, index) {
+                        final injury = state.injuries[index];
+                        return InjuryCard(injury: injury);
+                      },
+                    ),
+                  ),
+                ],
+              );
+            } else if (state is CommonInjuriesError) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(
+                      Icons.error_outline,
+                      size: 48,
+                      color: Colors.red,
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      'Error: ${state.message}',
+                      style: const TextStyle(color: Colors.red),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+              );
+            }
+            return const SizedBox.shrink();
+          },
+        ),
       ),
     );
   }
@@ -133,7 +204,7 @@ class _InjuryCardState extends State<InjuryCard> {
         Text(
           title,
           style: const TextStyle(
-            color: Color(0xFFE67F0D),
+            color: Color(0xFF019193),
             fontWeight: FontWeight.bold,
             fontSize: 14,
           ),
@@ -157,7 +228,7 @@ class _InjuryCardState extends State<InjuryCard> {
         Text(
           title,
           style: const TextStyle(
-            color: Color(0xFFE67F0D),
+            color: Color(0xFF019193),
             fontWeight: FontWeight.bold,
             fontSize: 14,
           ),
@@ -175,7 +246,7 @@ class _InjuryCardState extends State<InjuryCard> {
                       const Text(
                         '• ',
                         style: TextStyle(
-                          color: Color(0xFFE67F0D),
+                          color: Color(0xFF019193),
                           fontSize: 16,
                         ),
                       ),
@@ -199,20 +270,30 @@ class _InjuryCardState extends State<InjuryCard> {
   }
 
   Widget _buildInfoBox(String content) {
+    // Extraer severidad del contenido
+    final isSevere = content.contains('ALTO');
+    final isMedium = content.contains('MEDIO');
+
+    final Color boxColor = isSevere
+        ? Colors.red
+        : isMedium
+            ? Colors.orange
+            : Colors.green;
+
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: const Color(0xFFE67F0D).withOpacity(0.1),
+        color: boxColor.withOpacity(0.15),
         border: Border.all(
-          color: const Color(0xFFE67F0D),
+          color: boxColor,
           width: 1,
         ),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Text(
         content,
-        style: const TextStyle(
-          color: Color(0xFFE67F0D),
+        style: TextStyle(
+          color: boxColor,
           fontSize: 12,
           fontWeight: FontWeight.w500,
         ),

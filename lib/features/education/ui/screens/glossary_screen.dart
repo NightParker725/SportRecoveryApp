@@ -36,12 +36,55 @@ class _GlossaryScreenState extends State<GlossaryScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Glosario Médico'),
-        backgroundColor: const Color(0xFF1F242A),
-        foregroundColor: Colors.white,
-      ),
-      body: Column(
+      backgroundColor: const Color(0xFF1F242A),
+      body: SafeArea(
+        child: Column(
+          children: [
+            // Custom header with back button and title
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+              child: Row(
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.1),
+                            blurRadius: 4,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: const Icon(
+                        Icons.arrow_back,
+                        color: Color(0xFF1F242A),
+                        size: 24,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  const Expanded(
+                    child: Text(
+                      'Glosario Médico',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            // Content
+            Column(
         children: [
           // Search bar
           Padding(
@@ -55,13 +98,13 @@ class _GlossaryScreenState extends State<GlossaryScreen> {
                 hintStyle: const TextStyle(color: Color(0xFF666D77)),
                 prefixIcon: const Icon(
                   Icons.search,
-                  color: Color(0xFFE67F0D),
+                  color: Color(0xFF9B59B6),
                 ),
                 suffixIcon: _searchController.text.isNotEmpty
                     ? IconButton(
                         icon: const Icon(
                           Icons.clear,
-                          color: Color(0xFFE67F0D),
+                          color: Color(0xFF9B59B6),
                         ),
                         onPressed: () {
                           _searchController.clear();
@@ -74,14 +117,14 @@ class _GlossaryScreenState extends State<GlossaryScreen> {
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                   borderSide: const BorderSide(
-                    color: Color(0xFFE67F0D),
+                    color: Color(0xFF9B59B6),
                     width: 1,
                   ),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                   borderSide: const BorderSide(
-                    color: Color(0xFFE67F0D),
+                    color: Color(0xFF9B59B6),
                     width: 2,
                   ),
                 ),
@@ -96,7 +139,7 @@ class _GlossaryScreenState extends State<GlossaryScreen> {
                   return const Center(
                     child: CircularProgressIndicator(
                       valueColor:
-                          AlwaysStoppedAnimation<Color>(Color(0xFFE67F0D)),
+                          AlwaysStoppedAnimation<Color>(Color(0xFF9B59B6)),
                     ),
                   );
                 } else if (state is GlossaryLoaded) {
@@ -145,7 +188,10 @@ class _GlossaryScreenState extends State<GlossaryScreen> {
               },
             ),
           ),
-        ],
+            ],
+          ),
+          ],
+        ),
       ),
     );
   }
@@ -187,13 +233,13 @@ class _GlossaryTermCardState extends State<GlossaryTermCard> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
               decoration: BoxDecoration(
-                color: const Color(0xFFE67F0D).withOpacity(0.2),
+                color: const Color(0xFF9B59B6).withOpacity(0.2),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Text(
                 widget.term.category,
                 style: const TextStyle(
-                  color: Color(0xFFE67F0D),
+                  color: Color(0xFF9B59B6),
                   fontSize: 11,
                   fontWeight: FontWeight.w600,
                 ),
@@ -225,7 +271,7 @@ class _GlossaryTermCardState extends State<GlossaryTermCard> {
         Text(
           title,
           style: const TextStyle(
-            color: Color(0xFFE67F0D),
+            color: Color(0xFF9B59B6),
             fontWeight: FontWeight.bold,
             fontSize: 14,
           ),
