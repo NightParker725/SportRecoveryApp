@@ -87,36 +87,42 @@ class _MyProfilePageState extends State<MyProfilePage> {
                             radius: 45,
                             backgroundColor: Colors.grey[300],
                             child: ClipOval(
-                              child: Image.network(
-                                'https://cdn-icons-png.flaticon.com/512/847/847969.png',
-                                width: 90,
-                                height: 90,
-                                fit: BoxFit.cover,
-                                errorBuilder: (context, error, stackTrace) {
-                                  return Icon(
-                                    Icons.person,
-                                    size: 45,
-                                    color: Colors.grey[600],
-                                  );
-                                },
-                                loadingBuilder:
-                                    (context, child, loadingProgress) {
-                                      if (loadingProgress == null) return child;
-                                      return Center(
-                                        child: CircularProgressIndicator(
-                                          value:
-                                              loadingProgress
-                                                      .expectedTotalBytes !=
-                                                  null
-                                              ? loadingProgress
+                              child: profile.profilePicture != null &&
+                                      profile.profilePicture!.isNotEmpty
+                                  ? Image.network(
+                                      profile.profilePicture!,
+                                      width: 90,
+                                      height: 90,
+                                      fit: BoxFit.cover,
+                                      errorBuilder: (context, error, stackTrace) {
+                                        return Icon(
+                                          Icons.person,
+                                          size: 45,
+                                          color: Colors.grey[600],
+                                        );
+                                      },
+                                      loadingBuilder:
+                                          (context, child, loadingProgress) {
+                                        if (loadingProgress == null) return child;
+                                        return Center(
+                                          child: CircularProgressIndicator(
+                                            value: loadingProgress
+                                                        .expectedTotalBytes !=
+                                                    null
+                                                ? loadingProgress
                                                         .cumulativeBytesLoaded /
                                                     loadingProgress
                                                         .expectedTotalBytes!
-                                              : null,
-                                        ),
-                                      );
-                                    },
-                              ),
+                                                : null,
+                                          ),
+                                        );
+                                      },
+                                    )
+                                  : Icon(
+                                      Icons.person,
+                                      size: 45,
+                                      color: Colors.grey[600],
+                                    ),
                             ),
                           ),
                         ),
