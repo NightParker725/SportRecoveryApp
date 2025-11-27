@@ -146,7 +146,7 @@ class _BodyPartScreenState extends State<BodyPartScreen> {
                     return const Center(
                       child: CircularProgressIndicator(
                         valueColor:
-                            AlwaysStoppedAnimation<Color>(Color(0xFFE67F0D)),
+                            AlwaysStoppedAnimation<Color>(Color(0xFF019193)),
                       ),
                     );
                   } else if (state is CommonInjuriesLoaded) {
@@ -314,7 +314,7 @@ class _InjuryCardState extends State<_InjuryCard> {
         Text(
           title,
           style: const TextStyle(
-            color: Color(0xFFE67F0D),
+            color: Color(0xFF019193),
             fontWeight: FontWeight.bold,
             fontSize: 14,
           ),
@@ -338,7 +338,7 @@ class _InjuryCardState extends State<_InjuryCard> {
         Text(
           title,
           style: const TextStyle(
-            color: Color(0xFFE67F0D),
+            color: Color(0xFF019193),
             fontWeight: FontWeight.bold,
             fontSize: 14,
           ),
@@ -356,7 +356,7 @@ class _InjuryCardState extends State<_InjuryCard> {
                       const Text(
                         '• ',
                         style: TextStyle(
-                          color: Color(0xFFE67F0D),
+                          color: Color(0xFF019193),
                           fontSize: 16,
                         ),
                       ),
@@ -383,9 +383,9 @@ class _InjuryCardState extends State<_InjuryCard> {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: const Color(0xFFE67F0D).withOpacity(0.1),
+        color: const Color(0xFF019193).withOpacity(0.1),
         border: Border.all(
-          color: const Color(0xFFE67F0D),
+          color: const Color(0xFF019193),
           width: 1,
         ),
         borderRadius: BorderRadius.circular(8),
@@ -393,7 +393,7 @@ class _InjuryCardState extends State<_InjuryCard> {
       child: Text(
         content,
         style: const TextStyle(
-          color: Color(0xFFE67F0D),
+          color: Color(0xFF019193),
           fontSize: 12,
           fontWeight: FontWeight.w500,
         ),

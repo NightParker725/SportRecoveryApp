@@ -19,12 +19,56 @@ class _MythsScreenState extends State<MythsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Mitos y Realidades'),
-        backgroundColor: const Color(0xFF1F242A),
-        foregroundColor: Colors.white,
-      ),
-      body: BlocBuilder<MythsBloc, MythsState>(
+      backgroundColor: const Color(0xFF1F242A),
+      body: SafeArea(
+        child: Column(
+          children: [
+            // Custom header with back button and title
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+              child: Row(
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.1),
+                            blurRadius: 4,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: const Icon(
+                        Icons.arrow_back,
+                        color: Color(0xFF1F242A),
+                        size: 24,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  const Expanded(
+                    child: Text(
+                      'Mitos y Realidades',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            // Content
+            Expanded(
+              child: BlocBuilder<MythsBloc, MythsState>(
         builder: (context, state) {
           if (state is MythsLoading) {
             return const Center(
@@ -51,6 +95,10 @@ class _MythsScreenState extends State<MythsScreen> {
           }
           return const SizedBox.shrink();
         },
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
