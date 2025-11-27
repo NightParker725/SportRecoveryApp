@@ -102,13 +102,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ),
                                 const SizedBox(height: 4),
                                 InkWell(
-                                  onTap: () => Navigator.pushNamed(context, '/injury_location'),
+                                  onTap: () => Navigator.pushNamed(context, '/injury_evaluation'),
                                   child: Container(
                                     width: double.infinity,
                                     margin: const EdgeInsets.symmetric(vertical: 8),
                                     padding: const EdgeInsets.all(16),
                                     decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(16),
+                                      borderRadius: BorderRadius.circular(20),
                                       color: AppColors.primaryBlue,
                                     ),
                                     child: Row(
@@ -121,7 +121,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                           ),
                                           child: const Icon(Icons.medical_services_outlined, color: Colors.white, size: 28),
                                         ),
-                                        
+                                        const SizedBox(width: 12),
                                         const Expanded(
                                           child: Column(
                                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -135,7 +135,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                             ],
                                           ),
                                         ),
-                                        const Icon(Icons.arrow_forward_ios_rounded, color: Colors.white70, size: 18),
                                       ],
                                     ),
                                   ),
