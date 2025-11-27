@@ -4,6 +4,7 @@ import 'package:moviles252/domain/model/profile.dart';
 import 'package:moviles252/features/profile/ui/bloc/profile_bloc.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:moviles252/ui/theme/app_colors.dart';
+import 'package:moviles252/ui/widgets/feature_grid_with_image.dart';
 
 
 class MyProfilePage extends StatefulWidget {
@@ -143,23 +144,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                                 ),
                               ),
                               const SizedBox(height: 12),
-                              // Botón para completar perfil
-                              ElevatedButton.icon(
-                                onPressed: () {
-                                  Navigator.pushNamed(
-                                    context,
-                                    '/complete_profile',
-                                  );
-                                },
-                                icon: const Icon(
-                                  Icons.person_add_alt_1_outlined,
-                                ),
-                                label: const Text('Completar perfil'),
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.deepPurple,
-                                  foregroundColor: Colors.white,
-                                ),
-                              ),
+                              
 
                               // Sport and Age side by side
                               Row(
@@ -258,55 +243,28 @@ class _MyProfilePageState extends State<MyProfilePage> {
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
+                            const SizedBox(height: 8),
+                            const Divider(color: Colors.white30, thickness: 1),
                             const SizedBox(height: 16),
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                ClipRRect(
-                                  borderRadius: const BorderRadius.only(
-                                    bottomLeft: Radius.circular(30),
-                                    bottomRight: Radius.circular(30),
-                                    topRight: Radius.circular(30),
-                                    topLeft: Radius.circular(30),
-                                  ),
-                                  child: Image.asset(
-                                    "assets/images/user&home/inscreen.jpg",
-                                    width: 105,
-                                    height: 200,
-                                    fit: BoxFit.cover,
-                                  ),
+                            FeatureGridWithImage(
+                              imageAsset: "assets/images/user&home/inscreen.jpg",
+                              options: [
+                                FeatureGridOption(
+                                  label: "Información",
+                                  icon: Icons.info_outline,
+                                  onTap: () => Navigator.pushNamed(context, '/complete_profile'),
                                 ),
-                                const SizedBox(width: 12),
-                                Expanded(
-                                  child: GridView.count(
-                                    crossAxisCount: 2,
-                                    shrinkWrap: true,
-                                    physics:
-                                        const NeverScrollableScrollPhysics(),
-                                    crossAxisSpacing: 8,
-                                    mainAxisSpacing: 8,
-                                    childAspectRatio: 1.0,
-                                    children: const [
-                                      _StatCard(
-                                        title: "Información",
-                                        icon: Icons.info_outline,
-                                        image:
-                                            "https://cdn-icons-png.flaticon.com/512/992/992651.png",
-                                      ),
-                                      _StatCard(
-                                        title: "Lesiones",
-                                        icon: Icons.healing_outlined,
-                                      ),
-                                      _StatCard(
-                                        title: "Historial",
-                                        icon: Icons.history_outlined,
-                                      ),
-                                      _StatCard(
-                                        title: "Mis tareas",
-                                        icon: Icons.assignment_outlined,
-                                      ),
-                                    ],
-                                  ),
+                                const FeatureGridOption(
+                                  label: "Lesiones",
+                                  icon: Icons.healing_outlined,
+                                ),
+                                const FeatureGridOption(
+                                  label: "Historial",
+                                  icon: Icons.history_outlined,
+                                ),
+                                const FeatureGridOption(
+                                  label: "Mis tareas",
+                                  icon: Icons.assignment_outlined,
                                 ),
                               ],
                             ),
@@ -324,9 +282,9 @@ class _MyProfilePageState extends State<MyProfilePage> {
 
                             _ConfigItem(
                               icon: Icons.edit_outlined,
-                              label: "Editar información",
+                              label: "Completar información",
                               onTap: () =>
-                                  Navigator.pushNamed(context, '/edit_profile'),
+                                  Navigator.pushNamed(context, '/complete_profile'),
                             ),
                             _ConfigItem(
                               icon: Icons.lock_outline,
@@ -354,6 +312,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                               label: '',
                               onTap: () {},
                             ),
+                            const SizedBox(height: 90),
                           ],
                         ),
                       ),
@@ -371,49 +330,6 @@ class _MyProfilePageState extends State<MyProfilePage> {
 }
 
 // ---------- Widgets Auxiliares ----------
-
-class _StatCard extends StatelessWidget {
-  final String title;
-  final IconData icon;
-  final String? image;
-  final VoidCallback? onTap;
-  const _StatCard({
-    required this.title,
-    required this.icon,
-    this.image,
-    this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: AppColors.greySurface,
-        borderRadius: BorderRadius.circular(16),
-      ),
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          image != null
-              ? Image.network(image!, height: 40)
-              : Icon(icon, color: Colors.white, size: 36),
-          const SizedBox(height: 8),
-          Flexible(
-            child: Text(
-              title,
-              style: const TextStyle(color: Colors.white, fontSize: 12),
-              textAlign: TextAlign.center,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
 
 class _ConfigItem extends StatelessWidget {
   final IconData icon;

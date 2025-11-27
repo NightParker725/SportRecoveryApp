@@ -433,7 +433,7 @@ class _RecoveryOverviewScreenState extends State<RecoveryOverviewScreen> {
                                 topRight: Radius.circular(40),
                               ),
                             ),
-                            padding: const EdgeInsets.fromLTRB(28, 64, 28, 28),
+                            padding: const EdgeInsets.fromLTRB(28, 64, 28, 120),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [

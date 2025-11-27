@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:moviles252/features/profile/ui/bloc/profile_bloc.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:moviles252/ui/theme/app_colors.dart';
+import 'package:moviles252/ui/widgets/feature_grid_with_image.dart';
+import 'package:moviles252/ui/widgets/content_feature_card.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -40,31 +42,28 @@ class _HomeScreenState extends State<HomeScreen> {
               displayEmail = state.profile.email;
             }
 
+            final profilePicture = (state is ProfileLoaded)
+                ? state.profile.profilePicture
+                : (state is ProfileSaved ? state.profile.profilePicture : null);
+
             return Stack(
               children: [
-                Positioned.fill(
-                  child: Image.asset(
-                    'assets/images/user&home/fondomain.jpg',
-                    width: double.infinity,
-                    height: 250,
-                    fit: BoxFit.cover,
+                Positioned(
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  child: _HeroSection(
+                    profilePictureUrl: profilePicture,
                   ),
                 ),
-
                 Positioned(
-                  top: 60,
-                  left: 24,
-                  child: Image.asset('assets/images/logo.png', width: 140),
-                ),
-
-                Positioned(
-                  top: 210,
+                  top: 240,
                   left: 0,
                   right: 0,
                   bottom: 0,
                   child: Container(
                     decoration: const BoxDecoration(
-                      color: Color(0xFF1F242A),
+                      color: AppColors.darkSurface,
                       borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(30),
                         topRight: Radius.circular(30),
@@ -72,7 +71,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     child: Column(
                       children: [
-                        // Contenido scrolleable
                         Expanded(
                           child: SingleChildScrollView(
                             padding: const EdgeInsets.symmetric(
@@ -82,9 +80,6 @@ class _HomeScreenState extends State<HomeScreen> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const SizedBox(height: 24),
-
-                                //Main content :b
                                 const Text(
                                   "Favoritos",
                                   style: TextStyle(
@@ -93,129 +88,75 @@ class _HomeScreenState extends State<HomeScreen> {
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
+                                const SizedBox(height: 8),
+                                const Divider(color: Colors.white30, thickness: 1),
                                 const SizedBox(height: 16),
-                                Row(
-                                  children: [
-                                    ClipRRect(
-                                      borderRadius: const BorderRadius.only(
-                                        bottomLeft: Radius.circular(30),
-                                        bottomRight: Radius.circular(30),
-                                        topRight: Radius.circular(30),
-                                        topLeft: Radius.circular(30),
-                                      ),
-                                      child: Image.asset(
-                                        "assets/images/user&home/inscreen.jpg",
-                                        width: 105,
-                                        height: 200,
-                                        fit: BoxFit.cover,
-                                      ),
-                                    ),
-                                    Expanded(
-                                      child: GridView.count(
-                                        crossAxisCount: 2,
-                                        shrinkWrap: true,
-                                        physics:
-                                            const NeverScrollableScrollPhysics(),
-                                        mainAxisSpacing: 5,
-                                        crossAxisSpacing: 5,
-                                        children: const [
-                                          _HomeStatCard(
-                                            title: "Progreso",
-                                            icon: Icons.show_chart,
-                                          ),
-                                          _HomeStatCard(
-                                            title: "Mis tareas",
-                                            icon: Icons.checklist_outlined,
-                                          ),
-                                          _HomeStatCard(
-                                            title: "Tutoriales",
-                                            icon: Icons.lightbulb_outline,
-                                          ),
-                                          _HomeStatCard(
-                                            title: "Timer",
-                                            icon: Icons.access_time,
-                                          ),
-                                        ],
-                                      ),
-                                    ),
+                                FeatureGridWithImage(
+                                  imageAsset: "assets/images/user&home/inscreen.jpg",
+                                  options: [
+                                    FeatureGridOption(label: "Progreso", icon: Icons.show_chart, onTap: () {}),
+                                    FeatureGridOption(label: "Mis tareas", icon: Icons.checklist_outlined, onTap: () {}),
+                                    FeatureGridOption(label: "Tutoriales", icon: Icons.lightbulb_outline, onTap: () {}),
+                                    FeatureGridOption(label: "Timer", icon: Icons.access_time, onTap: () {}),
                                   ],
                                 ),
-
-                                const SizedBox(height: 5),
-                                //Boton de agregar lesion
+                                const SizedBox(height: 4),
                                 InkWell(
-                                  onTap: () {
-                                    Navigator.pushNamed(
-                                      context,
-                                      '/injury_location',
-                                    );
-                                  },
+                                  onTap: () => Navigator.pushNamed(context, '/injury_location'),
                                   child: Container(
                                     width: double.infinity,
-                                    margin: const EdgeInsets.symmetric(
-                                      vertical: 8,
-                                    ),
+                                    margin: const EdgeInsets.symmetric(vertical: 8),
                                     padding: const EdgeInsets.all(16),
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(16),
-                                      color: Color(0xFF019193),
+                                      color: AppColors.primaryBlue,
                                     ),
                                     child: Row(
                                       children: [
                                         Container(
                                           padding: const EdgeInsets.all(8),
                                           decoration: BoxDecoration(
-                                            color: Colors.white.withOpacity(
-                                              0.2,
-                                            ),
+                                            color: Colors.white.withOpacity(0.2),
                                             shape: BoxShape.circle,
                                           ),
-                                          child: const Icon(
-                                            Icons.medical_services_outlined,
-                                            color: Colors.white,
-                                            size: 28,
-                                          ),
+                                          child: const Icon(Icons.medical_services_outlined, color: Colors.white, size: 28),
                                         ),
-                                        const SizedBox(width: 16),
+                                        
                                         const Expanded(
                                           child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
+                                            crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
-                                              Text(
-                                                "Nueva lesión",
-                                                style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
+                                              Text("Nueva lesión", style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
                                               SizedBox(height: 4),
                                               Text(
                                                 "Registra aquí tu nueva lesión y recibe tu plan de recuperación.",
-                                                style: TextStyle(
-                                                  color: Colors.white70,
-                                                  fontSize: 13,
-                                                ),
+                                                style: TextStyle(color: Colors.white70, fontSize: 13),
                                               ),
                                             ],
                                           ),
                                         ),
-
-                                        const Icon(
-                                          Icons.arrow_forward_ios_rounded,
-                                          color: Colors.white70,
-                                          size: 18,
-                                        ),
+                                        const Icon(Icons.arrow_forward_ios_rounded, color: Colors.white70, size: 18),
                                       ],
                                     ),
                                   ),
                                 ),
-                                const _RecoveryPhaseCard(),
+                                const SizedBox(width: 24),
+                                ContentFeatureCard(
+                                  imageProvider: const AssetImage("assets/images/user&home/piemalo.png"),
+                                  badgeIcon: Icons.favorite_border,
+                                  badgeBackground: Colors.white,
+                                  badgeIconColor: AppColors.greySurface,
+                                  title: "Fase de recuperación",
+                                  description: "Explora los mejores ejercicios para calentar y prepárate para tu próxima sesión.",
+                                  buttonLabel: "Ver más",
+                                  onButtonPressed: () => Navigator.pushNamed(context, '/recovery_phase'),
+                                  backgroundColor: AppColors.greySurface,
+                                ),
                               ],
                             ),
                           ),
                         ),
+                        const SizedBox(height: 90),
                       ],
                     ),
                   ),
@@ -230,34 +171,6 @@ class _HomeScreenState extends State<HomeScreen> {
 }
 
 // ---------- Widgets Auxiliares ----------
-
-class _HomeStatCard extends StatelessWidget {
-  final String title;
-  final IconData icon;
-  final String? image;
-  const _HomeStatCard({required this.title, required this.icon, this.image});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: AppColors.greySurface,
-        borderRadius: BorderRadius.circular(16),
-      ),
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          image != null
-              ? Image.network(image!, height: 40)
-              : Icon(icon, color: Colors.white, size: 36),
-          const SizedBox(height: 12),
-          Text(title, style: const TextStyle(color: Colors.white)),
-        ],
-      ),
-    );
-  }
-}
 
 class _HomeActionItem extends StatelessWidget {
   final IconData icon;
@@ -290,110 +203,99 @@ class _HomeActionItem extends StatelessWidget {
 }
 // ---------- Nuevo Widget Auxiliar ----------
 
-class _RecoveryPhaseCard extends StatelessWidget {
-  const _RecoveryPhaseCard({super.key});
+class _HeroSection extends StatelessWidget {
+  const _HeroSection({required this.profilePictureUrl});
+
+  final String? profilePictureUrl;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 260,
+      child: Stack(
+        children: [
+          Positioned.fill(
+            child: Image.asset(
+              'assets/images/home_img.png',
+              fit: BoxFit.cover,
+            ),
+          ),
+          Positioned.fill(
+            child: Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Colors.transparent, Colors.black54],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                ),
+              ),
+            ),
+          ),
+          Positioned.fill(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(24, 20, 24, 24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      _HeroAvatar(photoUrl: profilePictureUrl),
+                      Image.asset('assets/images/isotipo.png', height: 48),
+                    ],
+                  ),
+                  const SizedBox(height: 56),
+                  const Text(
+                    '¡Queremos conocerte!',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  OutlinedButton(
+                    onPressed: () => Navigator.pushNamed(context, '/complete_profile'),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: Colors.white,
+                      side: const BorderSide(color: Colors.white, width: 1.6),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    ),
+                    child: const Text('Configurar mis datos', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _HeroAvatar extends StatelessWidget {
+  const _HeroAvatar({this.photoUrl});
+
+  final String? photoUrl;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(top: 24),
+      width: 48,
+      height: 48,
       decoration: BoxDecoration(
-        color: AppColors.greySurface,
-        borderRadius: BorderRadius.circular(16),
+        shape: BoxShape.circle,
+        border: Border.all(color: Colors.white, width: 2),
       ),
-      padding: const EdgeInsets.only(right: 16, top: 16, bottom: 16),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Stack(
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(16),
-                child: Image.asset(
-                  "assets/images/user&home/piemalo.png",
-                  width: 140,
-                  height: 120,
-                  fit: BoxFit.cover,
-                ),
-              ),
-
-              Positioned(
-                top: 8,
-                left: 8,
-                child: Container(
-                  padding: const EdgeInsets.all(4),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.3),
-                        blurRadius: 3,
-                      ),
-                    ],
-                  ),
-                  child: const Icon(
-                    Icons.favorite_border,
-                    color: AppColors.greySurface,
-                    size: 18,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(width: 16),
-
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  "Fase de desinflamación",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                const Text(
-                  "Continúa explorando sobre tu fase actual.",
-                  style: TextStyle(color: Colors.white70, fontSize: 13),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: 12),
-
-                Align(
-                  alignment: Alignment.bottomLeft,
-                  child: ElevatedButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primaryBlue,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 24,
-                        vertical: 8,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      elevation: 0,
-                    ),
-                    child: const Text(
-                      "Ver más",
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
+      child: ClipOval(
+        child: (photoUrl != null && photoUrl!.isNotEmpty)
+            ? Image.network(
+                photoUrl!,
+                fit: BoxFit.cover,
+                errorBuilder: (_, __, ___) => const Icon(Icons.person, color: Colors.white, size: 28),
+              )
+            : const Icon(Icons.person, color: Colors.white, size: 28),
       ),
     );
   }

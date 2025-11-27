@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:moviles252/ui/theme/app_colors.dart';
+import 'package:moviles252/ui/widgets/content_feature_card.dart';
 import '../data/phase_content.dart';
 
 class RecoveryPhaseScreen extends StatefulWidget {
@@ -263,90 +264,22 @@ class _PhaseTopicDetail extends StatelessWidget {
             description,
             style: const TextStyle(color: Colors.white70, height: 1.4),
           ),
-          if (video != null) ...[
-            const SizedBox(height: 16),
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: AppColors.greySurface.withOpacity(0.2),
-                borderRadius: BorderRadius.circular(24),
-              ),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Stack(
-                    children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(18),
-                        child: Image.network(
-                          video!.thumbnailUrl,
-                          width: 130,
-                          height: 110,
-                          fit: BoxFit.cover,
-                          errorBuilder: (_, __, ___) => Container(
-                            width: 130,
-                            height: 110,
-                            color: Colors.grey.shade700,
-                            alignment: Alignment.center,
-                            child: const Icon(Icons.image_not_supported, color: Colors.white70),
-                          ),
-                        ),
-                      ),
-                      Positioned(
-                        top: 10,
-                        left: 10,
-                        child: Container(
-                          padding: const EdgeInsets.all(6),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(color: Colors.black.withOpacity(0.3), blurRadius: 4),
-                            ],
-                          ),
-                          child: const Icon(Icons.play_circle_fill, size: 22, color: Colors.black87),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          video!.title,
-                          style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(height: 6),
-                        Text(
-                          video!.shortDescription,
-                          style: const TextStyle(color: Colors.white70, fontSize: 13),
-                        ),
-                        const SizedBox(height: 16),
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.primaryBlue,
-                            foregroundColor: AppColors.pureWhite,
-                            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                            elevation: 0,
-                          ),
-                          onPressed: video?.url != null && onOpenVideo != null
-                              ? () => onOpenVideo!(video!.url)
-                              : null,
-                          child: const Text(
-                            'Ver tutorial',
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
+        if (video != null) ...[
+          const SizedBox(height: 16),
+          ContentFeatureCard(
+            imageProvider: NetworkImage(video!.thumbnailUrl),
+            badgeIcon: Icons.play_arrow,
+            badgeBackground: Colors.white,
+            badgeIconColor: Colors.black87,
+            title: video!.title,
+            description: video!.shortDescription,
+            buttonLabel: 'Ver tutorial',
+            onButtonPressed: video?.url != null && onOpenVideo != null
+                ? () => onOpenVideo!(video!.url)
+                : () {},
+            backgroundColor: AppColors.greySurface,
+          ),
+        ],
         ],
       ),
     );
