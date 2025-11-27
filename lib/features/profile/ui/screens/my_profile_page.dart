@@ -87,36 +87,42 @@ class _MyProfilePageState extends State<MyProfilePage> {
                             radius: 45,
                             backgroundColor: Colors.grey[300],
                             child: ClipOval(
-                              child: Image.network(
-                                'https://cdn-icons-png.flaticon.com/512/847/847969.png',
-                                width: 90,
-                                height: 90,
-                                fit: BoxFit.cover,
-                                errorBuilder: (context, error, stackTrace) {
-                                  return Icon(
-                                    Icons.person,
-                                    size: 45,
-                                    color: Colors.grey[600],
-                                  );
-                                },
-                                loadingBuilder:
-                                    (context, child, loadingProgress) {
-                                      if (loadingProgress == null) return child;
-                                      return Center(
-                                        child: CircularProgressIndicator(
-                                          value:
-                                              loadingProgress
-                                                      .expectedTotalBytes !=
-                                                  null
-                                              ? loadingProgress
+                              child: profile.profilePicture != null &&
+                                      profile.profilePicture!.isNotEmpty
+                                  ? Image.network(
+                                      profile.profilePicture!,
+                                      width: 90,
+                                      height: 90,
+                                      fit: BoxFit.cover,
+                                      errorBuilder: (context, error, stackTrace) {
+                                        return Icon(
+                                          Icons.person,
+                                          size: 45,
+                                          color: Colors.grey[600],
+                                        );
+                                      },
+                                      loadingBuilder:
+                                          (context, child, loadingProgress) {
+                                        if (loadingProgress == null) return child;
+                                        return Center(
+                                          child: CircularProgressIndicator(
+                                            value: loadingProgress
+                                                        .expectedTotalBytes !=
+                                                    null
+                                                ? loadingProgress
                                                         .cumulativeBytesLoaded /
                                                     loadingProgress
                                                         .expectedTotalBytes!
-                                              : null,
-                                        ),
-                                      );
-                                    },
-                              ),
+                                                : null,
+                                          ),
+                                        );
+                                      },
+                                    )
+                                  : Icon(
+                                      Icons.person,
+                                      size: 45,
+                                      color: Colors.grey[600],
+                                    ),
                             ),
                           ),
                         ),
@@ -358,101 +364,6 @@ class _MyProfilePageState extends State<MyProfilePage> {
                             ),
                           ],
                         ),
-                      ),
-                    ),
-                  ),
-
-                  // ---------- NAV BAR ----------
-                  Align(
-                    alignment: Alignment.bottomCenter,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: const BorderRadius.only(
-                          topLeft: Radius.circular(40),
-                          topRight: Radius.circular(40),
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.2),
-                            blurRadius: 8,
-                            offset: const Offset(0, -3),
-                          ),
-                        ],
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 14,
-                        horizontal: 24,
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          IconButton(
-                            icon: const Icon(
-                              Icons.home_outlined,
-                              color: Colors.black87,
-                            ),
-                            onPressed: () =>
-                                Navigator.pushNamed(context, '/home'),
-                          ),
-                          IconButton(
-                            icon: const Icon(
-                              Icons.library_books_outlined,
-                              color: Colors.black87,
-                            ),
-                            onPressed: () =>
-                                Navigator.pushNamed(context, '/education'),
-                          ),
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.pushNamed(context, '/checkin_form');
-                            },
-                            child: const CircleAvatar(
-                              radius: 20,
-                              backgroundColor: Colors.black87,
-                              child: Icon(Icons.add, color: Colors.white),
-                            ),
-                          ),
-                          GestureDetector(
-                            onTap: () {
-                              final userId =
-                                  Supabase
-                                      .instance
-                                      .client
-                                      .auth
-                                      .currentUser
-                                      ?.id ??
-                                  '';
-                              if (userId.isNotEmpty) {
-                                Navigator.pushNamed(
-                                  context,
-                                  '/recovery_overview',
-                                );
-                              } else {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text(
-                                      'Error: Usuario no autenticado',
-                                    ),
-                                    backgroundColor: Colors.red,
-                                  ),
-                                );
-                              }
-                            },
-                            child: const Icon(
-                              Icons.favorite_border,
-                              color: Colors.black87,
-                            ),
-                          ),
-                          IconButton(
-                            icon: const Icon(
-                              Icons.person,
-                              color: Colors.black87,
-                            ),
-                            onPressed: () =>
-                                Navigator.pushNamed(context, '/my_profile'),
-                          ),
-                        ],
                       ),
                     ),
                   ),

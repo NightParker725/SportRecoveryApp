@@ -3,12 +3,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:moviles252/features/auth/ui/bloc/signup_bloc.dart';
 import 'package:moviles252/features/checkin/ui/bloc/checkin_bloc.dart';
 import 'package:moviles252/features/checkin/ui/screens/checkin_form_screen.dart';
+import 'package:moviles252/features/education/ui/screens/pain_map.dart';
+import 'package:moviles252/features/education/ui/screens/body_part_screen.dart';
 import 'package:moviles252/features/profile/ui/bloc/profile_bloc.dart';
 import 'package:moviles252/features/auth/ui/screens/login_screen.dart';
 import 'package:moviles252/features/profile/ui/screens/my_profile_page.dart';
 import 'package:moviles252/features/profile/ui/screens/profile_screen.dart';
 import 'package:moviles252/features/auth/ui/screens/signup_screen.dart';
 import 'package:moviles252/features/profile/ui/screens/home_screen.dart';
+import 'package:moviles252/ui/widgets/bottom_navigation_bar.dart';
 import 'package:moviles252/features/recovery/data/repositories/recovery_repository_impl.dart';
 import 'package:moviles252/features/recovery/domain/usecases/advance_recovery_day.dart';
 import 'package:moviles252/features/recovery/domain/usecases/complete_recovery_task.dart';
@@ -18,6 +21,7 @@ import 'package:moviles252/features/recovery/domain/usecases/get_tasks_by_phase.
 import 'package:moviles252/features/recovery/ui/bloc/recovery_bloc.dart';
 import 'package:moviles252/features/recovery/ui/screens/recovery_overview_screen.dart';
 import 'package:moviles252/features/recovery/ui/screens/recovery_phase_screen.dart';
+import 'package:moviles252/features/education/ui/screens/pain_map.dart';
 import 'features/auth/ui/screens/splash_screen.dart';
 import 'features/auth/ui/screens/welcome_screen.dart';
 import 'features/auth/ui/bloc/splash_bloc.dart';
@@ -85,6 +89,38 @@ void main() async {
   runApp(const MyApp());
 }
 
+/// Widget para la barra de navegacion(ya funciona epaaa :D
+class _ScreenWithBottomNav extends StatelessWidget {
+  final Widget child;
+
+  const _ScreenWithBottomNav({required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFF1F242A),
+      body: SafeArea(
+        child: Column(
+          children: [
+            Expanded(child: child),
+            Container(
+              height: 20,
+              decoration: const BoxDecoration(
+                color: Color(0xFF1F242A),
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(40),
+                  bottomRight: Radius.circular(40),
+                ),
+              ),
+            ),
+            const AppBottomNavigationBar(),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -115,11 +151,15 @@ class MyApp extends StatelessWidget {
             BlocProvider(create: (_) => LoginBloc(), child: LoginScreen()),
         '/my_profile': (_) => BlocProvider(
           create: (_) => ProfileBloc(),
-          child: const MyProfilePage(),
+          child: const _ScreenWithBottomNav(
+            child: MyProfilePage(),
+          ),
         ),
         '/home': (_) => BlocProvider(
           create: (_) => ProfileBloc(),
-          child: const HomeScreen(),
+          child: const _ScreenWithBottomNav(
+            child: HomeScreen(),
+          ),
         ),
         '/edit_profile': (_) => BlocProvider(
           create: (_) => ProfileBloc(),
@@ -219,21 +259,67 @@ class MyApp extends StatelessWidget {
             ),
           );
 
+
           return BlocProvider(
             create: (_) => GlossaryBloc(
               useCase: ViewGlossaryFlowUseCase(repository: repository),
             ),
             child: const GlossaryScreen(),
           );
+
         },
+        '/pain_map': (_) => BlocProvider.value(
+          value: recoveryBloc,
+          child: const _ScreenWithBottomNav(
+            child: PainMapScreen(),
+          ),
+        ),
         '/recovery_overview': (_) => BlocProvider.value(
           value: recoveryBloc,
-          child: const RecoveryOverviewScreen(),
+          child: const _ScreenWithBottomNav(
+            child: RecoveryOverviewScreen(),
+          ),
         ),
         '/recovery_phase': (_) => BlocProvider.value(
           value: recoveryBloc,
           child: const RecoveryPhaseScreen(),
         ),
+      },
+      onGenerateRoute: (settings) {
+        // Manejar rutas dinámicas para las partes del cuerpo
+        if (settings.name != null && settings.name!.startsWith('/body_part/')) {
+          final partKey = settings.name!.substring('/body_part/'.length);
+          
+          // Mapa de nombres de las partes del cuerpo
+          final partNames = {
+            'cabeza': 'Cabeza',
+            'cuello': 'Cuello',
+            'hombro_izquierdo': 'Hombro',
+            'hombro_derecho': 'Hombro',
+            'pecho': 'Pecho',
+            'brazo_izquierdo': 'Brazo',
+            'brazo_derecho': 'Brazo',
+            'abdomen': 'Abdomen',
+            'cadera_izquierda': 'Cadera',
+            'cadera_derecha': 'Cadera',
+            'muslo_izquierdo': 'Muslo',
+            'muslo_derecho': 'Muslo',
+            'rodilla_izquierda': 'Rodilla',
+            'rodilla_derecha': 'Rodilla',
+            'espinilla_izquierda': 'Espinilla',
+            'espinilla_derecha': 'Espinilla',
+          };
+          
+          final partName = partNames[partKey] ?? partKey;
+          
+          return MaterialPageRoute(
+            builder: (_) => BodyPartScreen(
+              partKey: partKey,
+              partName: partName,
+            ),
+          );
+        }
+        return null;
       },
     );
   }
