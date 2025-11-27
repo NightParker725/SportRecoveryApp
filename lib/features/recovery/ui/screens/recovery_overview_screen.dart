@@ -16,6 +16,8 @@ class _RecoveryOverviewScreenState extends State<RecoveryOverviewScreen> {
   static const phase1Color = Color(0xFFE87C38);
   static const phase2Color = Color(0xFFD3EE3D);
   static const phase3Color = Color(0xFF00DFC1);
+  static const darkBg = Color(0xFF1F242A);
+  static const greyBg = Color(0xFF37404C);
 
   bool _showMonth = false;
   DateTime _selectedDay = DateTime.now();
@@ -34,7 +36,6 @@ class _RecoveryOverviewScreenState extends State<RecoveryOverviewScreen> {
     }
   }
 
-  // ---------- Helpers ----------
   int _totalDays() => _phases.fold(0, (s, p) => s + p.durationDays);
 
   int _daysCompletedTotal() {
@@ -50,11 +51,10 @@ class _RecoveryOverviewScreenState extends State<RecoveryOverviewScreen> {
     return phase3Color;
   }
 
-  // Returns phase index (1-based) for a day offset from plan start (0-based)
   int? _phaseForOffset(int offsetFromStart) {
     int acc = 0;
     for (final p in _phases) {
-      final end = acc + p.durationDays; // exclusive
+      final end = acc + p.durationDays;
       if (offsetFromStart >= acc && offsetFromStart < end) return p.phaseIndex;
       acc = end;
     }
@@ -103,55 +103,41 @@ class _RecoveryOverviewScreenState extends State<RecoveryOverviewScreen> {
     final days = List.generate(7, (i) => startOfWeek.add(Duration(days: i)));
     final start = DateTime(_plan!.createdAt.year, _plan!.createdAt.month, _plan!.createdAt.day);
 
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-      decoration: BoxDecoration(
-        color: const Color(0xFF20252B),
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          for (final d in days)
-            _dayCell(d, start),
-        ],
-      ),
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        for (final d in days) _dayCell(d, start),
+      ],
     );
   }
 
   Widget _dayCell(DateTime day, DateTime planStart) {
     final onlyDate = DateTime(day.year, day.month, day.day);
-    final diff = onlyDate.difference(planStart).inDays;
-    final phaseIdx = diff >= 0 ? _phaseForOffset(diff) : null;
-    final color = phaseIdx != null ? _colorForPhaseIndex(phaseIdx) : Colors.grey.shade500;
-    final selected = onlyDate == DateTime(_selectedDay.year, _selectedDay.month, _selectedDay.day);
+    final now = DateTime.now();
+    final todayOnly = DateTime(now.year, now.month, now.day);
+    final selected = onlyDate == todayOnly;
 
-    return GestureDetector(
-      onTap: () => setState(() => _selectedDay = day),
-      child: Column(
-        children: [
-          Text(_weekdayShort(day.weekday), style: const TextStyle(color: Colors.white70, fontSize: 12)),
-          const SizedBox(height: 4),
-          Container(
-            width: 34,
-            height: 34,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: selected ? Colors.white : Colors.transparent,
-              borderRadius: BorderRadius.circular(18),
-            ),
-            child: Text(
-              '${day.day}',
-              style: TextStyle(
-                color: selected ? Colors.black : Colors.white,
-                fontWeight: FontWeight.w600,
-              ),
+    return Column(
+      children: [
+        Text(_weekdayShort(day.weekday), style: const TextStyle(color: Colors.grey, fontSize: 12)),
+        const SizedBox(height: 4),
+        Container(
+          width: 34,
+          height: 34,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: selected ? Colors.white : Colors.transparent,
+            borderRadius: BorderRadius.circular(18),
+          ),
+          child: Text(
+            '${day.day}',
+            style: TextStyle(
+              color: selected ? Colors.black : Colors.white,
+              fontWeight: FontWeight.w600,
             ),
           ),
-          const SizedBox(height: 6),
-          Container(width: 20, height: 4, decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(2))),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -160,46 +146,78 @@ class _RecoveryOverviewScreenState extends State<RecoveryOverviewScreen> {
     return labels[(weekday - 1) % 7];
   }
 
-  Widget _monthGrid(DateTime month) {
-    final first = DateTime(month.year, month.month, 1);
-    final firstWeekday = first.weekday % 7; // 0 for Sunday? adjust layout
-    final daysInMonth = DateTime(month.year, month.month + 1, 0).day;
-    final start = DateTime(_plan!.createdAt.year, _plan!.createdAt.month, _plan!.createdAt.day);
+  Widget _monthContinuationOverlay(DateTime startOfWeek) {
+    final planStart = DateTime(_plan!.createdAt.year, _plan!.createdAt.month, _plan!.createdAt.day);
+    final days = List.generate(28, (i) => startOfWeek.add(Duration(days: i))); // 4 filas
+    final monthRef = startOfWeek.month;
 
-    final cells = <Widget>[];
-    for (int i = 0; i < firstWeekday; i++) {
-      cells.add(Container());
-    }
-    for (int d = 1; d <= daysInMonth; d++) {
-      final date = DateTime(month.year, month.month, d);
-      final diff = date.difference(start).inDays;
-      final phaseIdx = diff >= 0 ? _phaseForOffset(diff) : null;
-      final color = phaseIdx != null ? _colorForPhaseIndex(phaseIdx) : Colors.transparent;
-      final border = phaseIdx != null ? Border.all(color: color, width: 2) : null;
-      final selected = date.year == _selectedDay.year && date.month == _selectedDay.month && date.day == _selectedDay.day;
-      cells.add(GestureDetector(
-        onTap: () => setState(() => _selectedDay = date),
-        child: Container(
-          margin: const EdgeInsets.all(4),
-          decoration: BoxDecoration(
-            color: selected ? Colors.black : Colors.white,
-            borderRadius: BorderRadius.circular(8),
-            border: border,
-          ),
-          alignment: Alignment.center,
-          child: Text(
-            '$d',
-            style: TextStyle(color: selected ? Colors.white : Colors.black),
-          ),
-        ),
-      ));
-    }
-
-    return GridView.count(
-      crossAxisCount: 7,
+    return GridView.builder(
+      padding: EdgeInsets.zero,
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      children: cells,
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 7,
+        mainAxisSpacing: 8,
+      ),
+      itemCount: days.length,
+      itemBuilder: (_, i) {
+        final date = days[i];
+        final only = DateTime(date.year, date.month, date.day);
+        final diff = only.difference(planStart).inDays;
+        final phaseIdx = diff >= 0 ? _phaseForOffset(diff) : null;
+        final baseColor = phaseIdx != null ? _colorForPhaseIndex(phaseIdx) : Colors.white54;
+        final color = (date.month == monthRef) ? baseColor : Colors.white38;
+        final now = DateTime.now();
+        final todayOnly = DateTime(now.year, now.month, now.day);
+        final selected = only == todayOnly;
+        return Container(
+          alignment: Alignment.center,
+          child: Text(
+            '${date.day}',
+            style: TextStyle(
+              color: selected ? Colors.white : color,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _headerCalendar(RecoveryPhase currentPhase, DateTime monday) {
+    final color = _colorForPhaseIndex(currentPhase.phaseIndex);
+    return Container(
+      decoration: BoxDecoration(
+        color: darkBg,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      padding: const EdgeInsets.all(12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  const Text('Fase ', style: TextStyle(color: Colors.white)),
+                  Text('${currentPhase.phaseIndex}', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w700)),
+                  const Text(': ', style: TextStyle(color: Colors.white)),
+                  Text(currentPhase.name, style: TextStyle(color: color, fontWeight: FontWeight.w800)),
+                ],
+              ),
+              IconButton(
+                onPressed: () => setState(() => _showMonth = !_showMonth),
+                color: Colors.white,
+                icon: Icon(_showMonth ? Icons.expand_less : Icons.expand_more),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          if (!_showMonth) _weekStrip(monday),
+          if (_showMonth) _monthContinuationOverlay(monday),
+        ],
+      ),
     );
   }
 
@@ -258,38 +276,42 @@ class _RecoveryOverviewScreenState extends State<RecoveryOverviewScreen> {
         : '${remaining.inHours.remainder(100).toString().padLeft(2, '0')}:${remaining.inMinutes.remainder(60).toString().padLeft(2, '0')}:${remaining.inSeconds.remainder(60).toString().padLeft(2, '0')}'
         ;
 
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      decoration: BoxDecoration(color: const Color(0xFF20252B), borderRadius: BorderRadius.circular(16)),
-      child: Row(
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text('Fase', style: TextStyle(color: Colors.white60)),
-                const SizedBox(height: 4),
-                Row(
-                  children: [
-                    Container(width: 4, height: 24, decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(2))),
-                    const SizedBox(width: 8),
-                    Text('Fase ${current.phaseIndex}', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600)),
-                    const SizedBox(width: 8),
-                    Text('${_currentDayInPhase1Based}/${current.durationDays} días', style: const TextStyle(color: Colors.white70)),
-                  ],
-                ),
-              ],
+    return Align(
+      alignment: Alignment.center,
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 24),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        decoration: BoxDecoration(color: darkBg, borderRadius: BorderRadius.circular(16)),
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Fase', style: TextStyle(color: Colors.white60)),
+                  const SizedBox(height: 4),
+                  Row(
+                    children: [
+                      Container(width: 4, height: 24, decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(2))),
+                      const SizedBox(width: 8),
+                      Text('Fase ${current.phaseIndex}', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600)),
+                      const SizedBox(width: 8),
+                      Text('${_currentDayInPhase1Based}/${current.durationDays} días', style: const TextStyle(color: Colors.white70)),
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              const Text('Siguiente fase', style: TextStyle(color: Colors.white60)),
-              const SizedBox(height: 4),
-              Text(timeLeft, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600)),
-            ],
-          )
-        ],
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                const Text('Siguiente fase', style: TextStyle(color: Colors.white60)),
+                const SizedBox(height: 4),
+                Text(timeLeft, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600)),
+              ],
+            )
+          ],
+        ),
       ),
     );
   }
@@ -297,153 +319,199 @@ class _RecoveryOverviewScreenState extends State<RecoveryOverviewScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(title: const Text('Recuperación')),
-      body: BlocBuilder<RecoveryBloc, RecoveryState>(
-        builder: (context, state) {
-          if (state is RecoveryLoading) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (state is RecoveryError) {
-            return Center(child: Text('Error: ${state.message}'));
-          } else if (state is RecoveryLoaded) {
-            final injury = state.injury;
-            _plan = state.plan;
-            _phases = state.phases..sort((a, b) => a.phaseIndex.compareTo(b.phaseIndex));
-            final progress = state.progress;
+      body: Stack(
+        children: [
+          Positioned.fill(
+            child: IgnorePointer(
+              ignoring: true,
+              child: Opacity(
+                opacity: 0.06,
+                child: Center(
+                  child: Image.asset('assets/images/recovery/recovery_back.png', fit: BoxFit.contain),
+                ),
+              ),
+            ),
+          ),
+          BlocBuilder<RecoveryBloc, RecoveryState>(
+            builder: (context, state) {
+              if (state is RecoveryLoading) {
+                return const Center(child: CircularProgressIndicator());
+              } else if (state is RecoveryError) {
+                return Center(child: Text('Error: ${state.message}'));
+              } else if (state is RecoveryLoaded) {
+                final injury = state.injury;
+                _plan = state.plan;
+                _phases = state.phases..sort((a, b) => a.phaseIndex.compareTo(b.phaseIndex));
+                final progress = state.progress;
 
-            if (injury == null || _plan == null) {
-              return const Center(child: Text('No hay lesión activa o plan.'));
-            }
+                if (injury == null || _plan == null) {
+                  return const Center(child: Text('No hay lesión activa o plan.'));
+                }
 
-            _currentPhaseIndex1Based = progress?.currentPhase ?? 1;
-            _currentDayInPhase1Based = progress?.currentDay ?? 1;
+                _currentPhaseIndex1Based = progress?.currentPhase ?? 1;
+                _currentDayInPhase1Based = progress?.currentDay ?? 1;
 
-            final today = DateTime.now();
-            final monday = today.subtract(Duration(days: (today.weekday - 1)));
+                final today = DateTime.now();
+                final monday = today.subtract(Duration(days: (today.weekday - 1)));
 
-            final cpIdx = _phases.indexWhere((p) => p.phaseIndex == _currentPhaseIndex1Based);
-            final currentPhase = cpIdx >= 0 ? _phases[cpIdx] : _phases.first;
+                final cpIdx = _phases.indexWhere((p) => p.phaseIndex == _currentPhaseIndex1Based);
+                final currentPhase = cpIdx >= 0 ? _phases[cpIdx] : _phases.first;
 
-            return SingleChildScrollView(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Calendar header
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                return SingleChildScrollView(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('Fase: Recuperación', style: TextStyle(fontWeight: FontWeight.w700)),
-                      IconButton(
-                        onPressed: () => setState(() => _showMonth = !_showMonth),
-                        icon: Icon(_showMonth ? Icons.expand_less : Icons.expand_more),
+                      _headerCalendar(currentPhase, monday),
+
+                      const SizedBox(height: 16),
+                      const Center(child: Text('Mi progreso', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700))),
+                      const SizedBox(height: 12),
+                      Center(child: _progressRing()),
+
+                      const SizedBox(height: 16),
+                      _phaseCard(currentPhase),
+                      const SizedBox(height: 6),
+                      Container(
+                        decoration: BoxDecoration(
+                          color: darkBg,
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        padding: const EdgeInsets.all(12),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                color: greyBg,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Container(
+                                        width: 28,
+                                        height: 28,
+                                        decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
+                                        child: const Icon(Icons.check, color: Colors.black87, size: 18),
+                                      ),
+                                      const SizedBox(width: 8),
+                                      const Text('Tareas de hoy', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: Colors.white)),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 8),
+                                  FutureBuilder<List<Map<String, dynamic>>>(
+                                    future: _loadTodayTasks(currentPhase.id, _currentDayInPhase1Based),
+                                    builder: (context, snapshot) {
+                                      if (!snapshot.hasData) {
+                                        return const Center(child: CircularProgressIndicator());
+                                      }
+                                      final tasks = snapshot.data!;
+                                      if (tasks.isEmpty) {
+                                        return const Text('No hay tareas asignadas para hoy.', style: TextStyle(color: Colors.white70));
+                                      }
+                                      final phaseColor = _colorForPhaseIndex(_currentPhaseIndex1Based);
+                                      return FutureBuilder<Set<String>>(
+                                        future: _loadCompletedTaskIds(_plan!.id),
+                                        builder: (context, completedSnap) {
+                                          final completed = completedSnap.data ?? <String>{};
+                                          return Column(
+                                            children: tasks.map((t) {
+                                              final id = t['id'] as String;
+                                              final title = t['title'] as String? ?? '';
+                                              final desc = t['description'] as String? ?? '';
+                                              final checked = completed.contains(id);
+                                              return Container(
+                                                margin: const EdgeInsets.symmetric(vertical: 6),
+                                                padding: const EdgeInsets.all(12),
+                                                decoration: BoxDecoration(
+                                                  borderRadius: BorderRadius.circular(12),
+                                                ),
+                                                child: Row(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+                                                    Theme(
+                                                      data: Theme.of(context).copyWith(
+                                                        checkboxTheme: CheckboxThemeData(
+                                                          side: BorderSide(color: phaseColor, width: 2),
+                                                          fillColor: MaterialStateProperty.resolveWith((states) {
+                                                            if (states.contains(MaterialState.selected)) return phaseColor;
+                                                            return Colors.transparent;
+                                                          }),
+                                                          checkColor: MaterialStateProperty.all(Colors.white),
+                                                        ),
+                                                      ),
+                                                      child: Checkbox(
+                                                        value: checked,
+                                                        onChanged: (v) => _toggleTaskCompletion(_plan!.id, id, v == true),
+                                                      ),
+                                                    ),
+                                                    const SizedBox(width: 8),
+                                                    Expanded(
+                                                      child: Column(
+                                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                                        children: [
+                                                          Text(title, style: const TextStyle(fontWeight: FontWeight.w600, color: Colors.white)),
+                                                          if (desc.isNotEmpty) ...[
+                                                            const SizedBox(height: 4),
+                                                            Text(desc, style: const TextStyle(color: Colors.white70)),
+                                                          ],
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              );
+                                            }).toList(),
+                                          );
+                                        },
+                                      );
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            Container(
+                              padding: const EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                color: greyBg,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Row(
+                                children: [
+                                  Container(
+                                    width: 28,
+                                    height: 28,
+                                    decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
+                                    child: const Icon(Icons.notifications_active_outlined, color: Colors.black87, size: 18),
+                                  ),
+                                  const SizedBox(width: 12),
+                                  const Expanded(child: Text('Configurar recordatorios diarios', style: TextStyle(color: Colors.white))),
+                                  TextButton(
+                                    onPressed: () {},
+                                    child: const Text('Configurar'),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),
-                  _weekStrip(monday),
-                  if (_showMonth) ...[
-                    const SizedBox(height: 8),
-                    _monthGrid(DateTime(today.year, today.month, 1)),
-                  ],
-
-                  const SizedBox(height: 16),
-                  const Text('Mi progreso', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700)),
-                  const SizedBox(height: 12),
-                  Center(child: _progressRing()),
-
-                  const SizedBox(height: 16),
-                  _phaseCard(currentPhase),
-
-                  const SizedBox(height: 16),
-                  const Text('Tareas de hoy', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
-                  const SizedBox(height: 8),
-                  FutureBuilder<List<Map<String, dynamic>>>(
-                    future: _loadTodayTasks(currentPhase.id, _currentDayInPhase1Based),
-                    builder: (context, snapshot) {
-                      if (!snapshot.hasData) {
-                        return const Center(child: CircularProgressIndicator());
-                      }
-                      final tasks = snapshot.data!;
-                      if (tasks.isEmpty) {
-                        return const Text('No hay tareas asignadas para hoy.');
-                      }
-                      return FutureBuilder<Set<String>>(
-                        future: _loadCompletedTaskIds(_plan!.id),
-                        builder: (context, completedSnap) {
-                          final completed = completedSnap.data ?? <String>{};
-                          return Column(
-                            children: tasks.map((t) {
-                              final id = t['id'] as String;
-                              final title = t['title'] as String? ?? '';
-                              final desc = t['description'] as String? ?? '';
-                              final checked = completed.contains(id);
-                              return Container(
-                                margin: const EdgeInsets.symmetric(vertical: 6),
-                                padding: const EdgeInsets.all(12),
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFFF4F6F8),
-                                  borderRadius: BorderRadius.circular(12),
-                                  border: Border.all(color: const Color(0xFFE6E6E6)),
-                                ),
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Checkbox(
-                                      value: checked,
-                                      onChanged: (v) => _toggleTaskCompletion(_plan!.id, id, v == true),
-                                      activeColor: _colorForPhaseIndex(_currentPhaseIndex1Based),
-                                    ),
-                                    const SizedBox(width: 8),
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Text(title, style: const TextStyle(fontWeight: FontWeight.w600)),
-                                          if (desc.isNotEmpty) ...[
-                                            const SizedBox(height: 4),
-                                            Text(desc, style: const TextStyle(color: Colors.black54)),
-                                          ],
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              );
-                            }).toList(),
-                          );
-                        },
-                      );
-                    },
-                  ),
-
-                  const SizedBox(height: 16),
-                  // Recordatorios (placeholder)
-                  Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: const Color(0xFFE6E6E6)),
-                    ),
-                    child: Row(
-                      children: [
-                        const Icon(Icons.notifications_active_outlined),
-                        const SizedBox(width: 12),
-                        const Expanded(child: Text('Configurar recordatorios diarios')),
-                        TextButton(
-                          onPressed: () {
-                            // TODO: Hook reminders
-                          },
-                          child: const Text('Configurar'),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            );
-          } else {
-            return const SizedBox.shrink();
-          }
-        },
+                );
+              } else {
+                return const SizedBox.shrink();
+              }
+            },
+          ),
+        ],
       ),
     );
   }
