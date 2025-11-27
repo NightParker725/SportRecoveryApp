@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
 class PhaseVideo {
-  final String thumbnailAsset;
+  final String thumbnailUrl;
   final String title;
   final String shortDescription;
   final String url;
   const PhaseVideo({
-    required this.thumbnailAsset,
+    required this.thumbnailUrl,
     required this.title,
     required this.shortDescription,
     required this.url,
@@ -49,7 +49,7 @@ const List<PhaseContent> kPhaseContents = [
         description:
             'Evita actividades que aumenten el dolor o la inflamación. Prioriza la inmovilidad relativa y protege la zona afectada.',
         video: PhaseVideo(
-          thumbnailAsset: 'assets/images/recovery/1_enabled.png',
+          thumbnailUrl: 'https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=600&q=80',
           title: 'Reposo y protección',
           shortDescription: 'Cómo proteger la zona y organizar el reposo inicial.',
           url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
@@ -60,7 +60,7 @@ const List<PhaseContent> kPhaseContents = [
         description:
             'Aplicación de frío envuelto en una toalla (bolsas de gel o hielo) durante 10-15 minutos, 3-5 veces al día. Ayuda con la vasoconstricción y disminuye la inflamación.',
         video: PhaseVideo(
-          thumbnailAsset: 'assets/images/recovery/1_enabled.png',
+          thumbnailUrl: 'https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?auto=format&fit=crop&w=600&q=80',
           title: 'Aplicación frío - calor',
           shortDescription: 'Tutorial: cómo aplicar compresas de forma segura.',
           url: 'https://www.youtube.com/watch?v=2Vv-BfVoq4g',
@@ -71,7 +71,7 @@ const List<PhaseContent> kPhaseContents = [
         description:
             'Usa un vendaje elástico firme pero cómodo y eleva la extremidad por encima del nivel del corazón para reducir el edema.',
         video: PhaseVideo(
-          thumbnailAsset: 'assets/images/recovery/1_enabled.png',
+          thumbnailUrl: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=600&q=80',
           title: 'Compresión y elevación',
           shortDescription: 'Aplicación correcta del vendaje y elevación segura.',
           url: 'https://www.youtube.com/watch?v=3JZ_D3ELwOQ',
@@ -90,7 +90,7 @@ const List<PhaseContent> kPhaseContents = [
         description:
             'Ejercicios de rango de movimiento sin dolor para recuperar amplitud articular.',
         video: PhaseVideo(
-          thumbnailAsset: 'assets/images/recovery/2_enabled.png',
+          thumbnailUrl: 'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=600&q=80',
           title: 'Movilidad suave',
           shortDescription: 'Secuencia de movilidad sin dolor para articulación.',
           url: 'https://www.youtube.com/watch?v=04854XqcfCY',
@@ -101,7 +101,7 @@ const List<PhaseContent> kPhaseContents = [
         description:
             'Trabajo isométrico y cargas bajas enfocadas en la musculatura estabilizadora.',
         video: PhaseVideo(
-          thumbnailAsset: 'assets/images/recovery/2_enabled.png',
+          thumbnailUrl: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&w=600&q=80',
           title: 'Isométricos básicos',
           shortDescription: 'Introducción segura a fuerza isométrica.',
           url: 'https://www.youtube.com/watch?v=oHg5SJYRHA0',
@@ -112,7 +112,7 @@ const List<PhaseContent> kPhaseContents = [
         description:
             'Continuar con estrategias de manejo del dolor y monitorización de la respuesta al ejercicio.',
         video: PhaseVideo(
-          thumbnailAsset: 'assets/images/recovery/2_enabled.png',
+          thumbnailUrl: 'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=600&q=80',
           title: 'Estrategias de control del dolor',
           shortDescription: 'Respiración, pacing y termoterapia.',
           url: 'https://www.youtube.com/watch?v=9bZkp7q19f0',
@@ -131,7 +131,7 @@ const List<PhaseContent> kPhaseContents = [
         description:
             'Progresión de cargas, pliometría y potencia, manteniendo una técnica segura.',
         video: PhaseVideo(
-          thumbnailAsset: 'assets/images/recovery/3_enabled.png',
+          thumbnailUrl: 'https://images.unsplash.com/photo-1518458028785-8fbcd101ebb9?auto=format&fit=crop&w=600&q=80',
           title: 'Potencia progresiva',
           shortDescription: 'Pliometría básica y carga submáxima.',
           url: 'https://www.youtube.com/watch?v=2vjPBrBU-TM',
@@ -142,7 +142,7 @@ const List<PhaseContent> kPhaseContents = [
         description:
             'Ejercicios neuromusculares y de control motor orientados al gesto funcional.',
         video: PhaseVideo(
-          thumbnailAsset: 'assets/images/recovery/3_enabled.png',
+          thumbnailUrl: 'https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=600&q=80',
           title: 'Coordinación y control',
           shortDescription: 'Tareas neuromusculares para estabilidad dinámica.',
           url: 'https://www.youtube.com/watch?v=uelHwf8o7_U',
@@ -153,7 +153,7 @@ const List<PhaseContent> kPhaseContents = [
         description:
             'Integración de tareas específicas, test funcionales y criterios de alta.',
         video: PhaseVideo(
-          thumbnailAsset: 'assets/images/recovery/3_enabled.png',
+          thumbnailUrl: 'https://images.unsplash.com/photo-1507537509458-b8312d35a233?auto=format&fit=crop&w=600&q=80',
           title: 'Retorno progresivo',
           shortDescription: 'Criterios y progresión de retorno al deporte.',
           url: 'https://www.youtube.com/watch?v=60ItHLz5WEA',

@@ -397,25 +397,40 @@ class _RecoveryOverviewScreenState extends State<RecoveryOverviewScreen> {
                 final currentPhase = cpIdx >= 0 ? _phases[cpIdx] : _phases.first;
 
                 return SingleChildScrollView(
-                  padding: const EdgeInsets.all(16),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _headerCalendar(currentPhase, monday),
-
                       const SizedBox(height: 16),
-                      const Center(child: Text('Mi progreso', style: TextStyle(fontSize: 24, fontWeight: FontWeight.w900))),
-                      const SizedBox(height: 12),
-                      Center(child: _progressRing()),
+                      _headerCalendar(currentPhase, monday),
+                      const SizedBox(height: 20),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Center(
+                              child: Text(
+                                'Mi progreso',
+                                style: TextStyle(fontSize: 24, fontWeight: FontWeight.w900),
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            Center(child: _progressRing()),
+                          ],
+                        ),
+                      ),
 
                       const SizedBox(height: 60),
                       Stack(
                         clipBehavior: Clip.none,
                         children: [
                           Container(
-                            decoration: BoxDecoration(
+                            decoration: const BoxDecoration(
                               color: darkBg,
-                              borderRadius: BorderRadius.circular(40),
+                              borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(40),
+                                topRight: Radius.circular(40),
+                              ),
                             ),
                             padding: const EdgeInsets.fromLTRB(28, 64, 28, 28),
                             child: Column(

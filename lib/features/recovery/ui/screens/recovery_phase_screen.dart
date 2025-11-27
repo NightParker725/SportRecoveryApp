@@ -16,6 +16,8 @@ class _RecoveryPhaseScreenState extends State<RecoveryPhaseScreen> {
   final Map<int, String> _phaseNames = {};
   int _selectedTopicIndex = 0;
 
+  static const Color _topicsHighlight = Color(0xFF00DFC1);
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -57,8 +59,9 @@ class _RecoveryPhaseScreenState extends State<RecoveryPhaseScreen> {
   @override
   Widget build(BuildContext context) {
     final content = getPhaseContentByIndex(_viewPhaseIndex);
-    final phaseTitle = _phaseNames[_viewPhaseIndex] ?? content.phaseTitle;
+    final phaseTitle = _phaseDisplayLabel(_viewPhaseIndex);
     final accent = colorForPhaseIndex(_viewPhaseIndex);
+    final screenHeight = MediaQuery.of(context).size.height;
 
     final icons = List.generate(3, (i) {
       final idx = i + 1;
@@ -73,162 +76,276 @@ class _RecoveryPhaseScreenState extends State<RecoveryPhaseScreen> {
         },
         child: Image.asset(
           'assets/images/recovery/${idx}_$state.png',
-          width: 64,
-          height: 64,
+          width: 70,
+          height: 70,
         ),
       );
     });
 
+    final topInset = MediaQuery.of(context).padding.top;
+
     return Scaffold(
+      extendBodyBehindAppBar: true,
       backgroundColor: Colors.white,
-      appBar: AppBar(title: Text(phaseTitle)),
+      appBar: AppBar(
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        foregroundColor: Colors.black,
+        automaticallyImplyLeading: true,
+      ),
       body: Stack(
         children: [
           Positioned.fill(
             child: IgnorePointer(
               ignoring: true,
-              child: Center(
-                child: Image.asset('assets/images/recovery/recovery_back.png', fit: BoxFit.contain),
+              child: Image.asset(
+                'assets/images/recovery/${_viewPhaseIndex}_back.png',
+                fit: BoxFit.cover,
               ),
             ),
           ),
           SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
+            padding: EdgeInsets.only(top: topInset + kToolbarHeight + 8),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Header
-                Center(
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const SizedBox(height: 8),
-                      Text(
-                        'Proceso de Recuperación',
-                        style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
-                      ),
-                      const SizedBox(height: 6),
-                      Text(
-                        phaseTitle,
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w800,
-                          color: accent,
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: icons,
-                      ),
-                    ],
-                  ),
-                ),
-
-                const SizedBox(height: 20),
-                // Phase description
-                Text(
-                  content.phaseDescription,
-                  style: const TextStyle(color: Colors.black87),
-                ),
-
-                const SizedBox(height: 16),
-                // Topics selector
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: List.generate(content.topics.length, (i) {
-                    final selected = _selectedTopicIndex == i;
-                    return ChoiceChip(
-                      label: Text(content.topics[i].title),
-                      selected: selected,
-                      onSelected: (_) => setState(() => _selectedTopicIndex = i),
-                      labelStyle: TextStyle(
-                        color: selected ? Colors.black : Colors.black87,
-                        fontWeight: FontWeight.w600,
-                      ),
-                      selectedColor: accent,
-                      backgroundColor: Colors.grey.shade200,
-                    );
-                  }),
-                ),
-
-                const SizedBox(height: 12),
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.grey.shade300),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.04),
-                        blurRadius: 8,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  child: Text(
-                    content.topics[_selectedTopicIndex].description,
-                    style: const TextStyle(fontSize: 14, color: Colors.black87),
-                  ),
-                ),
-
-                const SizedBox(height: 16),
-                // Optional video for current topic
-                if (content.topics[_selectedTopicIndex].video != null)
-                  Builder(builder: (context) {
-                    final v = content.topics[_selectedTopicIndex].video!;
-                    return Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: Colors.grey.shade300),
-                      ),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(8),
-                            child: Image.asset(
-                              v.thumbnailAsset,
-                              width: 96,
-                              height: 72,
-                              fit: BoxFit.cover,
+                      Center(
+                        child: Column(
+                          children: [
+                            const SizedBox(height: 8),
+                            SizedBox(
+                              width: 280,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: icons,
+                              ),
                             ),
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                            const SizedBox(height: 18),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                Text(v.title, style: const TextStyle(fontWeight: FontWeight.w700)),
-                                const SizedBox(height: 4),
-                                Text(v.shortDescription, style: const TextStyle(color: Colors.black87)),
-                                const SizedBox(height: 8),
-                                Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: TextButton(
-                                    style: TextButton.styleFrom(
-                                      foregroundColor: Colors.white,
-                                      backgroundColor: accent,
-                                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                                    ),
-                                    onPressed: () => _openUrl(v.url),
-                                    child: const Text('Ver tutorial'),
+                                Text(
+                                  'Proceso de',
+                                  style: TextStyle(
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.w600,
+                                    color: accent,
+                                  ),
+                                ),
+                                const SizedBox(height: 0),
+                                Text(
+                                  phaseTitle,
+                                  style: const TextStyle(
+                                    fontSize: 32,
+                                    fontWeight: FontWeight.w800,
+                                    color: Colors.black87,
                                   ),
                                 ),
                               ],
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    );
-                  }),
+                      const SizedBox(height: 18),
+                      Text(
+                        content.phaseDescription,
+                        style: const TextStyle(color: Colors.black87, height: 1.4, fontSize: 14, fontWeight: FontWeight.w500),
+                      ),
+                      const SizedBox(height: 18),
+                      Wrap(
+                        spacing: 12,
+                        runSpacing: 12,
+                        children: List.generate(content.topics.length, (i) {
+                          final selected = _selectedTopicIndex == i;
+                          return GestureDetector(
+                            onTap: () => setState(() => _selectedTopicIndex = i),
+                            child: AnimatedContainer(
+                              duration: const Duration(milliseconds: 200),
+                              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+                              decoration: BoxDecoration(
+                                color: selected ? Colors.white : const Color(0xFFD2D3D4),
+                                borderRadius: BorderRadius.circular(24),
+                                border: Border.all(
+                                  color: selected ? _topicsHighlight : Colors.transparent,
+                                  width: 1.5,
+                                ),
+                              ),
+                              child: Text(
+                                content.topics[i].title,
+                                style: TextStyle(
+                                  color: selected ? Colors.black : Colors.white,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          );
+                        }),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 16),
+                _PhaseTopicDetail(
+                  topicTitle: content.topics[_selectedTopicIndex].title,
+                  description: content.topics[_selectedTopicIndex].description,
+                  video: content.topics[_selectedTopicIndex].video,
+                  onOpenVideo: _openUrl,
+                  accent: accent,
+                  minHeight: screenHeight * 0.55,
+                ),
               ],
             ),
           ),
+        ],
+      ),
+    );
+  }
+
+  String _phaseDisplayLabel(int idx) {
+    switch (idx) {
+      case 1:
+        return 'Recuperación';
+      case 2:
+        return 'Rehabilitación';
+      case 3:
+        return 'Prevención';
+      default:
+        return 'Fase $idx';
+    }
+  }
+}
+
+class _PhaseTopicDetail extends StatelessWidget {
+  const _PhaseTopicDetail({
+    required this.topicTitle,
+    required this.description,
+    required this.accent,
+    this.minHeight,
+    this.video,
+    this.onOpenVideo,
+  });
+
+  final String topicTitle;
+  final String description;
+  final Color accent;
+  final double? minHeight;
+  final PhaseVideo? video;
+  final void Function(String url)? onOpenVideo;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      constraints: BoxConstraints(minHeight: minHeight ?? 0),
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 30),
+      decoration: const BoxDecoration(
+        color: Color(0xFF1F242A),
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(40),
+          topRight: Radius.circular(40),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            topicTitle,
+            style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w700),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            description,
+            style: const TextStyle(color: Colors.white70, height: 1.4),
+          ),
+          if (video != null) ...[
+            const SizedBox(height: 16),
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: const Color(0xFF313944),
+                borderRadius: BorderRadius.circular(24),
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Stack(
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(18),
+                        child: Image.network(
+                          video!.thumbnailUrl,
+                          width: 130,
+                          height: 110,
+                          fit: BoxFit.cover,
+                          errorBuilder: (_, __, ___) => Container(
+                            width: 130,
+                            height: 110,
+                            color: Colors.grey.shade700,
+                            alignment: Alignment.center,
+                            child: const Icon(Icons.image_not_supported, color: Colors.white70),
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        top: 10,
+                        left: 10,
+                        child: Container(
+                          padding: const EdgeInsets.all(6),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(color: Colors.black.withOpacity(0.3), blurRadius: 4),
+                            ],
+                          ),
+                          child: const Icon(Icons.play_circle_fill, size: 22, color: Colors.black87),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          video!.title,
+                          style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 6),
+                        Text(
+                          video!.shortDescription,
+                          style: const TextStyle(color: Colors.white70, fontSize: 13),
+                        ),
+                        const SizedBox(height: 16),
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF00C897),
+                            foregroundColor: Colors.black,
+                            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                            elevation: 0,
+                          ),
+                          onPressed: video?.url != null && onOpenVideo != null
+                              ? () => onOpenVideo!(video!.url)
+                              : null,
+                          child: const Text(
+                            'Ver tutorial',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ],
       ),
     );
