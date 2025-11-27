@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:moviles252/domain/model/profile.dart';
 import 'package:moviles252/features/profile/ui/bloc/profile_bloc.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:moviles252/ui/theme/app_colors.dart';
+
 
 class MyProfilePage extends StatefulWidget {
   const MyProfilePage({super.key});
@@ -55,17 +57,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                         bottomLeft: Radius.circular(40),
                         bottomRight: Radius.circular(40),
                       ),
-                      // Subtle teal arc pattern background
-                      gradient: LinearGradient(
-                        begin: Alignment.bottomRight,
-                        end: Alignment.topLeft,
-                        colors: [
-                          Colors.white,
-                          Colors.white,
-                          const Color(0xFF00CED1).withOpacity(0.05),
-                        ],
-                        stops: const [0.0, 0.6, 1.0],
-                      ),
+                    
                     ),
                     padding: const EdgeInsets.symmetric(
                       vertical: 32,
@@ -396,7 +388,7 @@ class _StatCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: const Color(0xFF2C2C2C),
+        color: AppColors.greySurface,
         borderRadius: BorderRadius.circular(16),
       ),
       padding: const EdgeInsets.all(16),

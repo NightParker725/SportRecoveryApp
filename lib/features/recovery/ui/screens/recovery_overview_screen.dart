@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:moviles252/ui/theme/app_colors.dart';
 import '../../ui/bloc/recovery_bloc.dart';
 import '../../domain/entities/recovery_phase.dart';
 import '../../domain/entities/recovery_plan.dart';
@@ -18,9 +19,9 @@ class RecoveryOverviewScreen extends StatefulWidget {
 class _RecoveryOverviewScreenState extends State<RecoveryOverviewScreen> {
   static const phase1Color = Color(0xFFE87C38);
   static const phase2Color = Color(0xFFD3EE3D);
-  static const phase3Color = Color(0xFF00DFC1);
-  static const darkBg = Color(0xFF1F242A);
-  static const greyBg = Color(0xFF37404C);
+  static const phase3Color = AppColors.primaryBlue;
+  static const darkBg = AppColors.darkSurface;
+  static const greyBg = AppColors.greySurface;
 
   bool _showMonth = false;
   DateTime _selectedDay = DateTime.now();
@@ -312,7 +313,7 @@ class _RecoveryOverviewScreenState extends State<RecoveryOverviewScreen> {
         child: Container(
           margin: const EdgeInsets.symmetric(horizontal: 24),
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-          decoration: BoxDecoration(color: const Color(0xFF37404C), borderRadius: BorderRadius.circular(20)),
+          decoration: BoxDecoration(color: AppColors.greySurface, borderRadius: BorderRadius.circular(20)),
           child: Row(
           children: [
             Expanded(
@@ -330,7 +331,7 @@ class _RecoveryOverviewScreenState extends State<RecoveryOverviewScreen> {
               height: 60,
               margin: const EdgeInsets.symmetric(horizontal: 12),
               decoration: BoxDecoration(
-                color: const Color(0xFF00DFC1),
+                color: AppColors.primaryBlue,
                 borderRadius: BorderRadius.circular(20),
               ),
             ),
@@ -454,7 +455,10 @@ class _RecoveryOverviewScreenState extends State<RecoveryOverviewScreen> {
                                             child: const Icon(Icons.checklist_outlined, color: Colors.black87, size: 18),
                                           ),
                                           const SizedBox(width: 8),
-                                          const Text('Tareas de hoy', style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w600)),
+                                          Text(
+                                            'Tareas de hoy',
+                                            style: TextStyle(color: AppColors.pureWhite, fontSize: 14, fontWeight: FontWeight.w600),
+                                          ),
                                         ],
                                       ),
                                       const SizedBox(height: 8),
@@ -466,7 +470,10 @@ class _RecoveryOverviewScreenState extends State<RecoveryOverviewScreen> {
                                           }
                                           final tasks = snapshot.data!;
                                           if (tasks.isEmpty) {
-                                            return const Text('No hay tareas asignadas para hoy.', style: TextStyle(color: Colors.white70));
+                                            return Text(
+                                              'No hay tareas asignadas para hoy.',
+                                              style: TextStyle(color: AppColors.darkSurface.withOpacity(0.7)),
+                                            );
                                           }
                                           return FutureBuilder<Set<String>>(
                                             future: _loadCompletedTaskIds(_plan!.id),
@@ -488,14 +495,14 @@ class _RecoveryOverviewScreenState extends State<RecoveryOverviewScreen> {
                                                       children: [
                                                         Theme(
                                                           data: Theme.of(context).copyWith(
-                                                            checkboxTheme: CheckboxThemeData(
-                                                              side: const BorderSide(color: Color(0xFF00DFC1), width: 1),
-                                                              fillColor: MaterialStateProperty.resolveWith((states) {
-                                                                if (states.contains(MaterialState.selected)) return const Color(0xFF00DFC1);
-                                                                return Colors.transparent;
-                                                              }),
-                                                              checkColor: MaterialStateProperty.all(Colors.white),
-                                                            ),
+                                                        checkboxTheme: CheckboxThemeData(
+                                                          side: const BorderSide(color: AppColors.primaryBlue, width: 1),
+                                                          fillColor: MaterialStateProperty.resolveWith((states) {
+                                                            if (states.contains(MaterialState.selected)) return AppColors.primaryBlue;
+                                                            return Colors.transparent;
+                                                          }),
+                                                          checkColor: MaterialStateProperty.all(Colors.white),
+                                                        ),
                                                           ),
                                                           child: Checkbox(
                                                             value: checked,
@@ -507,10 +514,16 @@ class _RecoveryOverviewScreenState extends State<RecoveryOverviewScreen> {
                                                           child: Column(
                                                             crossAxisAlignment: CrossAxisAlignment.start,
                                                             children: [
-                                                              Text(title, style: const TextStyle(fontWeight: FontWeight.w600, color: Colors.white)),
+                                                          Text(
+                                                            title,
+                                                            style: TextStyle(fontWeight: FontWeight.w600, color: AppColors.pureWhite),
+                                                          ),
                                                               if (desc.isNotEmpty) ...[
                                                                 const SizedBox(height: 4),
-                                                                Text(desc, style: const TextStyle(color: Colors.white70)),
+                                                            Text(
+                                                              desc,
+                                                              style: TextStyle(color: AppColors.lighGreySurface),
+                                                            ),
                                                               ],
                                                             ],
                                                           ),
@@ -543,10 +556,21 @@ class _RecoveryOverviewScreenState extends State<RecoveryOverviewScreen> {
                                         child: const Icon(Icons.notifications_active_outlined, color: Colors.black87, size: 18),
                                       ),
                                       const SizedBox(width: 12),
-                                      const Expanded(child: Text('Configurar recordatorios diarios', style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w600))),
+                                      Expanded(
+                                        child: Text(
+                                          'Configurar recordatorios diarios',
+                                          style: TextStyle(color: AppColors.pureWhite, fontSize: 14, fontWeight: FontWeight.w600),
+                                        ),
+                                      ),
                                       TextButton(
+                                        style: TextButton.styleFrom(
+                                          backgroundColor: AppColors.primaryBlue,
+                                          foregroundColor: Colors.white,
+                                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                                        ),
                                         onPressed: () {},
-                                        child: const Text('Configurar', style: TextStyle(color: Color(0xFF00DFC1), fontSize: 14, fontWeight: FontWeight.w600)),
+                                        child: const Text('Configurar'),
                                       ),
                                     ],
                                   ),
@@ -567,26 +591,35 @@ class _RecoveryOverviewScreenState extends State<RecoveryOverviewScreen> {
                                         child: const Icon(Icons.info_outline, color: Colors.black87, size: 18),
                                       ),
                                       const SizedBox(width: 12),
-                                      const Expanded(child: Text('Conocer más de esta fase', style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w600))),
+                                      Expanded(
+                                        child: Text(
+                                          'Conocer más de esta fase',
+                                          style: TextStyle(color: AppColors.pureWhite, fontSize: 14, fontWeight: FontWeight.w600),
+                                        ),
+                                      ),
                                       TextButton(
+                                        style: TextButton.styleFrom(
+                                          backgroundColor: AppColors.primaryBlue,
+                                          foregroundColor: Colors.white,
+                                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                                        ),
                                         onPressed: () {
                                           final phaseNamesArg = {
                                             for (final ph in _phases) ph.phaseIndex: ph.name,
                                           };
-                                          Navigator.of(context).push(
-                                            MaterialPageRoute(
-                                              builder: (_) => const RecoveryPhaseScreen(),
-                                              settings: RouteSettings(arguments: {
-                                                'planId': _plan!.id,
-                                                'phaseId': currentPhase.id,
-                                                'phaseIndex': currentPhase.phaseIndex,
-                                                'phaseName': currentPhase.name,
-                                                'phaseNames': phaseNamesArg,
-                                              }),
-                                            ),
+                                          Navigator.of(context).pushNamed(
+                                            '/recovery_phase',
+                                            arguments: {
+                                              'planId': _plan!.id,
+                                              'phaseId': currentPhase.id,
+                                              'phaseIndex': currentPhase.phaseIndex,
+                                              'phaseName': currentPhase.name,
+                                              'phaseNames': phaseNamesArg,
+                                            },
                                           );
                                         },
-                                        child: const Text('Abrir', style: TextStyle(color: Color(0xFF00DFC1), fontSize: 14, fontWeight: FontWeight.w600)),
+                                        child: const Text('Abrir'),
                                       ),
                                     ],
                                   ),

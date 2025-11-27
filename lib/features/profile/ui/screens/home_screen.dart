@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:moviles252/features/profile/ui/bloc/profile_bloc.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:moviles252/ui/theme/app_colors.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -240,7 +241,7 @@ class _HomeStatCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: const Color(0xFF2C2C2C),
+        color: AppColors.greySurface,
         borderRadius: BorderRadius.circular(16),
       ),
       padding: const EdgeInsets.all(16),
@@ -297,7 +298,7 @@ class _RecoveryPhaseCard extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(top: 24),
       decoration: BoxDecoration(
-        color: const Color(0xFF2C2C2C),
+        color: AppColors.greySurface,
         borderRadius: BorderRadius.circular(16),
       ),
       padding: const EdgeInsets.only(right: 16, top: 16, bottom: 16),
@@ -333,7 +334,7 @@ class _RecoveryPhaseCard extends StatelessWidget {
                   ),
                   child: const Icon(
                     Icons.favorite_border,
-                    color: Color(0xFF2C2C2C),
+                    color: AppColors.greySurface,
                     size: 18,
                   ),
                 ),
@@ -369,8 +370,8 @@ class _RecoveryPhaseCard extends StatelessWidget {
                   child: ElevatedButton(
                     onPressed: () {},
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF00C897),
-                      foregroundColor: Colors.black,
+                      backgroundColor: AppColors.primaryBlue,
+                      foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(
                         horizontal: 24,
                         vertical: 8,

@@ -173,7 +173,7 @@ PhaseContent getPhaseContentByIndex(int phaseIndex) {
 Color colorForPhaseIndex(int idx) {
   if (idx == 1) return const Color(0xFFE87C38);
   if (idx == 2) return const Color(0xFFD3EE3D);
-  return const Color(0xFF00DFC1);
+  return const Color(0xFF019193);
 }
 
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:moviles252/ui/theme/app_colors.dart';
 import '../data/phase_content.dart';
 
 class RecoveryPhaseScreen extends StatefulWidget {
@@ -16,7 +17,7 @@ class _RecoveryPhaseScreenState extends State<RecoveryPhaseScreen> {
   final Map<int, String> _phaseNames = {};
   int _selectedTopicIndex = 0;
 
-  static const Color _topicsHighlight = Color(0xFF00DFC1);
+  static const Color _topicsHighlight = AppColors.primaryBlue;
 
   @override
   void didChangeDependencies() {
@@ -168,7 +169,7 @@ class _RecoveryPhaseScreenState extends State<RecoveryPhaseScreen> {
                               duration: const Duration(milliseconds: 200),
                               padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
                               decoration: BoxDecoration(
-                                color: selected ? Colors.white : const Color(0xFFD2D3D4),
+                                color: selected ? AppColors.pureWhite : AppColors.lightChipGrey,
                                 borderRadius: BorderRadius.circular(24),
                                 border: Border.all(
                                   color: selected ? _topicsHighlight : Colors.transparent,
@@ -178,7 +179,7 @@ class _RecoveryPhaseScreenState extends State<RecoveryPhaseScreen> {
                               child: Text(
                                 content.topics[i].title,
                                 style: TextStyle(
-                                  color: selected ? Colors.black : Colors.white,
+                                  color: selected ? Colors.black : AppColors.pureWhite,
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
@@ -244,7 +245,7 @@ class _PhaseTopicDetail extends StatelessWidget {
       constraints: BoxConstraints(minHeight: minHeight ?? 0),
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 30),
       decoration: const BoxDecoration(
-        color: Color(0xFF1F242A),
+        color: AppColors.darkSurface,
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(40),
           topRight: Radius.circular(40),
@@ -255,7 +256,7 @@ class _PhaseTopicDetail extends StatelessWidget {
         children: [
           Text(
             topicTitle,
-            style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w700),
+            style: const TextStyle(color: AppColors.pureWhite, fontSize: 20, fontWeight: FontWeight.w700),
           ),
           const SizedBox(height: 8),
           Text(
@@ -267,7 +268,7 @@ class _PhaseTopicDetail extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: const Color(0xFF313944),
+                color: AppColors.greySurface.withOpacity(0.2),
                 borderRadius: BorderRadius.circular(24),
               ),
               child: Row(
@@ -325,8 +326,8 @@ class _PhaseTopicDetail extends StatelessWidget {
                         const SizedBox(height: 16),
                         ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF00C897),
-                            foregroundColor: Colors.black,
+                            backgroundColor: AppColors.primaryBlue,
+                            foregroundColor: AppColors.pureWhite,
                             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                             elevation: 0,
