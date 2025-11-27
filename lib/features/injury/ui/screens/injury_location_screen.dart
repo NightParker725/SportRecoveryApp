@@ -91,11 +91,8 @@ class _InjuryLocationScreenState extends State<InjuryLocationScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Barra de progreso
                 _buildProgressBar(),
                 const SizedBox(height: 24),
-
-                // Pregunta principal
                 const Text(
                   'Selecciona la zona afectada',
                   style: TextStyle(
@@ -105,8 +102,6 @@ class _InjuryLocationScreenState extends State<InjuryLocationScreen> {
                   ),
                 ),
                 const SizedBox(height: 16),
-
-                // Grid de ubicaciones
                 GridView.count(
                   crossAxisCount: 2,
                   shrinkWrap: true,
@@ -117,10 +112,7 @@ class _InjuryLocationScreenState extends State<InjuryLocationScreen> {
                       .map((location) => _buildLocationButton(location))
                       .toList(),
                 ),
-
                 const SizedBox(height: 32),
-
-                // Pregunta adicional
                 const Text(
                   '¿Es en el lado izquierdo o derecho del cuerpo?',
                   style: TextStyle(
@@ -130,23 +122,17 @@ class _InjuryLocationScreenState extends State<InjuryLocationScreen> {
                   ),
                 ),
                 const SizedBox(height: 16),
-
-                // Opciones de lado
                 Column(
                   children: sides
                       .map((side) => _buildSideOption(side))
                       .toList(),
                 ),
-
                 const SizedBox(height: 32),
-
-                // Botón siguiente
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: isFormValid
                         ? () {
-                            // Guardar datos en el singleton
                             final service = InjuryEvaluationService();
                             service.location = selectedLocation;
                             service.side = selectedSide;

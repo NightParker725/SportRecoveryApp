@@ -120,19 +120,11 @@ class _CheckinFormScreenState extends State<CheckinFormScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Check-in de Hoy'),
-        leading: IconButton(
-          icon: const Icon(Icons.close),
-          onPressed: () => Navigator.pop(context),
-        ),
-      ),
       body: BlocConsumer<CheckinBloc, CheckinState>(
         listener: (context, state) {
           if (state is CheckinSuccess) {
-            ScaffoldMessenger.of(
-              context,
-            ).showSnackBar(const SnackBar(content: Text('¡Check-in enviado!')));
+            ScaffoldMessenger.of(context)
+                .showSnackBar(const SnackBar(content: Text('¡Check-in enviado!')));
             Navigator.pushReplacementNamed(context, '/my_profile');
           } else if (state is CheckinError) {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -144,190 +136,63 @@ class _CheckinFormScreenState extends State<CheckinFormScreen> {
           }
         },
         builder: (context, state) {
-          if (_showIntro) return _buildIntro(context);
-
-          return Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              children: [
-                _buildProgressHeader(),
-                const SizedBox(height: 12),
-                Expanded(child: _buildStep()),
-                const SizedBox(height: 12),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    TextButton(onPressed: _goBack, child: const Text('Atrás')),
-                    ElevatedButton(
-                      onPressed: state is CheckinLoading ? null : _goNext,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primaryBlue,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 28,
-                          vertical: 16,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(999),
-                        ),
-                      ),
-                      child: state is CheckinLoading
-                          ? const SizedBox(
-                              height: 18,
-                              width: 18,
-                              child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
-                            )
-                          : Text(_step == 6 ? 'Terminar' : 'Siguiente'),
-                    ),
-                  ],
-                ),
-              ],
-            ),
+          final content = _showIntro ? _buildIntroCard() : _buildStepperCard(state);
+          return _buildFormBackground(
+            title: 'Check-in del día',
+            child: content,
           );
         },
       ),
     );
   }
 
-  Widget _buildIntro(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.all(16.0),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      clipBehavior: Clip.antiAlias,
+  Widget _buildIntroCard() {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(24),
       child: Stack(
+        fit: StackFit.expand,
         children: [
-          // Imagen de fondo
-          Positioned.fill(
-            child: Image.asset(
-              'assets/images/feel.jpg', // <= AQUÍ LA IMAGEN QUE ME PEDISTE
-              fit: BoxFit.cover,
-            ),
+          Image.asset(
+            'assets/images/feel.jpg',
+            fit: BoxFit.cover,
           ),
-          // Degradado para texto
-          Positioned.fill(
-            child: Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [Colors.transparent, Colors.black.withOpacity(0.55)],
-                  stops: const [0.4, 1.0],
-                ),
+          Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Colors.transparent,
+                  Colors.black.withOpacity(0.65),
+                ],
+                stops: const [0.35, 1],
               ),
             ),
           ),
-          // Contenido inferior
-          Positioned.fill(
-            child: Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Align(
-                alignment: Alignment.bottomLeft,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      '¿Cómo te sientes hoy?',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 24,
-                        fontWeight: FontWeight.w600,
-                      ),
+          Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: Align(
+              alignment: Alignment.bottomLeft,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    '¿Cómo te sientes hoy?',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 24,
+                      fontWeight: FontWeight.w600,
                     ),
-                    const SizedBox(height: 8),
-                    const Text(
-                      'Check–in de hoy. Tómate 1 minuto para contarnos cómo va tu recuperación.',
-                      style: TextStyle(color: Colors.white70),
-                    ),
-                    const SizedBox(height: 16),
-
-                    // ***** SLIDER BUTTON *****
-                    LayoutBuilder(
-                      builder: (context, constraints) {
-                        _introMaxWidth = constraints.maxWidth;
-
-                        final maxLeftNow =
-                            _introMaxWidth - _introButtonWidth - 8.0;
-                        if (_introSlideValue > maxLeftNow && maxLeftNow > 8.0) {
-                          _introSlideValue = maxLeftNow;
-                        }
-
-                        return Container(
-                          width: double.infinity,
-                          height: 56,
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF31373F),
-                            borderRadius: BorderRadius.circular(35),
-                          ),
-                          child: Stack(
-                            children: [
-                              const Positioned.fill(
-                                child: Center(
-                                  child: Text(
-                                    '       > > > ',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.w500,
-                                      letterSpacing: 3,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              AnimatedPositioned(
-                                top: 8,
-                                duration: const Duration(milliseconds: 150),
-                                left: _introSlideValue,
-                                child: GestureDetector(
-                                  onHorizontalDragUpdate: (d) =>
-                                      _onIntroDragUpdate(d),
-                                  onHorizontalDragEnd: (_) => _onIntroDragEnd(),
-                                  child: Container(
-                                    width: _introButtonWidth,
-                                    height: 40,
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(35),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.black.withOpacity(0.3),
-                                          blurRadius: 8,
-                                          offset: const Offset(0, 3),
-                                        ),
-                                      ],
-                                    ),
-                                    child: const Center(
-                                      child: Text(
-                                        'Empezar',
-                                        style: TextStyle(
-                                          color: Color(0xFF31373F),
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w700,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        );
-                      },
-                    ),
-
-                    const SizedBox(height: 24),
-                  ],
-                ),
+                  ),
+                  const SizedBox(height: 8),
+                  const Text(
+                    'Tómate un minuto para contarnos cómo va tu recuperación.',
+                    style: TextStyle(color: Colors.white70),
+                  ),
+                  const SizedBox(height: 20),
+                  _buildIntroSlider(),
+                ],
               ),
             ),
           ),
@@ -335,6 +200,52 @@ class _CheckinFormScreenState extends State<CheckinFormScreen> {
       ),
     );
   }
+
+  Widget _buildStepperCard(CheckinState state) {
+    return Padding(
+      padding: const EdgeInsets.all(24.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildProgressHeader(),
+          const SizedBox(height: 12),
+          Expanded(child: _buildStep()),
+          const SizedBox(height: 12),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              TextButton(onPressed: _goBack, child: const Text('Atrás')),
+              ElevatedButton(
+                onPressed: state is CheckinLoading ? null : _goNext,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primaryBlue,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 28,
+                    vertical: 16,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(999),
+                  ),
+                ),
+                child: state is CheckinLoading
+                    ? const SizedBox(
+                        height: 18,
+                        width: 18,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
+                      )
+                    : Text(_step == 6 ? 'Terminar' : 'Siguiente'),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
 
   Widget _buildProgressHeader() {
     const primary = Color(0xFF019193);
@@ -609,6 +520,135 @@ class _CheckinFormScreenState extends State<CheckinFormScreen> {
             onChanged: (v) => setState(() => _q6 = v),
             title: Text(o),
             activeColor: AppColors.primaryBlue,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildIntroSlider() {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        _introMaxWidth = constraints.maxWidth;
+        final maxLeftNow = _introMaxWidth - _introButtonWidth - 8.0;
+        if (_introSlideValue > maxLeftNow && maxLeftNow > 8.0) {
+          _introSlideValue = maxLeftNow;
+        }
+        return Container(
+          width: double.infinity,
+          height: 56,
+          decoration: BoxDecoration(
+            color: const Color(0xFF31373F),
+            borderRadius: BorderRadius.circular(35),
+          ),
+          child: Stack(
+            children: [
+              const Positioned.fill(
+                child: Center(
+                  child: Text(
+                    '       > > > ',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.w500,
+                      letterSpacing: 3,
+                    ),
+                  ),
+                ),
+              ),
+              AnimatedPositioned(
+                top: 8,
+                duration: const Duration(milliseconds: 150),
+                left: _introSlideValue,
+                child: GestureDetector(
+                  onHorizontalDragUpdate: (d) => _onIntroDragUpdate(d),
+                  onHorizontalDragEnd: (_) => _onIntroDragEnd(),
+                  child: Container(
+                    width: _introButtonWidth,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(35),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.3),
+                          blurRadius: 8,
+                          offset: const Offset(0, 3),
+                        ),
+                      ],
+                    ),
+                    child: const Center(
+                      child: Text(
+                        'Empezar',
+                        style: TextStyle(
+                          color: Color(0xFF31373F),
+                          fontSize: 14,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildFormBackground({
+    required String title,
+    required Widget child,
+  }) {
+    return Stack(
+      children: [
+        Positioned.fill(
+          child: Image.asset(
+            'assets/images/recovery/recovery_back.png',
+            fit: BoxFit.cover,
+          ),
+        ),
+        SafeArea(
+          child: Align(
+            alignment: Alignment.topCenter,
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(24),
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 600),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      title,
+                      style: const TextStyle(
+                        color: Colors.black,
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    Container(
+                      height: 500,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(32),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.12),
+                            blurRadius: 30,
+                            offset: const Offset(0, 12),
+                          ),
+                        ],
+                      ),
+                      clipBehavior: Clip.antiAlias,
+                      child: child,
+                    ),
+                  ],
+                ),
+              ),
+            ),
           ),
         ),
       ],

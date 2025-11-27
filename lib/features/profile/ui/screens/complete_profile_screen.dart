@@ -678,242 +678,124 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Completa tu perfil'),
-        // If we're on the intro screen allow the user to go back to profile
-        leading: _showIntro
-            ? IconButton(
-                icon: const Icon(Icons.arrow_back),
-                onPressed: () =>
-                    Navigator.pushReplacementNamed(context, '/my_profile'),
-              )
-            : null,
-      ),
       body: BlocListener<CompleteProfileBloc, CompleteProfileState>(
         listener: (context, state) {
           if (state is CompleteProfileSuccess) {
             Navigator.pushReplacementNamed(context, '/my_profile');
           } else if (state is CompleteProfileError) {
-            ScaffoldMessenger.of(
-              context,
-            ).showSnackBar(SnackBar(content: Text(state.message)));
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text(state.message)));
           }
         },
-        child: _showIntro ? _buildIntro(context) : _buildStepper(context),
-      ),
-    );
-  }
-
-  Widget _buildIntro(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.all(16.0),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: Stack(
-        children: [
-          // Imagen de fondo
-          Positioned.fill(
-            child: Image.asset(
-              'assets/images/signup/image_back.png',
-              fit: BoxFit.cover,
-            ),
-          ),
-          // Degradado para texto
-          Positioned.fill(
-            child: Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    Colors.transparent,
-                    Colors.black.withOpacity(0.55),
-                  ],
-                  stops: const [0.4, 1.0],
-                ),
-              ),
-            ),
-          ),
-          // Contenido inferior con textos y slider
-          Positioned.fill(
-            child: Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Align(
-                alignment: Alignment.bottomLeft,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      '¡Queremos conocerte!',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 24,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    const Text(
-                      'Este paso es opcional, pero te ayudará a obtener recomendaciones más relevantes.',
-                      style: TextStyle(color: Colors.white70),
-                    ),
-                    const SizedBox(height: 16),
-                    // Slider button (similar a welcome)
-                    LayoutBuilder(
-                      builder: (context, constraints) {
-                        _introMaxWidth = constraints.maxWidth;
-                        // Asegurar posición válida si cambia el ancho
-                        final maxLeftNow = _introMaxWidth - _introButtonWidth - 8.0;
-                        if (maxLeftNow > 8.0 && _introSlideValue > maxLeftNow) {
-                          _introSlideValue = maxLeftNow;
-                        }
-                        return Container(
-                          width: double.infinity,
-                          height: 56,
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF31373F),
-                            borderRadius: BorderRadius.circular(35),
-                          ),
-                          child: Stack(
-                            children: [
-                              const Positioned.fill(
-                                child: Center(
-                                  child: Text(
-                                    '       > > > ',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.w500,
-                                      letterSpacing: 3,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              AnimatedPositioned(
-                                top: 8,
-                                duration: const Duration(milliseconds: 150),
-                                left: _introSlideValue,
-                                child: GestureDetector(
-                                  onHorizontalDragUpdate: (d) => _onIntroDragUpdate(d),
-                                  onHorizontalDragEnd: (_) => _onIntroDragEnd(),
-                                  child: Container(
-                                    width: _introButtonWidth,
-                                    height: 40,
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(35),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.black.withOpacity(0.3),
-                                          blurRadius: 8,
-                                          offset: const Offset(0, 3),
-                                        ),
-                                      ],
-                                    ),
-                                    child: const Center(
-                                      child: Text(
-                                        'Empezar',
-                                        style: TextStyle(
-                                          color: Color(0xFF31373F),
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w700,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        );
-                      },
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildStepper(BuildContext context) {
-    final titles = [
-      'Configura tu perfil',
-      '¿Cuál es tu género?',
-      '¿Cuál es tu composición corporal?',
-      '¿Cuál es tu actividad física principal?',
-      '¿Con qué frecuencia sueles hacer actividad física?',
-      '¿Cuáles son tus principales objetivos?',
-      '¿Has tenido lesiones relevantes en el último año?',
-      '¿Cómo fue la lesión?',
-    ];
-
-    final currentTitle = titles[_step];
-
-    return Container(
-      margin: const EdgeInsets.all(16.0),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildStepHeader(context, _step, currentTitle, titles.length),
-            const SizedBox(height: 12),
-            Expanded(child: SingleChildScrollView(child: _stepContent())),
-            const SizedBox(height: 12),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                TextButton(onPressed: _back, child: const Text('Atrás')),
-                BlocBuilder<CompleteProfileBloc, CompleteProfileState>(
-                  builder: (context, state) {
-                    if (state is CompleteProfileLoading)
-                      return const CircularProgressIndicator();
-                    final isLast = _hadInjuries ? _step == 7 : _step == 6;
-                return ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primaryBlue,
-                    foregroundColor: Colors.black,
-                    textStyle: const TextStyle(fontWeight: FontWeight.bold),
-                    padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 18),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(999)),
-                  ),
-                      onPressed: _next,
-                      child: Text(isLast ? 'Enviar' : 'Siguiente'),
-                    );
-                  },
-                ),
-              ],
-            ),
-          ],
+        child: _buildFormBackground(
+          title: 'Completar perfil',
+          child: _showIntro ? _buildIntroCard(context) : _buildStepperCard(context),
         ),
       ),
     );
   }
 
+  Widget _buildIntroCard(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(24),
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          Image.asset(
+            'assets/images/signup/image_back.png',
+            fit: BoxFit.cover,
+          ),
+          Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Colors.transparent,
+                  Colors.black.withOpacity(0.65),
+                ],
+                stops: const [0.35, 1],
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: Align(
+              alignment: Alignment.bottomLeft,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    '¡Queremos conocerte!',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 24,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  const Text(
+                    'Este paso es opcional, pero te ayudará a obtener recomendaciones más relevantes.',
+                    style: TextStyle(color: Colors.white70),
+                  ),
+                  const SizedBox(height: 20),
+                  _buildIntroSlider(),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStepperCard(BuildContext context) {
+    final currentTitle = _stepTitles[_step];
+    return Padding(
+      padding: const EdgeInsets.all(24.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildStepHeader(context, _step, currentTitle, _stepTitles.length),
+          const SizedBox(height: 12),
+          Expanded(
+            child: SingleChildScrollView(
+              child: _stepContent(),
+            ),
+          ),
+          const SizedBox(height: 12),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              TextButton(onPressed: _back, child: const Text('Atrás')),
+              BlocBuilder<CompleteProfileBloc, CompleteProfileState>(
+                builder: (context, state) {
+                  if (state is CompleteProfileLoading) {
+                    return const CircularProgressIndicator();
+                  }
+                  final isLast = _hadInjuries ? _step == 7 : _step == 6;
+                  return ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primaryBlue,
+                      foregroundColor: Colors.white,
+                      textStyle: const TextStyle(fontWeight: FontWeight.bold),
+                      padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 18),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(999),
+                      ),
+                    ),
+                    onPressed: _next,
+                    child: Text(isLast ? 'Enviar' : 'Siguiente'),
+                  );
+                },
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
   Widget _buildStepHeader(
     BuildContext context,
     int step,
@@ -963,4 +845,144 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
       ],
     );
   }
+
+  Widget _buildIntroSlider() {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        _introMaxWidth = constraints.maxWidth;
+        final maxLeftNow = _introMaxWidth - _introButtonWidth - 8.0;
+        if (maxLeftNow > 8.0 && _introSlideValue > maxLeftNow) {
+          _introSlideValue = maxLeftNow;
+        }
+        return Container(
+          width: double.infinity,
+          height: 56,
+          decoration: BoxDecoration(
+            color: const Color(0xFF31373F),
+            borderRadius: BorderRadius.circular(35),
+          ),
+          child: Stack(
+            children: [
+              const Positioned.fill(
+                child: Center(
+                  child: Text(
+                    '       > > > ',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.w500,
+                      letterSpacing: 3,
+                    ),
+                  ),
+                ),
+              ),
+              AnimatedPositioned(
+                top: 8,
+                duration: const Duration(milliseconds: 150),
+                left: _introSlideValue,
+                child: GestureDetector(
+                  onHorizontalDragUpdate: (d) => _onIntroDragUpdate(d),
+                  onHorizontalDragEnd: (_) => _onIntroDragEnd(),
+                  child: Container(
+                    width: _introButtonWidth,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(35),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.3),
+                          blurRadius: 8,
+                          offset: const Offset(0, 3),
+                        ),
+                      ],
+                    ),
+                    child: const Center(
+                      child: Text(
+                        'Empezar',
+                        style: TextStyle(
+                          color: Color(0xFF31373F),
+                          fontSize: 14,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildFormBackground({
+    required String title,
+    required Widget child,
+  }) {
+    return Stack(
+      children: [
+        Positioned.fill(
+          child: Image.asset(
+            'assets/images/recovery/recovery_back.png',
+            fit: BoxFit.cover,
+          ),
+        ),
+        SafeArea(
+          child: Align(
+            alignment: Alignment.topCenter,
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(24),
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 600),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      title,
+                      style: const TextStyle(
+                        color: Colors.black,
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    Container(
+                      height: 500,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(32),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.12),
+                            blurRadius: 30,
+                            offset: const Offset(0, 12),
+                          ),
+                        ],
+                      ),
+                      clipBehavior: Clip.antiAlias,
+                      child: child,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  List<String> get _stepTitles => const [
+        'Configura tu perfil',
+        '¿Cuál es tu género?',
+        '¿Cuál es tu composición corporal?',
+        '¿Cuál es tu actividad física principal?',
+        '¿Con qué frecuencia sueles hacer actividad física?',
+        '¿Cuáles son tus principales objetivos?',
+        '¿Has tenido lesiones relevantes en el último año?',
+        '¿Cómo fue la lesión?',
+      ];
 }

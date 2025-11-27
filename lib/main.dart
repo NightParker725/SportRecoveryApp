@@ -139,7 +139,9 @@ class MyApp extends StatelessWidget {
           create: (_) => CompleteProfileBloc(
             CompleteProfileUsecase(ProfileRepositoryImpl()),
           ),
-          child: CompleteProfileScreen(),
+          child: const _ScreenWithBottomNav(
+            child: CompleteProfileScreen(),
+          ),
         ),
         '/login': (_) =>
             BlocProvider(create: (_) => LoginBloc(), child: LoginScreen()),
