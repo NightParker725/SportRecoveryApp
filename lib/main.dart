@@ -98,24 +98,18 @@ class _ScreenWithBottomNav extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF1F242A),
-      body: SafeArea(
-        child: Column(
-          children: [
-            Expanded(child: child),
-            Container(
-              height: 20,
-              decoration: const BoxDecoration(
-                color: Color(0xFF1F242A),
-                borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(40),
-                  bottomRight: Radius.circular(40),
-                ),
-              ),
-            ),
-            const AppBottomNavigationBar(),
-          ],
-        ),
+      backgroundColor: Colors.white,
+      extendBody: true,
+      body: Stack(
+        children: [
+          Positioned.fill(child: child),
+          const Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: AppBottomNavigationBar(),
+          ),
+        ],
       ),
     );
   }
@@ -204,7 +198,9 @@ class MyApp extends StatelessWidget {
         ),
         '/checkin_form': (_) => BlocProvider(
           create: (_) => CheckinBloc(),
-          child: const CheckinFormScreen(),
+          child: const _ScreenWithBottomNav(
+            child: CheckinFormScreen(),
+          ),
         ),
         // Rutas de Educación/Enciclopedia
         '/education': (_) => const EncyclopediaScreen(),
@@ -282,7 +278,9 @@ class MyApp extends StatelessWidget {
         ),
         '/recovery_phase': (_) => BlocProvider.value(
           value: recoveryBloc,
-          child: const RecoveryPhaseScreen(),
+          child: const _ScreenWithBottomNav(
+            child: RecoveryPhaseScreen(),
+          ),
         ),
       },
       onGenerateRoute: (settings) {

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:moviles252/features/checkin/ui/bloc/checkin_bloc.dart';
+import 'package:moviles252/ui/theme/app_colors.dart';
 
 class CheckinFormScreen extends StatefulWidget {
   const CheckinFormScreen({super.key});
@@ -160,8 +161,8 @@ class _CheckinFormScreenState extends State<CheckinFormScreen> {
                     ElevatedButton(
                       onPressed: state is CheckinLoading ? null : _goNext,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF00DFC1),
-                        foregroundColor: Colors.black,
+                        backgroundColor: AppColors.primaryBlue,
+                        foregroundColor: Colors.white,
                         padding: const EdgeInsets.symmetric(
                           horizontal: 28,
                           vertical: 16,
@@ -174,7 +175,7 @@ class _CheckinFormScreenState extends State<CheckinFormScreen> {
                           ? const SizedBox(
                               height: 18,
                               width: 18,
-                              child: CircularProgressIndicator(strokeWidth: 2),
+                              child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
                             )
                           : Text(_step == 6 ? 'Terminar' : 'Siguiente'),
                     ),
@@ -405,7 +406,7 @@ class _CheckinFormScreenState extends State<CheckinFormScreen> {
           divisions: 4,
           label: _q1.round().toString(),
           onChanged: (v) => setState(() => _q1 = v),
-          activeColor: const Color(0xFF00DFC1),
+          activeColor: AppColors.primaryBlue,
         ),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -473,7 +474,7 @@ class _CheckinFormScreenState extends State<CheckinFormScreen> {
             groupValue: _q2,
             onChanged: (v) => setState(() => _q2 = v),
             title: Text(o),
-            activeColor: const Color(0xFF00DFC1),
+            activeColor: AppColors.primaryBlue,
           ),
         ),
       ],
@@ -491,7 +492,7 @@ class _CheckinFormScreenState extends State<CheckinFormScreen> {
             groupValue: _q3,
             onChanged: (v) => setState(() => _q3 = v),
             title: Text(o),
-            activeColor: const Color(0xFF00DFC1),
+            activeColor: AppColors.primaryBlue,
           ),
         ),
       ],
@@ -518,7 +519,7 @@ class _CheckinFormScreenState extends State<CheckinFormScreen> {
           divisions: 4,
           label: _q4.round().toString(),
           onChanged: (v) => setState(() => _q4 = v),
-          activeColor: const Color(0xFF00DFC1),
+          activeColor: AppColors.primaryBlue,
         ),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -607,7 +608,7 @@ class _CheckinFormScreenState extends State<CheckinFormScreen> {
             groupValue: _q6,
             onChanged: (v) => setState(() => _q6 = v),
             title: Text(o),
-            activeColor: const Color(0xFF00DFC1),
+            activeColor: AppColors.primaryBlue,
           ),
         ),
       ],

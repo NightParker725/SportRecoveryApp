@@ -4,6 +4,7 @@ import 'package:moviles252/features/profile/ui/bloc/complete_profile_bloc.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:dotted_border/dotted_border.dart';
+import 'package:moviles252/ui/theme/app_colors.dart';
 
 class CompleteProfileScreen extends StatefulWidget {
   const CompleteProfileScreen({super.key});
@@ -101,7 +102,7 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: Color(0xFF00DFC1), width: 2),
+        borderSide: const BorderSide(color: AppColors.primaryBlue, width: 2),
       ),
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
     );
@@ -232,7 +233,7 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
   }
 
   Widget _buildAvatarUploader() {
-    const borderColor = Color(0xFF00DFC1);
+    const borderColor = AppColors.primaryBlue;
     if (_uploadedAvatarUrl == null || _uploadedAvatarUrl!.isEmpty) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -270,7 +271,7 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
           ),
           if (_uploadingImage) ...[
             const SizedBox(height: 8),
-            const LinearProgressIndicator(minHeight: 4, color: Color(0xFF00DFC1)),
+            const LinearProgressIndicator(minHeight: 4, color: AppColors.primaryBlue),
           ],
         ],
       );
@@ -371,7 +372,7 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
             value: opt.key,
             groupValue: value,
             onChanged: onChanged,
-            activeColor: const Color(0xFF00DFC1),
+            activeColor: AppColors.primaryBlue,
             contentPadding: EdgeInsets.zero,
             title: Text(
               opt.value,
@@ -894,7 +895,7 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
                     final isLast = _hadInjuries ? _step == 7 : _step == 6;
                 return ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF00DFC1),
+                    backgroundColor: AppColors.primaryBlue,
                     foregroundColor: Colors.black,
                     textStyle: const TextStyle(fontWeight: FontWeight.bold),
                     padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 18),

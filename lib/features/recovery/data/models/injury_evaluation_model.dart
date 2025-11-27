@@ -53,6 +53,18 @@ class InjuryEvaluationModel extends InjuryEvaluation {
          createdAt: createdAt,
        );
 
+  // Accept jsonb fields that may arrive as Map or List from Supabase
+  static Map<String, dynamic>? _asMap(dynamic value) {
+    if (value == null) return null;
+    if (value is Map) {
+      return Map<String, dynamic>.from(value as Map);
+    }
+    if (value is List) {
+      return {'items': List<dynamic>.from(value)};
+    }
+    return null;
+  }
+
   factory InjuryEvaluationModel.fromJson(Map<String, dynamic> json) {
     return InjuryEvaluationModel(
       id: json['id'] as String,
@@ -64,24 +76,20 @@ class InjuryEvaluationModel extends InjuryEvaluation {
       hasPopping: json['has_popping'] as bool?,
       frequency: json['frequency'] as String?,
       painIntensity: (json['pain_intensity'] as num?)?.toInt(),
-      painTypes: (json['pain_types'] as Map?)?.cast<String, dynamic>(),
-      painTriggers: (json['pain_triggers'] as Map?)?.cast<String, dynamic>(),
+      painTypes: _asMap(json['pain_types']),
+      painTriggers: _asMap(json['pain_triggers']),
       weightBearingCapacity: json['weight_bearing_capacity'] as String?,
-      basicActivities: (json['basic_activities'] as Map?)
-          ?.cast<String, dynamic>(),
+      basicActivities: _asMap(json['basic_activities']),
       stabilityLevel: json['stability_level'] as String?,
-      symptoms: (json['symptoms'] as Map?)?.cast<String, dynamic>(),
+      symptoms: _asMap(json['symptoms']),
       hasCriticalSymptoms: json['has_critical_symptoms'] as bool?,
       activityType: json['activity_type'] as String?,
-      preexistingConditions: (json['preexisting_conditions'] as Map?)
-          ?.cast<String, dynamic>(),
-      additionalFactors: (json['additional_factors'] as Map?)
-          ?.cast<String, dynamic>(),
+      preexistingConditions: _asMap(json['preexisting_conditions']),
+      additionalFactors: _asMap(json['additional_factors']),
       preliminaryDiagnosis: json['preliminary_diagnosis'] as String?,
       urgencyLevel: json['urgency_level'] as String?,
       estimatedRecoveryDays: (json['estimated_recovery_days'] as num?)?.toInt(),
-      initialRecommendations: (json['initial_recommendations'] as Map?)
-          ?.cast<String, dynamic>(),
+      initialRecommendations: _asMap(json['initial_recommendations']),
       createdAt: DateTime.parse(json['created_at'] as String),
     );
   }

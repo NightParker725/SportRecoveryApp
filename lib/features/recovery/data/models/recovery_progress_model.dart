@@ -18,13 +18,17 @@ class RecoveryProgressModel extends RecoveryProgress {
        );
 
   factory RecoveryProgressModel.fromJson(Map<String, dynamic> json) {
+    final String? lastUpdateStr = json['last_update'] as String?;
+    final String? createdAtStr = json['created_at'] as String?;
     return RecoveryProgressModel(
       id: json['id'] as String,
       planId: json['plan_id'] as String,
       currentPhase: (json['current_phase'] as num).toInt(),
       currentDay: (json['current_day'] as num).toInt(),
-      lastUpdate: DateTime.parse(json['last_update'] as String),
-      createdAt: DateTime.parse(json['created_at'] as String),
+      lastUpdate: lastUpdateStr != null
+          ? DateTime.parse(lastUpdateStr)
+          : (createdAtStr != null ? DateTime.parse(createdAtStr) : DateTime.now()),
+      createdAt: createdAtStr != null ? DateTime.parse(createdAtStr) : DateTime.now(),
     );
   }
 

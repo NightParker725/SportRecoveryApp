@@ -14,7 +14,6 @@ class PainMapScreen extends StatelessWidget {
           children: [
             // Cuerpo fondo con el mapa interactivo
             Expanded(
-              flex: 3,
               child: Container(
                 width: double.infinity,
                 decoration: const BoxDecoration(
@@ -36,7 +35,7 @@ class PainMapScreen extends StatelessWidget {
                         ),
                       ),
                     ),
-                    // Widget del mapa de dolor
+                    // Widget del mapa de dolor (debe estar antes del texto para que el texto esté encima)
                     Positioned.fill(
                       child: InteractiveBodyMap(
                         imagePath: 'assets/images/mapdolor/muscular.jpeg',
@@ -49,29 +48,78 @@ class PainMapScreen extends StatelessWidget {
                         },
                       ),
                     ),
+                    // Título en la parte superior izquierda (con IgnorePointer para no bloquear el mapa)
                     Positioned(
-                      top: 20,
+                      top: 8,
                       left: 24,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Enciclopedia de',
-                            style: TextStyle(
-                              color: Colors.grey[600],
-                              fontSize: 20,
-                              fontWeight: FontWeight.w400,
+                      child: IgnorePointer(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            // "Enciclopedia" - grande, light blue
+                            const Text(
+                              'Enciclopedia',
+                              style: TextStyle(
+                                color: Color(0xFF00CED1), // Light blue
+                                fontSize: 28,
+                                fontWeight: FontWeight.w400,
+                                letterSpacing: -0.5,
+                                height: 1.0,
+                              ),
                             ),
-                          ),
-                          const Text(
-                            'dolor',
-                            style: TextStyle(
-                              color: Color(0xFF00CED1),
-                              fontSize: 20,
-                              fontWeight: FontWeight.w600,
+                            // " de dolor" en la misma línea
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                // " de " - más pequeño, light gray
+                                Padding(
+                                  padding: const EdgeInsets.only(right: 4),
+                                  child: Text(
+                                    'de',
+                                    style: TextStyle(
+                                      color: Colors.grey[500], // Light gray
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w400,
+                                      height: 1.0,
+                                    ),
+                                  ),
+                                ),
+                                // "dolor" - grande, light blue con outline
+                                Stack(
+                                  alignment: Alignment.center,
+                                  children: [
+                                    // Capa de outline (fondo)
+                                    Text(
+                                      'dolor',
+                                      style: TextStyle(
+                                        fontSize: 28,
+                                        fontWeight: FontWeight.w400,
+                                        letterSpacing: -0.5,
+                                        height: 1.0,
+                                        foreground: Paint()
+                                          ..style = PaintingStyle.stroke
+                                          ..strokeWidth = 2.5
+                                          ..color = const Color(0xFF00CED1),
+                                      ),
+                                    ),
+                                    // Capa de relleno (frente)
+                                    const Text(
+                                      'dolor',
+                                      style: TextStyle(
+                                        color: Color(0xFF00CED1), // Light blue
+                                        fontSize: 28,
+                                        fontWeight: FontWeight.w400,
+                                        letterSpacing: -0.5,
+                                        height: 1.0,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                     // Botón Biblioteca
@@ -116,9 +164,14 @@ class PainMapScreen extends StatelessWidget {
               color: Colors.transparent,
               child: Container(
                 width: double.infinity,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 20,
+                constraints: const BoxConstraints(
+                  minHeight: 140,
+                ),
+                padding: const EdgeInsets.fromLTRB(
+                  24,
+                  20,
+                  24,
+                  120, // Padding inferior para que no quede oculto detrás de la barra flotante
                 ),
                 decoration: const BoxDecoration(
                   color: Color(0xFF1F242A),
