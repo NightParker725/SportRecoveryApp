@@ -34,7 +34,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF1F242A),
+      backgroundColor: AppColors.pureWhite,
       body: SafeArea(
         child: BlocBuilder<ProfileBloc, ProfileState>(
           builder: (context, state) {
@@ -49,72 +49,53 @@ class _MyProfilePageState extends State<MyProfilePage> {
 
               return Stack(
                 children: [
-                  // ---------- HEADER ----------
+                  Positioned.fill(
+                    child: Image.asset(
+                      'assets/images/recovery/recovery_back.png',
+                      fit: BoxFit.cover,
+                    ),
+                  ),
                   Container(
                     width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: const BorderRadius.only(
-                        bottomLeft: Radius.circular(40),
-                        bottomRight: Radius.circular(40),
-                      ),
-                    
-                    ),
                     padding: const EdgeInsets.symmetric(
-                      vertical: 32,
-                      horizontal: 20,
+                      vertical: 40,
+                      horizontal: 24,
                     ),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Avatar with teal border
                         Container(
+                          padding: const EdgeInsets.all(5),
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             border: Border.all(
-                              color: const Color(0xFF00CED1),
+                              color: AppColors.primaryBlue,
                               width: 3,
                             ),
                           ),
                           child: CircleAvatar(
-                            radius: 45,
-                            backgroundColor: Colors.grey[300],
+                            radius: 60,
+                            backgroundColor: Colors.white24,
                             child: ClipOval(
                               child: profile.profilePicture != null &&
                                       profile.profilePicture!.isNotEmpty
                                   ? Image.network(
                                       profile.profilePicture!,
-                                      width: 90,
-                                      height: 90,
+                                      width: 120,
+                                      height: 120,
                                       fit: BoxFit.cover,
                                       errorBuilder: (context, error, stackTrace) {
-                                        return Icon(
+                                        return const Icon(
                                           Icons.person,
-                                          size: 45,
-                                          color: Colors.grey[600],
-                                        );
-                                      },
-                                      loadingBuilder:
-                                          (context, child, loadingProgress) {
-                                        if (loadingProgress == null) return child;
-                                        return Center(
-                                          child: CircularProgressIndicator(
-                                            value: loadingProgress
-                                                        .expectedTotalBytes !=
-                                                    null
-                                                ? loadingProgress
-                                                        .cumulativeBytesLoaded /
-                                                    loadingProgress
-                                                        .expectedTotalBytes!
-                                                : null,
-                                          ),
+                                          size: 60,
+                                          color: Colors.white,
                                         );
                                       },
                                     )
-                                  : Icon(
+                                  : const Icon(
                                       Icons.person,
-                                      size: 45,
-                                      color: Colors.grey[600],
+                                      size: 60,
+                                      color: Colors.white,
                                     ),
                             ),
                           ),
@@ -130,7 +111,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                                 style: const TextStyle(
                                   fontSize: 24,
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.black87,
+                                  color: AppColors.darkSurface,
                                 ),
                               ),
                               const SizedBox(height: 4),
@@ -138,7 +119,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                               Text(
                                 profile.email ?? '',
                                 style: const TextStyle(
-                                  color: Colors.black54,
+                                  color: AppColors.darkSurface,
                                   fontSize: 14,
                                   fontWeight: FontWeight.normal,
                                 ),
@@ -160,7 +141,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                                         style: TextStyle(
                                           fontSize: 16,
                                           fontWeight: FontWeight.bold,
-                                          color: Colors.black87,
+                                          color: AppColors.darkSurface,
                                         ),
                                       ),
                                       const SizedBox(height: 2),
@@ -169,7 +150,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                                         style: const TextStyle(
                                           fontSize: 13,
                                           fontWeight: FontWeight.normal,
-                                          color: Colors.black54,
+                                          color: AppColors.darkSurface,
                                         ),
                                       ),
                                     ],
@@ -188,7 +169,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                                           style: const TextStyle(
                                             fontSize: 16,
                                             fontWeight: FontWeight.bold,
-                                            color: Colors.black87,
+                                            color: AppColors.darkSurface,
                                           ),
                                         ),
                                         const SizedBox(height: 2),
@@ -197,7 +178,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                                           style: TextStyle(
                                             fontSize: 13,
                                             fontWeight: FontWeight.normal,
-                                            color: Colors.black54,
+                                            color: AppColors.darkSurface,
                                           ),
                                         ),
                                       ],
@@ -306,12 +287,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                               },
                               color: Colors.redAccent,
                             ),
-                            const SizedBox(height: 8),
-                            _ConfigItem(
-                              icon: Icons.settings_outlined,
-                              label: '',
-                              onTap: () {},
-                            ),
+
                             const SizedBox(height: 90),
                           ],
                         ),
@@ -346,9 +322,26 @@ class _ConfigItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool isDanger = color == Colors.redAccent;
     return ListTile(
       contentPadding: EdgeInsets.zero,
-      leading: Icon(icon, color: color ?? Colors.white),
+      leading: Container(
+        width: 34,
+        height: 34,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: isDanger ? Colors.transparent : Colors.white,
+          border: Border.all(
+            color: Colors.white,
+            width: isDanger ? 1.5 : 0,
+          ),
+        ),
+        child: Icon(
+          icon,
+          color: isDanger ? Colors.white : AppColors.darkSurface,
+          size: 20,
+        ),
+      ),
       title: Text(
         label,
         style: TextStyle(

@@ -54,7 +54,7 @@ class _RecoveryPhaseScreenState extends State<RecoveryPhaseScreen> {
     if (!launched && mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('No se pudo abrir el video')),
-      );
+    );
     }
   }
 
@@ -183,11 +183,11 @@ class _RecoveryPhaseScreenState extends State<RecoveryPhaseScreen> {
                                   color: selected ? Colors.black : AppColors.pureWhite,
                                   fontWeight: FontWeight.w600,
                                 ),
-                              ),
-                            ),
-                          );
-                        }),
                       ),
+                    ),
+                  );
+                        }),
+              ),
                     ],
                   ),
                 ),
@@ -281,7 +281,7 @@ class _PhaseTopicDetail extends StatelessWidget {
           ),
         ],
         ],
-      ),
+            ),
     );
   }
 }
