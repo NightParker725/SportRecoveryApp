@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:moviles252/ui/theme/app_colors.dart';
 import '../bloc/prevention_tips_bloc.dart';
 
 class PreventionTipsScreen extends StatefulWidget {
@@ -18,110 +19,166 @@ class _PreventionTipsScreenState extends State<PreventionTipsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final accent = const Color(0xFF00C897);
+    final topInset = MediaQuery.of(context).padding.top;
+
     return Scaffold(
-      backgroundColor: const Color(0xFF1F242A),
-      body: SafeArea(
-        child: BlocBuilder<PreventionTipsBloc, PreventionTipsState>(
-          builder: (context, state) {
-            if (state is PreventionTipsLoading) {
-              return const Center(
-                child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF00C897)),
+      extendBodyBehindAppBar: true,
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        foregroundColor: Colors.black,
+        automaticallyImplyLeading: true,
+      ),
+      body: Stack(
+        children: [
+          // Background with gradient
+          Positioned.fill(
+            child: IgnorePointer(
+              ignoring: true,
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      Colors.white,
+                      accent.withOpacity(0.05),
+                    ],
+                  ),
                 ),
-              );
-            } else if (state is PreventionTipsLoaded) {
-              return Column(
-                children: [
-                  // Header
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                    child: Row(
-                      children: [
-                        GestureDetector(
-                          onTap: () => Navigator.pop(context),
-                          child: Container(
-                            padding: const EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(12),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.1),
-                                  blurRadius: 4,
-                                  offset: const Offset(0, 2),
-                                ),
-                              ],
+              ),
+            ),
+          ),
+          BlocBuilder<PreventionTipsBloc, PreventionTipsState>(
+            builder: (context, state) {
+              if (state is PreventionTipsLoading) {
+                return const Center(
+                  child: CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF00C897)),
+                  ),
+                );
+              } else if (state is PreventionTipsLoaded) {
+                return SingleChildScrollView(
+                  padding: EdgeInsets.only(top: topInset + kToolbarHeight + 8),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Center(
+                              child: Column(
+                                children: [
+                                  const SizedBox(height: 8),
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        'Enciclopedia de',
+                                        style: TextStyle(
+                                          fontSize: 24,
+                                          fontWeight: FontWeight.w600,
+                                          color: accent,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 0),
+                                      const Text(
+                                        'Prevención',
+                                        style: TextStyle(
+                                          fontSize: 32,
+                                          fontWeight: FontWeight.w800,
+                                          color: Colors.black87,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
                             ),
-                            child: const Icon(
-                              Icons.arrow_back,
-                              color: Color(0xFF1F242A),
-                              size: 24,
+                            const SizedBox(height: 18),
+                            const Text(
+                              'Tips y estrategias para prevenir lesiones y mantenerte seguro durante la práctica deportiva.',
+                              style: TextStyle(
+                                color: Colors.black87,
+                                height: 1.4,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                              ),
+                              textAlign: TextAlign.center,
                             ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      // Dark container with list
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 24,
+                          vertical: 30,
+                        ),
+                        decoration: const BoxDecoration(
+                          color: AppColors.darkSurface,
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(40),
+                            topRight: Radius.circular(40),
                           ),
                         ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text(
-                                'Prevención',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'Tips de Prevención',
+                              style: TextStyle(
+                                color: AppColors.pureWhite,
+                                fontSize: 20,
+                                fontWeight: FontWeight.w700,
                               ),
-                              const SizedBox(height: 4),
-                              const Text(
-                                'Tips para evitar lesiones',
-                                style: TextStyle(
-                                  color: Color(0xFFB0B5BA),
-                                  fontSize: 12,
-                                ),
-                              ),
-                            ],
-                          ),
+                            ),
+                            const SizedBox(height: 16),
+                            ListView.builder(
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemCount: state.tips.length,
+                              itemBuilder: (context, index) {
+                                final tip = state.tips[index];
+                                return PreventionTipCard(tip: tip);
+                              },
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                  // List
-                  Expanded(
-                    child: ListView.builder(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                      itemCount: state.tips.length,
-                      itemBuilder: (context, index) {
-                        final tip = state.tips[index];
-                        return PreventionTipCard(tip: tip);
-                      },
-                    ),
+                );
+              } else if (state is PreventionTipsError) {
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(
+                        Icons.error_outline,
+                        size: 48,
+                        color: Colors.red,
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        'Error: ${state.message}',
+                        style: const TextStyle(color: Colors.red),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
                   ),
-                ],
-              );
-            } else if (state is PreventionTipsError) {
-              return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(
-                      Icons.error_outline,
-                      size: 48,
-                      color: Colors.red,
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      'Error: ${state.message}',
-                      style: const TextStyle(color: Colors.red),
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
-                ),
-              );
-            }
-            return const SizedBox.shrink();
-          },
-        ),
+                );
+              }
+              return const SizedBox.shrink();
+            },
+          ),
+        ],
       ),
     );
   }
@@ -141,13 +198,20 @@ class _PreventionTipCardState extends State<PreventionTipCard> {
 
   @override
   Widget build(BuildContext context) {
+    final accent = const Color(0xFF00C897);
+    
     return Card(
-      margin: const EdgeInsets.symmetric(vertical: 8),
-      color: const Color(0xFF2A2F36),
+      margin: const EdgeInsets.only(bottom: 12),
+      color: AppColors.greySurface,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
       child: ExpansionTile(
         onExpansionChanged: (expanded) {
           setState(() => _isExpanded = expanded);
         },
+        tilePadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        childrenPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -163,13 +227,13 @@ class _PreventionTipCardState extends State<PreventionTipCard> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
               decoration: BoxDecoration(
-                color: const Color(0xFF00C897).withOpacity(0.2),
+                color: accent.withOpacity(0.2),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Text(
                 widget.tip.sport,
-                style: const TextStyle(
-                  color: Color(0xFF00C897),
+                style: TextStyle(
+                  color: accent,
                   fontSize: 11,
                   fontWeight: FontWeight.w600,
                 ),
@@ -178,30 +242,22 @@ class _PreventionTipCardState extends State<PreventionTipCard> {
           ],
         ),
         children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildSection('Descripción', widget.tip.description),
-                const SizedBox(height: 16),
-                _buildBulletSection('Consejos', widget.tip.tips),
-              ],
-            ),
-          ),
+          _buildSection('Descripción', widget.tip.description, accent),
+          const SizedBox(height: 16),
+          _buildBulletSection('Consejos', widget.tip.tips, accent),
         ],
       ),
     );
   }
 
-  Widget _buildSection(String title, String content) {
+  Widget _buildSection(String title, String content, Color accent) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           title,
-          style: const TextStyle(
-            color: Color(0xFF00C897),
+          style: TextStyle(
+            color: accent,
             fontWeight: FontWeight.bold,
             fontSize: 14,
           ),
@@ -210,22 +266,23 @@ class _PreventionTipCardState extends State<PreventionTipCard> {
         Text(
           content,
           style: const TextStyle(
-            color: Color(0xFFB0B5BA),
+            color: Colors.white70,
             fontSize: 13,
+            height: 1.4,
           ),
         ),
       ],
     );
   }
 
-  Widget _buildBulletSection(String title, List<String> items) {
+  Widget _buildBulletSection(String title, List<String> items, Color accent) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           title,
-          style: const TextStyle(
-            color: Color(0xFF00C897),
+          style: TextStyle(
+            color: accent,
             fontWeight: FontWeight.bold,
             fontSize: 14,
           ),
@@ -240,10 +297,10 @@ class _PreventionTipCardState extends State<PreventionTipCard> {
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
+                      Text(
                         '✓ ',
                         style: TextStyle(
-                          color: Color(0xFF00C897),
+                          color: accent,
                           fontSize: 16,
                         ),
                       ),
@@ -251,8 +308,9 @@ class _PreventionTipCardState extends State<PreventionTipCard> {
                         child: Text(
                           item,
                           style: const TextStyle(
-                            color: Color(0xFFB0B5BA),
+                            color: Colors.white70,
                             fontSize: 13,
+                            height: 1.4,
                           ),
                         ),
                       ),

@@ -189,7 +189,39 @@ class MyApp extends StatelessWidget {
           ),
         ),
         // Rutas de Educación/Enciclopedia
-        '/education': (_) => const EncyclopediaScreen(),
+        '/education': (_) {
+          final repository = EducationRepositoryImpl(
+            educationDataSource: EducationDataSourceImpl(
+              supabaseClient: Supabase.instance.client,
+              useMockData: true,
+            ),
+          );
+          return MultiBlocProvider(
+            providers: [
+              BlocProvider(
+                create: (_) => CommonInjuriesBloc(
+                  useCase: ViewCommonInjuriesFlowUseCase(repository: repository),
+                ),
+              ),
+              BlocProvider(
+                create: (_) => PreventionTipsBloc(
+                  useCase: ViewPreventionTipsFlowUseCase(repository: repository),
+                ),
+              ),
+              BlocProvider(
+                create: (_) => MythsBloc(
+                  useCase: ViewMythsFlowUseCase(repository: repository),
+                ),
+              ),
+              BlocProvider(
+                create: (_) => GlossaryBloc(
+                  useCase: ViewGlossaryFlowUseCase(repository: repository),
+                ),
+              ),
+            ],
+            child: const EncyclopediaScreen(),
+          );
+        },
         '/education/common-injuries': (_) {
           final repository = EducationRepositoryImpl(
             educationDataSource: EducationDataSourceImpl(
