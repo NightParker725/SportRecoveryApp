@@ -4,6 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../ui/bloc/recovery_bloc.dart';
 import '../../domain/entities/recovery_phase.dart';
 import '../../domain/entities/recovery_plan.dart';
+import 'recovery_phase_screen.dart';
 
 class RecoveryOverviewScreen extends StatefulWidget {
   const RecoveryOverviewScreen({super.key});
@@ -326,12 +327,9 @@ class _RecoveryOverviewScreenState extends State<RecoveryOverviewScreen> {
           Positioned.fill(
             child: IgnorePointer(
               ignoring: true,
-              child: Opacity(
-                opacity: 0.06,
                 child: Center(
-                  child: Image.asset('assets/images/recovery/recovery_back.png', fit: BoxFit.contain),
+                  child: Image.asset('assets/images/recovery/recovery_back.png'),
                 ),
-              ),
             ),
           ),
           BlocBuilder<RecoveryBloc, RecoveryState>(
@@ -496,6 +494,42 @@ class _RecoveryOverviewScreenState extends State<RecoveryOverviewScreen> {
                                   TextButton(
                                     onPressed: () {},
                                     child: const Text('Configurar'),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            Container(
+                              padding: const EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                color: greyBg,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Row(
+                                children: [
+                                  Container(
+                                    width: 28,
+                                    height: 28,
+                                    decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
+                                    child: const Icon(Icons.info_outline, color: Colors.black87, size: 18),
+                                  ),
+                                  const SizedBox(width: 12),
+                                  const Expanded(child: Text('Conocer más de esta fase', style: TextStyle(color: Colors.white))),
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder: (_) => const RecoveryPhaseScreen(),
+                                          settings: RouteSettings(arguments: {
+                                            'planId': _plan!.id,
+                                            'phaseId': currentPhase.id,
+                                            'phaseIndex': currentPhase.phaseIndex,
+                                            'phaseName': currentPhase.name,
+                                          }),
+                                        ),
+                                      );
+                                    },
+                                    child: const Text('Abrir'),
                                   ),
                                 ],
                               ),
