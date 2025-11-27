@@ -77,18 +77,6 @@ class EncyclopediaScreen extends StatelessWidget {
                   '/education/glossary',
                 ),
               ),
-              //BOTON TEMPORAL PARA EL MAPA DE DOLOR(Me tengo que acordar de borrar esta vaina despues -Ebas
-              const SizedBox(height: 16),
-              _buildOptionCard(
-                context,
-                title: 'Mapa de dolor(boton temporal)',
-                description: 'Mapa del cuerpo humano con lugares de afecciones',
-                icon: Icons.book_outlined,
-                onTap: () => Navigator.pushNamed(
-                  context,
-                  '/pain_map',
-                ),
-              ),
 
             ],
           ),
