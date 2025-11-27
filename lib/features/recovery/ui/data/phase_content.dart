@@ -40,7 +40,7 @@ class PhaseContent {
 const List<PhaseContent> kPhaseContents = [
   PhaseContent(
     phaseIndex: 1,
-    phaseTitle: 'Proceso de Recuperación: Fase 1',
+    phaseTitle: 'Fase 1 · Recuperación aguda',
     phaseDescription:
         'Ocurre en los primeros 1 a 3 días. El objetivo principal es reducir el dolor y controlar la inflamación. En esta etapa usamos el protocolo RICE (reposo, hielo, compresión, elevación).',
     topics: [
@@ -81,7 +81,7 @@ const List<PhaseContent> kPhaseContents = [
   ),
   PhaseContent(
     phaseIndex: 2,
-    phaseTitle: 'Proceso de Recuperación: Fase 2',
+    phaseTitle: 'Fase 2 · Adaptación progresiva',
     phaseDescription:
         'Fase subaguda. Se inicia movilidad suave y fortalecimiento ligero, manteniendo control del dolor. Progresión gradual según tolerancia.',
     topics: [
@@ -122,7 +122,7 @@ const List<PhaseContent> kPhaseContents = [
   ),
   PhaseContent(
     phaseIndex: 3,
-    phaseTitle: 'Proceso de Recuperación: Fase 3',
+    phaseTitle: 'Fase 3 · Retorno funcional',
     phaseDescription:
         'Fase funcional/retorno progresivo. Se trabaja potencia, coordinación y gestos específicos del deporte hasta el retorno seguro.',
     topics: [

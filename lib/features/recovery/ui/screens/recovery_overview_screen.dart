@@ -517,6 +517,9 @@ class _RecoveryOverviewScreenState extends State<RecoveryOverviewScreen> {
                                   const Expanded(child: Text('Conocer más de esta fase', style: TextStyle(color: Colors.white))),
                                   TextButton(
                                     onPressed: () {
+                                      final phaseNamesArg = {
+                                        for (final ph in _phases) ph.phaseIndex: ph.name,
+                                      };
                                       Navigator.of(context).push(
                                         MaterialPageRoute(
                                           builder: (_) => const RecoveryPhaseScreen(),
@@ -525,6 +528,7 @@ class _RecoveryOverviewScreenState extends State<RecoveryOverviewScreen> {
                                             'phaseId': currentPhase.id,
                                             'phaseIndex': currentPhase.phaseIndex,
                                             'phaseName': currentPhase.name,
+                                            'phaseNames': phaseNamesArg,
                                           }),
                                         ),
                                       );

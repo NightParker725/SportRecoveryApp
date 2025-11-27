@@ -10,18 +10,38 @@ class RecoveryPhaseScreen extends StatefulWidget {
 }
 
 class _RecoveryPhaseScreenState extends State<RecoveryPhaseScreen> {
-  late int phaseIndex;
-  String? phaseName;
+  bool _initialized = false;
+  late int _initialPhaseIndex;
+  late int _viewPhaseIndex;
+  final Map<int, String> _phaseNames = {};
   int _selectedTopicIndex = 0;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    if (_initialized) return;
     final args =
         ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
-    if (args == null) return;
-    phaseIndex = args['phaseIndex'] as int;
-    phaseName = args['phaseName'] as String?;
+    final initialIdx = args?['phaseIndex'] as int? ?? 1;
+    _initialPhaseIndex = initialIdx;
+    _viewPhaseIndex = initialIdx;
+
+    final providedName = args?['phaseName'] as String?;
+    if (providedName != null && providedName.isNotEmpty) {
+      _phaseNames[_initialPhaseIndex] = providedName;
+    }
+
+    final rawNames = args?['phaseNames'];
+    if (rawNames is Map) {
+      rawNames.forEach((key, value) {
+        final parsedKey =
+            key is int ? key : int.tryParse(key.toString());
+        if (parsedKey != null && value is String && value.isNotEmpty) {
+          _phaseNames[parsedKey] = value;
+        }
+      });
+    }
+    _initialized = true;
   }
 
   Future<void> _openUrl(String url) async {
@@ -36,14 +56,27 @@ class _RecoveryPhaseScreenState extends State<RecoveryPhaseScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final content = getPhaseContentByIndex(phaseIndex);
-    final phaseTitle =
-        phaseName != null && phaseName!.isNotEmpty ? phaseName! : 'Fase $phaseIndex';
+    final content = getPhaseContentByIndex(_viewPhaseIndex);
+    final phaseTitle = _phaseNames[_viewPhaseIndex] ?? content.phaseTitle;
+    final accent = colorForPhaseIndex(_viewPhaseIndex);
 
     final icons = List.generate(3, (i) {
       final idx = i + 1;
-      final state = idx == phaseIndex ? 'pressed' : 'enabled';
-      return Image.asset('assets/images/recovery/${idx}_$state.png', width: 64, height: 64);
+      final state = idx == _viewPhaseIndex ? 'pressed' : 'enabled';
+      return GestureDetector(
+        onTap: () {
+          if (_viewPhaseIndex == idx) return;
+          setState(() {
+            _viewPhaseIndex = idx;
+            _selectedTopicIndex = 0;
+          });
+        },
+        child: Image.asset(
+          'assets/images/recovery/${idx}_$state.png',
+          width: 64,
+          height: 64,
+        ),
+      );
     });
 
     return Scaffold(
@@ -79,7 +112,7 @@ class _RecoveryPhaseScreenState extends State<RecoveryPhaseScreen> {
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w800,
-                          color: colorForPhaseIndex(phaseIndex),
+                          color: accent,
                         ),
                       ),
                       const SizedBox(height: 12),
@@ -113,7 +146,7 @@ class _RecoveryPhaseScreenState extends State<RecoveryPhaseScreen> {
                         color: selected ? Colors.black : Colors.black87,
                         fontWeight: FontWeight.w600,
                       ),
-                      selectedColor: colorForPhaseIndex(phaseIndex),
+                      selectedColor: accent,
                       backgroundColor: Colors.grey.shade200,
                     );
                   }),
@@ -146,7 +179,6 @@ class _RecoveryPhaseScreenState extends State<RecoveryPhaseScreen> {
                 if (content.topics[_selectedTopicIndex].video != null)
                   Builder(builder: (context) {
                     final v = content.topics[_selectedTopicIndex].video!;
-                    final accent = colorForPhaseIndex(phaseIndex);
                     return Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
