@@ -33,13 +33,8 @@ import 'features/profile/domain/usecases/profile_usecases.dart';
 import 'features/profile/data/repository/profile_repository_impl.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:moviles252/features/auth/ui/bloc/login_bloc.dart';
-import 'features/injury/ui/screens/injury_location_screen.dart';
-import 'features/injury/ui/screens/injury_mechanism_screen.dart';
-import 'features/injury/ui/screens/injury_pain_screen.dart';
-import 'features/injury/ui/screens/injury_functional_capacity_screen.dart';
-import 'features/injury/ui/screens/injury_symptoms_screen.dart';
-import 'features/injury/ui/screens/injury_medical_context_screen.dart';
 import 'features/injury/ui/screens/injury_assessment_summary_screen.dart';
+import 'features/injury/ui/screens/injury_evaluation_form_screen.dart';
 import 'features/injury/ui/bloc/injury_location_bloc.dart';
 import 'features/injury/ui/bloc/injury_mechanism_bloc.dart';
 import 'features/injury/ui/bloc/injury_pain_bloc.dart';
@@ -162,30 +157,19 @@ class MyApp extends StatelessWidget {
           child: const ProfileScreen(),
         ),
         // Rutas de evaluación de lesiones
-        '/injury_location': (_) => BlocProvider(
-          create: (_) => InjuryLocationBloc(),
-          child: const InjuryLocationScreen(userId: 'fetch_from_auth'),
-        ),
-        '/injury_mechanism': (_) => BlocProvider(
-          create: (_) => InjuryMechanismBloc(),
-          child: const InjuryMechanismScreen(),
-        ),
-        '/injury_pain': (_) => BlocProvider(
-          create: (_) => InjuryPainBloc(),
-          child: const InjuryPainScreen(),
-        ),
-        '/injury_functional_capacity': (_) => BlocProvider(
-          create: (_) => InjuryFunctionalCapacityBloc(),
-          child: const InjuryFunctionalCapacityScreen(),
-        ),
-        '/injury_symptoms': (_) => BlocProvider(
-          create: (_) => InjurySymptomsBloc(),
-          child: const InjurySymptomsScreen(),
-        ),
-        '/injury_medical_context': (_) => BlocProvider(
-          create: (_) => InjuryMedicalContextBloc(),
-          child: const InjuryMedicalContextScreen(),
-        ),
+        '/injury_evaluation': (_) => MultiBlocProvider(
+              providers: [
+                BlocProvider(create: (_) => InjuryLocationBloc()),
+                BlocProvider(create: (_) => InjuryMechanismBloc()),
+                BlocProvider(create: (_) => InjuryPainBloc()),
+                BlocProvider(create: (_) => InjuryFunctionalCapacityBloc()),
+                BlocProvider(create: (_) => InjurySymptomsBloc()),
+                BlocProvider(create: (_) => InjuryMedicalContextBloc()),
+              ],
+              child: const _ScreenWithBottomNav(
+                child: InjuryEvaluationFormScreen(),
+              ),
+            ),
         '/injury_assessment_summary': (_) => BlocProvider(
           create: (_) => InjuryAssessmentBloc(
             startInjuryEvaluationFlowUseCase:
