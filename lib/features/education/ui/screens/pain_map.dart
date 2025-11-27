@@ -14,7 +14,6 @@ class PainMapScreen extends StatelessWidget {
           children: [
             // Cuerpo fondo con el mapa interactivo
             Expanded(
-              flex: 3,
               child: Container(
                 width: double.infinity,
                 decoration: const BoxDecoration(
@@ -165,9 +164,14 @@ class PainMapScreen extends StatelessWidget {
               color: Colors.transparent,
               child: Container(
                 width: double.infinity,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 20,
+                constraints: const BoxConstraints(
+                  minHeight: 140,
+                ),
+                padding: const EdgeInsets.fromLTRB(
+                  24,
+                  20,
+                  24,
+                  120, // Padding inferior para que no quede oculto detrás de la barra flotante
                 ),
                 decoration: const BoxDecoration(
                   color: Color(0xFF1F242A),
